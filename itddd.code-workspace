@@ -1,0 +1,73 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "root"
+    },
+    {
+      "path": "apps/frontend",
+      "name": "frontend application"
+    },
+    {
+      "path": "apps/backend",
+      "name": "backend application"
+    },
+    {
+      "path": "apps/frontend-e2e",
+      "name": "frontend e2e"
+    }
+  ],
+  "settings": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+      "source.fixAll.stylelint": true
+    },
+
+    "npm.packageManager": "yarn",
+
+    "eslint.packageManager": "yarn",
+    "eslint.alwaysShowStatus": true,
+    "eslint.workingDirectories": [
+      { "pattern": "./apps/*/" },
+      { "pattern": "./libs/*/" },
+      { "pattern": "./tools/*/" }
+    ],
+
+    "stylelint.packageManager": "yarn",
+    "stylelint.validate": [
+      "css",
+      "postcss",
+      "scss",
+      "javascriptreact",
+      "typescriptreact"
+    ],
+
+    "typescript.tsdk": "./node_modules/typescript/lib",
+    "typescript.preferences.importModuleSpecifier": "relative",
+
+    "jest.autoRun": {
+      "watch": false,
+      "onSave": "test-src-file"
+    },
+    "jest.jestCommandLine": "yarn nx affected:test",
+    "jest.disabledWorkspaceFolders": ["root"]
+  },
+  "extensions": {
+    "recommendations": [
+      "nrwl.angular-console",
+      "EditorConfig.editorconfig",
+      "esbenp.prettier-vscode",
+      "redhat.vscode-yaml",
+      "dbaeumer.vscode-eslint",
+      "stylelint.vscode-stylelint",
+      "styled-components.vscode-styled-components",
+      "orta.vscode-jest",
+      "firsttris.vscode-jest-runner",
+      "GraphQL.vscode-graphql"
+    ]
+  }
+}

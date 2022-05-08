@@ -1,0 +1,139 @@
+version: 2.1
+
+executors:
+  default:
+    docker:
+      - image: cimg/node:16.14.0
+
+commands:
+  prepare-dependencies:
+    steps:
+      - restore_cache:
+          keys:
+            - v1-yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - v1-yarn-packages-{{ .Branch }}-
+            - v1-yarn-packages-
+
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+
+      - save_cache:
+          key: v1-yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+
+orbs:
+  codecov: codecov/codecov@3.2.2
+
+jobs:
+  lint:
+    executor: default
+
+    steps:
+      - checkout
+
+      - prepare-dependencies
+
+      - run:
+          name: Format
+          command: yarn format:check
+
+      - run:
+          name: Lint Workspace
+          command: yarn workspace-lint
+
+      - run:
+          name: Run ESLint
+          command: yarn affected:lint --parallel --configuration ci
+
+      - run:
+          name: Run stylelint
+          command: yarn affected:stylelint --parallel
+
+      - store_test_results:
+          path: ./reports
+
+  unit-test:
+    executor: default
+
+    steps:
+      - checkout
+
+      - prepare-dependencies
+
+      - run:
+          name: Run Unit Tests
+          command: yarn affected:test --ci --runInBand --codeCoverage --parallel
+
+      - store_test_results:
+          path: ./reports
+
+      - store_artifacts:
+          path: ./coverage
+
+      - codecov/upload:
+          file: ./coverage/apps/frontend/lcov.info
+          flags: frontend
+
+      - codecov/upload:
+          file: ./coverage/apps/backend/lcov.info
+          flags: backend
+
+  build:
+    executor: default
+
+    steps:
+      - checkout
+
+      - prepare-dependencies
+
+      - run:
+          name: Build Applications
+          command: yarn affected:build --parallel --configuration production
+
+  e2e-test:
+    executor: default
+
+    steps:
+      - checkout
+
+      - prepare-dependencies
+
+      - run:
+          name: Run E2E Tests
+          command: yarn affected:e2e --configuration production --parallel false --headless
+
+      - store_artifacts:
+          path: dist/cypress
+
+workflows:
+  version: 2
+
+  develop:
+    jobs:
+      - lint
+
+      - unit-test:
+          requires:
+            - lint
+
+      - build:
+          requires:
+            - unit-test
+
+          filters:
+            branches:
+              only:
+                - main
+                - develop
+
+      - e2e-test:
+          requires:
+            - build
+
+          filters:
+            branches:
+              only:
+                - main
+                - develop

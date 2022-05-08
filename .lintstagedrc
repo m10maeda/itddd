@@ -1,0 +1,17 @@
+{
+  "{nx,workspace}.json": "nx workspace-lint",
+  "*.{json,yml,md}": "nx format:write --files",
+  "*.{js,ts}": [
+    "nx format:write --files",
+    "nx affected:lint --fix --files"
+  ],
+  "*.{jsx,tsx}": [
+    "nx format:write --files",
+    "nx affected:lint --fix --files",
+    "nx affected --target=stylelint --fix --files"
+  ],
+  "*.{css,scss}": [
+    "nx format:write --files",
+    "nx affected --target=stylelint --fix --files"
+  ]
+}

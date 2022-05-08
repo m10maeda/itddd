@@ -1,0 +1,20 @@
+{
+  "ignoreFiles": ["**/*"],
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-standard-scss",
+    "stylelint-config-recess-order",
+    "stylelint-config-prettier"
+  ],
+  "plugins": ["stylelint-order"],
+  "rules": {
+    "selector-class-pattern": null,
+    "order/order": ["custom-properties", "declarations"]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.{tsx,jsx}"],
+      "customSyntax": "@stylelint/postcss-css-in-js"
+    }
+  ]
+}
