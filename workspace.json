@@ -2,6 +2,8 @@
   "version": 2,
   "projects": {
     "backend": "apps/backend",
+    "backend-feature-shared": "libs/backend/feature/shared",
+    "backend-feature-user": "libs/backend/feature/user",
     "frontend": "apps/frontend",
     "frontend-e2e": "apps/frontend-e2e"
   }

@@ -1,0 +1,1 @@
+export { InMemorySerialNumberAssigner } from './InMemorySerialNumberAssigner';

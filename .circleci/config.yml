@@ -77,8 +77,12 @@ jobs:
           flags: frontend
 
       - codecov/upload:
-          file: ./coverage/apps/backend/lcov.info
-          flags: backend
+          file: ./coverage/libs/backend/feature/shared/lcov.info
+          flags: backend-feature-shared
+
+      - codecov/upload:
+          file: ./coverage/libs/backend/feature/user/lcov.info
+          flags: backend-feature-user
 
   build:
     executor: default
