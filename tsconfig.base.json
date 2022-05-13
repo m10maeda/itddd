@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@itddd/backend-feature-circle": [
+        "libs/backend/feature/circle/src/index.ts"
+      ],
       "@itddd/backend-feature-shared": [
         "libs/backend/feature/shared/src/index.ts"
       ],

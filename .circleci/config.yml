@@ -84,6 +84,10 @@ jobs:
           file: ./coverage/libs/backend/feature/user/lcov.info
           flags: backend-feature-user
 
+      - codecov/upload:
+          file: ./coverage/libs/backend/feature/circle/lcov.info
+          flags: backend-feature-circle
+
   build:
     executor: default
 

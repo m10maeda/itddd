@@ -1,0 +1,28 @@
+{
+  "sourceRoot": "libs/backend/feature/circle/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/backend/feature/circle/**/*.ts"]
+      },
+      "configurations": {
+        "ci": {
+          "format": "junit",
+          "outputFile": "reports/libs/backend/feature/circle/eslint-results.xml"
+        }
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/backend/feature/circle"],
+      "options": {
+        "jestConfig": "libs/backend/feature/circle/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
