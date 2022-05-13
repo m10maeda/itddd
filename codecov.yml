@@ -8,6 +8,16 @@ coverage:
           - backend
         informational: true
 
+      backend-feature-shared:
+        flags:
+          - backend-feature-shared
+        informational: true
+
+      backend-feature-user:
+        flags:
+          - backend-feature-user
+        informational: true
+
       frontend:
         flags:
           - frontend
@@ -26,6 +36,16 @@ flags:
   frontend:
     paths:
       - apps/frontend
+    carryforward: true
+
+  backend-feature-shared:
+    paths:
+      - libs/backend/feature/shared
+    carryforward: true
+
+  backend-feature-user:
+    paths:
+      - libs/backend/feature/user
     carryforward: true
 
 comment:

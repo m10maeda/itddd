@@ -1,0 +1,28 @@
+{
+  "sourceRoot": "libs/backend/feature/user/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/backend/feature/user/**/*.ts"]
+      },
+      "configurations": {
+        "ci": {
+          "format": "junit",
+          "outputFile": "reports/libs/backend/feature/user/eslint-results.xml"
+        }
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/backend/feature/user"],
+      "options": {
+        "jestConfig": "libs/backend/feature/user/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

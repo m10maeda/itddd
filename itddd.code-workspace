@@ -15,6 +15,12 @@
     {
       "path": "apps/frontend-e2e",
       "name": "frontend e2e"
+    },
+    {
+      "path": "libs/backend/feature/shared"
+    },
+    {
+      "path": "libs/backend/feature/user"
     }
   ],
   "settings": {
