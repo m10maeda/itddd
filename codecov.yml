@@ -18,6 +18,11 @@ coverage:
           - backend-feature-user
         informational: true
 
+      backend-feature-circle:
+        flags:
+          - backend-feature-circle
+        informational: true
+
       frontend:
         flags:
           - frontend
@@ -46,6 +51,11 @@ flags:
   backend-feature-user:
     paths:
       - libs/backend/feature/user
+    carryforward: true
+
+  backend-feature-circle:
+    paths:
+      - libs/backend/feature/circle
     carryforward: true
 
 comment:

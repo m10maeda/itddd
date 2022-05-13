@@ -21,6 +21,9 @@
     },
     {
       "path": "libs/backend/feature/user"
+    },
+    {
+      "path": "libs/backend/feature/circle"
     }
   ],
   "settings": {

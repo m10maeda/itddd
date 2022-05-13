@@ -2,6 +2,7 @@
   "version": 2,
   "projects": {
     "backend": "apps/backend",
+    "backend-feature-circle": "libs/backend/feature/circle",
     "backend-feature-shared": "libs/backend/feature/shared",
     "backend-feature-user": "libs/backend/feature/user",
     "frontend": "apps/frontend",
