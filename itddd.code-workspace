@@ -27,6 +27,9 @@
     },
     {
       "path": "libs/backend/presentation"
+    },
+    {
+      "path": "libs/frontend/feature/user"
     }
   ],
   "settings": {

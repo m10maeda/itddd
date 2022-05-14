@@ -32,6 +32,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@apollo/client": "^3.6.2",
     "@emotion/react": "11.9.0",
     "@emotion/server": "11.4.0",
     "@emotion/styled": "11.8.1",
@@ -58,6 +59,9 @@
     "@commitlint/config-conventional": "^16.2.4",
     "@commitlint/config-nx-scopes": "^16.2.1",
     "@emotion/babel-plugin": "11.9.2",
+    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/typescript-operations": "^2.4.0",
+    "@graphql-codegen/typescript-react-apollo": "^3.2.14",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
     "@next/eslint-plugin-next": "^12.1.5",
