@@ -5,6 +5,7 @@
     "backend-feature-circle": "libs/backend/feature/circle",
     "backend-feature-shared": "libs/backend/feature/shared",
     "backend-feature-user": "libs/backend/feature/user",
+    "backend-presentation": "libs/backend/presentation",
     "frontend": "apps/frontend",
     "frontend-e2e": "apps/frontend-e2e"
   }

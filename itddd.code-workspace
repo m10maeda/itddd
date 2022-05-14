@@ -24,6 +24,9 @@
     },
     {
       "path": "libs/backend/feature/circle"
+    },
+    {
+      "path": "libs/backend/presentation"
     }
   ],
   "settings": {
