@@ -22,7 +22,10 @@
         "libs/backend/feature/shared/src/index.ts"
       ],
       "@itddd/backend-feature-user": ["libs/backend/feature/user/src/index.ts"],
-      "@itddd/backend/presentation": ["libs/backend/presentation/src/index.ts"]
+      "@itddd/backend/presentation": ["libs/backend/presentation/src/index.ts"],
+      "@itddd/frontend/feature/user": [
+        "libs/frontend/feature/user/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

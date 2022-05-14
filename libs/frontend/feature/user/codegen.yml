@@ -1,0 +1,15 @@
+overwrite: true
+
+schema: 'libs/backend/presentation/dist/schema.graphql'
+
+generates:
+  libs/frontend/feature/user/src/lib/generated/index.tsx:
+    documents: 'libs/frontend/feature/user/src/**/*.graphql'
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+    config:
+      withHooks: true
+      withComponent: false
+      withHOC: false

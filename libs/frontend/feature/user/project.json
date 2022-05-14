@@ -1,0 +1,32 @@
+{
+  "sourceRoot": "libs/frontend/feature/user/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/frontend/feature/user/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/frontend/feature/user"],
+      "options": {
+        "jestConfig": "libs/frontend/feature/user/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "generate": {
+      "builder": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "npx graphql-codegen --config libs/frontend/feature/user/codegen.yml"
+          }
+        ]
+      }
+    }
+  }
+}

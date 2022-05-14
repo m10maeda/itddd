@@ -2,10 +2,9 @@
 const config = {
   extends: [
     'plugin:@nrwl/nx/react-typescript',
-    '../../.eslintrc.json',
+    '../../../../.eslintrc.json',
     'airbnb',
     'airbnb/hooks',
-    'plugin:@next/next/core-web-vitals',
     'plugin:jest/recommended',
     'plugin:jest/style',
     'plugin:jest-formatting/recommended',
@@ -24,8 +23,6 @@ const config = {
         unnamedComponents: 'arrow-function',
       },
     ],
-
-    'react/prop-types': 'off',
 
     'react/require-default-props': 'off',
 
@@ -46,8 +43,6 @@ const config = {
         assert: 'either',
       },
     ],
-
-    '@next/next/no-html-link-for-pages': ['error', 'apps/frontend/pages'],
   },
   overrides: [
     {

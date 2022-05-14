@@ -1,0 +1,53 @@
+fragment UserData on User {
+  __typename
+  id
+  name
+}
+
+fragment UserResultFields on UserResult {
+  __typename
+  ... on User {
+    id
+    name
+  }
+  ... on UserNotFoundError {
+    id
+    message
+  }
+}
+
+query getAllUsers {
+  users {
+    ...UserData
+  }
+}
+
+query getUser($id: ID!) {
+  user(id: $id) {
+    ...UserResultFields
+  }
+}
+
+mutation registerUser($name: String!) {
+  registerUser(name: $name) {
+    ...UserResultFields
+    ... on CanNotRegisterUserError {
+      name
+      message
+    }
+  }
+}
+
+mutation deleteUser($id: ID!) {
+  deleteUser(id: $id)
+}
+
+mutation updateUser($id: ID!, $name: String!) {
+  updateUser(id: $id, name: $name) {
+    ...UserResultFields
+    ... on CanNotRegisterUserError {
+      name
+      message
+    }
+  }
+}

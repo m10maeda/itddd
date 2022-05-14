@@ -6,3 +6,4 @@
 
 # Generated
 libs/backend/presentation/dist/schema.graphql
+libs/frontend/feature/user/generated
