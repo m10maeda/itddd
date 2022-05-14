@@ -1,3 +1,5 @@
+import { join } from 'path';
+
 import { PresentationModule } from '@itddd/backend/presentation';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
@@ -14,7 +16,10 @@ import { AppService } from './app.service';
       debug: process.env.NODE_ENV === 'development',
       playground: process.env.NODE_ENV === 'development',
       driver: ApolloDriver,
-      autoSchemaFile: true,
+      autoSchemaFile: join(
+        process.cwd(),
+        'libs/backend/presentation/dist/schema.graphql',
+      ),
       context: ({ req }) => ({ req }),
     }),
     PresentationModule,
