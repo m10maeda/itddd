@@ -1,0 +1,72 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""user"""
+type User {
+  id: ID!
+  name: String!
+}
+
+"""circle"""
+type Circle {
+  id: ID!
+  name: String!
+  ownerId: ID!
+  memberIds: [ID!]!
+}
+
+type Query {
+  user(id: ID!): UserResult!
+  users: [User!]!
+  circle(id: ID!): CircleResult!
+  circles: [Circle!]!
+  candidates(id: ID!): [User!]!
+}
+
+"""User Result"""
+union UserResult = User | UserNotFoundError
+
+"""User not found error"""
+type UserNotFoundError {
+  id: ID!
+  message: String!
+}
+
+"""Circle Result"""
+union CircleResult = Circle | CircleNotFoundError | UserNotFoundError
+
+"""Circle not found error"""
+type CircleNotFoundError {
+  id: ID!
+  message: String!
+}
+
+type Mutation {
+  registerUser(name: String!): UserRegistrationResult!
+  deleteUser(id: ID!): Boolean!
+  updateUser(id: ID!, name: String!): UserRegistrationResult!
+  createCircle(name: String!, ownerId: ID!): CircleRegistrationResult!
+  deleteCircle(id: ID!): Boolean!
+  updateCircle(id: ID!, name: String!): CircleRegistrationResult!
+  joinCircle(id: ID!, userId: ID!): CircleResult!
+  leaveCircle(id: ID!, memberId: ID!): CircleResult!
+}
+
+"""User Registration Result"""
+union UserRegistrationResult = User | UserNotFoundError | CanNotRegisterUserError
+
+"""Can not register user error"""
+type CanNotRegisterUserError {
+  name: String!
+  message: String!
+}
+
+"""Circle Registration Result"""
+union CircleRegistrationResult = Circle | CanNotRegisterCircleError | CircleNotFoundError | UserNotFoundError
+
+"""Can not register cirlce error"""
+type CanNotRegisterCircleError {
+  name: String!
+  message: String!
+}

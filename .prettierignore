@@ -3,3 +3,6 @@
 /dist
 /coverage
 /reports
+
+# Generated
+libs/backend/presentation/dist/schema.graphql
