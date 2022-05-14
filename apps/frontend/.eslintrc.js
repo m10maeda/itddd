@@ -25,6 +25,8 @@ const config = {
       },
     ],
 
+    'react/prop-types': 'off',
+
     'react/require-default-props': 'off',
 
     'jsx-a11y/alt-text': [
