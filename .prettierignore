@@ -1,0 +1,19 @@
+# dependencies
+node_modules
+
+# compiled output
+dist
+
+# testing
+coverage
+reports
+
+# next.js
+.next
+
+# misc
+pnpm-lock.yaml
+
+# turbo
+.turbo
+**/turbo/generators/**/*.hbs

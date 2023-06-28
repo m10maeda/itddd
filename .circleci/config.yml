@@ -1,0 +1,82 @@
+version: 2.1
+
+executors:
+  base:
+    docker:
+      - image: cimg/node:18.16.0-browsers
+
+commands:
+  prepare-dependencies:
+    steps:
+      - restore_cache:
+          name: Restore pnpm Package Cache
+          keys:
+            - pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
+
+      - run:
+          name: Install pnpm package manager
+          command: |
+            sudo corepack enable
+            sudo corepack prepare pnpm@8.6.5 --activate
+
+      - run:
+          name: Install Dependencies
+          command: |
+            pnpm install --frozen-lockfile
+
+      - save_cache:
+          name: Save pnpm Package Cache
+          key: pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - node_modules
+
+jobs:
+  lint:
+    executor: base
+
+    steps:
+      - checkout
+
+      - prepare-dependencies
+
+      - run:
+          name: Format Check
+          command: |
+            pnpm run format:check
+
+      - run:
+          name: Run ESLint
+          command: |
+            pnpm run lint --continue
+
+      - run:
+          name: Run Stylelint
+          command: |
+            pnpm run stylelint --continue
+
+  test:
+    executor: base
+
+    steps:
+      - checkout
+
+      - prepare-dependencies
+
+      - run:
+          name: Run Unit Test
+          command: |
+            pnpm run test --continue -- --ci --runInBand --coverage
+
+      - store_test_results:
+          path: ./reports
+
+      - store_artifacts:
+          path: ./coverage
+
+workflows:
+  main:
+    jobs:
+      - lint
+      - test:
+          requires:
+            - lint

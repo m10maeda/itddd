@@ -1,0 +1,35 @@
+{
+  "name": "itddd",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "format": "prettier --write --ignore-unknown .",
+    "format:check": "prettier --list-different --ignore-unknown .",
+    "lint": "turbo run lint",
+    "prepare": "husky install",
+    "stylelint": "turbo run stylelint",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.6",
+    "@commitlint/config-conventional": "^17.6.6",
+    "@commitlint/config-pnpm-scopes": "^17.5.0",
+    "@commitlint/types": "^17.4.4",
+    "@itddd/eslint-config": "workspace:*",
+    "@nestjs/cli": "^10.1.0",
+    "@turbo/gen": "^1.9.7",
+    "eslint": "^8.43.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.2.3",
+    "prettier": "^3.0.0",
+    "sort-package-json": "^2.4.1",
+    "turbo": "latest"
+  },
+  "packageManager": "pnpm@8.6.5",
+  "engines": {
+    "node": "^18.16.0",
+    "pnpm": "^8.6.0"
+  }
+}

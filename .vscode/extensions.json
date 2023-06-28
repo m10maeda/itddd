@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "unional.vscode-sort-package-json",
+    "redhat.vscode-yaml",
+    "dbaeumer.vscode-eslint",
+    "stylelint.vscode-stylelint",
+    "unifiedjs.vscode-mdx",
+    "graphql.vscode-graphql",
+    "graphql.vscode-graphql-syntax",
+    "firsttris.vscode-jest-runner",
+    "mikestead.dotenv",
+    "circleci.circleci"
+  ]
+}

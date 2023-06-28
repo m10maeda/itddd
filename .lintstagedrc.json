@@ -1,0 +1,5 @@
+{
+  "package.json": ["prettier --write", "sort-package-json"],
+  "{!(package).json,*.{md,yml}}": "prettier --write",
+  "*.{tsx,ts,js}": ["prettier --write", "eslint --fix --cache"]
+}

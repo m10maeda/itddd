@@ -1,0 +1,16 @@
+{
+  "name": "@itddd/stylelint-config",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "stylelint-config-recess-order": "^4.2.0",
+    "stylelint-config-standard": "^33.0.0",
+    "stylelint-config-standard-scss": "^9.0.0",
+    "stylelint-order": "^6.0.3"
+  },
+  "peerDependencies": {
+    "stylelint": "^15.7.0"
+  }
+}
