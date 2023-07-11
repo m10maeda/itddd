@@ -1,0 +1,40 @@
+import { UserId } from './UserId';
+
+describe('UserId', () => {
+  describe('should throw an error, when the instance is constructed', () => {
+    it.each`
+      value | description
+      ${''} | ${'empty string'}
+    `('with $description("$value")', ({ value }: { value: string }) => {
+      expect(() => {
+        // eslint-disable-next-line no-new
+        new UserId(value);
+      }).toThrow(RangeError);
+    });
+  });
+
+  describe('equals method', () => {
+    it.each`
+      a      | b      | expected
+      ${'0'} | ${'0'} | ${true}
+      ${'0'} | ${'1'} | ${false}
+    `(
+      'should return $expected, when "$a" and "$b" are compared',
+      ({
+        a: _a,
+        b: _b,
+        expected,
+      }: {
+        a: string;
+        b: string;
+        expected: boolean;
+      }) => {
+        const a = new UserId(_a);
+        const b = new UserId(_b);
+
+        expect(a.equals(b)).toBe(expected);
+        expect(b.equals(a)).toBe(expected);
+      },
+    );
+  });
+});
