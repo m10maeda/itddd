@@ -15,6 +15,13 @@ module.exports = {
 
     '@typescript-eslint/consistent-type-definitions': 'off',
 
+    '@typescript-eslint/unified-signatures': [
+      'error',
+      {
+        ignoreDifferentlyNamedParameters: true,
+      },
+    ],
+
     // Enforce member ordering.
     '@typescript-eslint/member-ordering': [
       'error',
