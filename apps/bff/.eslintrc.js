@@ -2,7 +2,7 @@
 module.exports = {
   root: true,
   extends: ['@itddd/eslint-config/nest'],
-  ignorePatterns: ['dist'],
+  ignorePatterns: ['lib', 'dist'],
   parserOptions: {
     project: 'tsconfig.json',
     tsconfigRootDir: __dirname,

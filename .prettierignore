@@ -17,3 +17,6 @@ pnpm-lock.yaml
 # turbo
 .turbo
 **/turbo/generators/**/*.hbs
+
+# generated libraries
+apps/bff/lib
