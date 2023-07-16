@@ -6,13 +6,17 @@ export enum UserType {
 }
 
 export class User {
-  @ApiProperty({ example: '1' })
+  @ApiProperty({ example: '1', description: 'The id of the User' })
   public readonly id: string;
 
-  @ApiProperty({ example: 'Alice' })
+  @ApiProperty({ example: 'Alice', description: 'The name of the User' })
   public readonly name: string;
 
-  @ApiProperty({ example: UserType.Normal, enum: UserType })
+  @ApiProperty({
+    example: UserType.Normal,
+    enum: UserType,
+    description: 'The type of the User',
+  })
   public readonly type: UserType;
 
   public constructor(id: string, name: string, type: UserType) {

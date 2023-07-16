@@ -63,14 +63,14 @@ const conflictResponseResponseOption = {
 @Controller('users')
 export class UsersController {
   @Get()
-  @ApiOperation({ summary: 'Get all users' })
+  @ApiOperation({ summary: 'Get all users information' })
   @ApiOkResponse({ type: [User] })
   public getAll(): Promise<Iterable<User>> {
     return this.usersService.getAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get one user' })
+  @ApiOperation({ summary: 'Get one user information by specified id' })
   @ApiOkResponse({ type: User })
   @ApiNotFoundResponse(notFoundResponseOption)
   public async getBy(@Param('id') id: string): Promise<User> {
@@ -85,7 +85,7 @@ export class UsersController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Register user' })
+  @ApiOperation({ summary: 'Register a new user with specified input' })
   @ApiCreatedResponse({ type: User })
   @ApiBadRequestResponse(badRequestResponseOption)
   @ApiConflictResponse(conflictResponseResponseOption)
@@ -105,7 +105,9 @@ export class UsersController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update user' })
+  @ApiOperation({
+    summary: 'Update user information with specified id and input',
+  })
   @ApiNoContentResponse({ type: User })
   @ApiBadRequestResponse(badRequestResponseOption)
   @ApiNotFoundResponse(notFoundResponseOption)
@@ -129,7 +131,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete user' })
+  @ApiOperation({ summary: 'Delete the user with specivied id' })
   @ApiNoContentResponse()
   @ApiNotFoundResponse(notFoundResponseOption)
   public async delete(@Param('id') id: string): Promise<void> {
