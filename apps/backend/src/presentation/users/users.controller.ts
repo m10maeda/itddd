@@ -63,19 +63,19 @@ const conflictResponseResponseOption = {
 @Controller('users')
 export class UsersController {
   @Get()
-  @ApiOperation({ summary: 'Find all users' })
+  @ApiOperation({ summary: 'Get all users' })
   @ApiOkResponse({ type: [User] })
-  public findAll(): Promise<Iterable<User>> {
-    return this.usersService.findAll();
+  public getAll(): Promise<Iterable<User>> {
+    return this.usersService.getAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Find one user' })
+  @ApiOperation({ summary: 'Get one user' })
   @ApiOkResponse({ type: User })
   @ApiNotFoundResponse(notFoundResponseOption)
-  public async findOne(@Param('id') id: string): Promise<User> {
+  public async getBy(@Param('id') id: string): Promise<User> {
     try {
-      return await this.usersService.findBy(id);
+      return await this.usersService.getBy(id);
     } catch (error) {
       if (error instanceof UserNotFoundException)
         throw new NotFoundException(error.message);

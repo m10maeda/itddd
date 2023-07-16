@@ -24,14 +24,14 @@ import {
 
 @Injectable()
 export class UsersService {
-  public async findBy(id: string): Promise<User> {
+  public async getBy(id: string): Promise<User> {
     const request = new UserGetRequest(id);
     const { user } = await this.getUseCase.handle(request);
 
     return this.convert(user);
   }
 
-  public async findAll(): Promise<Iterable<User>> {
+  public async getAll(): Promise<Iterable<User>> {
     const request = new UserGetAllRequest();
     const { users } = await this.getAllUseCase.handle(request);
 
