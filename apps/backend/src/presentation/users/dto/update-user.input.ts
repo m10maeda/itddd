@@ -3,7 +3,10 @@ import { IsString } from 'class-validator';
 
 export class UpdateUserInput {
   @IsString()
-  @ApiProperty({ example: 'Alice' })
+  @ApiProperty({
+    example: 'Alice',
+    description: 'The name of User to update',
+  })
   public readonly name: string;
 
   public constructor(name: string) {

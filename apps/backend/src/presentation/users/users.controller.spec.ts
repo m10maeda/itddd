@@ -35,34 +35,34 @@ describe('UserController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('findAll method', () => {
+  describe('getAll method', () => {
     it('should return an array of users', async () => {
       const result = [
         new UserEntity('0', 'Alice', UserType.Normal),
         new UserEntity('1', 'Bob', UserType.Premium),
       ];
-      jest.spyOn(service, 'findAll').mockResolvedValue(result);
+      jest.spyOn(service, 'getAll').mockResolvedValue(result);
 
-      expect(await controller.findAll()).toBe(result);
+      expect(await controller.getAll()).toBe(result);
     });
   });
 
-  describe('findBy method', () => {
+  describe('getBy method', () => {
     it('should return user, when user service returns user', async () => {
       const id = '0';
       const result = new UserEntity(id, 'Alice', UserType.Premium);
-      jest.spyOn(service, 'findBy').mockResolvedValue(result);
+      jest.spyOn(service, 'getBy').mockResolvedValue(result);
 
-      expect(await controller.findOne(id)).toBe(result);
+      expect(await controller.getBy(id)).toBe(result);
     });
 
     it('should throw NotFoundException, when user service throw UserNotFoundException', async () => {
       const id = 'unexisting';
       jest
-        .spyOn(service, 'findBy')
+        .spyOn(service, 'getBy')
         .mockRejectedValue(new UserNotFoundException(new UserId(id)));
 
-      await expect(controller.findOne(id)).rejects.toThrow(NotFoundException);
+      await expect(controller.getBy(id)).rejects.toThrow(NotFoundException);
     });
   });
 
