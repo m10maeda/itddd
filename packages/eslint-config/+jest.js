@@ -15,5 +15,11 @@ module.exports = {
         'import/no-default-export': 'off',
       },
     },
+    {
+      files: ['**.@(spec|test).@(ts|tsx|js|jsx)'],
+      rules: {
+        '@typescript-eslint/no-unsafe-assignment': 'warn',
+      },
+    },
   ],
 };
