@@ -40,6 +40,11 @@ jobs:
       - prepare-dependencies
 
       - run:
+          name: Code Generate
+          command: |
+            pnpm run code-generate
+
+      - run:
           name: Format Check
           command: |
             pnpm run format:check
@@ -61,6 +66,11 @@ jobs:
       - checkout
 
       - prepare-dependencies
+
+      - run:
+          name: Code Generate
+          command: |
+            pnpm run code-generate
 
       - run:
           name: Run Unit Test
