@@ -1,0 +1,6 @@
+withSeparateModelsAndApi: true
+apiPackage: 'api'
+modelPackage: 'dto'
+modelPropertyNaming: 'camelCase'
+supportsES6: true
+withInterfaces: true

@@ -7,6 +7,7 @@ const config: Config = {
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
+  collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
   coverageDirectory: '../../coverage/apps/bff',
   // eslint-disable-next-line turbo/no-undeclared-env-vars
   reporters: process.env.CI
