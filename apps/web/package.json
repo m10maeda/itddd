@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "next build",
+    "codegen": "graphql-codegen",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
@@ -14,13 +15,17 @@
     "test": "jest"
   },
   "dependencies": {
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@itddd/ui": "workspace:*",
     "classnames": "^2.3.2",
+    "graphql": "^16.7.1",
     "next": "^13.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "4.0.1",
+    "@graphql-codegen/client-preset": "4.0.1",
     "@itddd/eslint-config": "workspace:*",
     "@itddd/stylelint-config": "workspace:*",
     "@itddd/tsconfig": "workspace:*",
