@@ -52,6 +52,7 @@
     "jest-environment-jsdom": "^29.5.0",
     "jest-extended": "^4.0.0",
     "msw": "^1.2.3",
+    "msw-storybook-addon": "^1.8.0",
     "sass": "^1.63.6",
     "storybook": "^7.0.26",
     "stylelint": "^15.7.0",
