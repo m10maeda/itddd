@@ -6,7 +6,7 @@ module.exports = {
     project: 'tsconfig.json',
     tsconfigRootDir: __dirname,
   },
-  ignorePatterns: ['**/__generated__/**/*.ts'],
+  ignorePatterns: ['**/__generated__/**/*.ts', 'public/mockServiceWorker.js'],
   overrides: [
     {
       files: [

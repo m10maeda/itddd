@@ -21,3 +21,4 @@ pnpm-lock.yaml
 # generated libraries
 apps/bff/lib
 __generated__
+apps/web/public/mockServiceWorker.js
