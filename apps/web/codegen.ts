@@ -1,4 +1,7 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
+import type { TypeScriptDocumentsPluginConfig } from '@graphql-codegen/typescript-operations';
+
+const operationConfig: TypeScriptDocumentsPluginConfig = {};
 
 export default {
   overwrite: true,
@@ -21,6 +24,25 @@ export default {
         },
         enumsAsTypes: true,
       },
+    },
+    './src/': {
+      preset: 'near-operation-file',
+      presetConfig: {
+        folder: '__generated__',
+        extension: '.msw.ts',
+        baseTypesPath: './lib/api-client/__generated__/graphql.ts',
+        importTypesNamespace: 'Types',
+      },
+      plugins: [
+        {
+          'typescript-operations': {
+            ...operationConfig,
+            nonOptionalTypename: true,
+            skipTypeNameForRoot: true,
+          } satisfies TypeScriptDocumentsPluginConfig,
+        },
+        'typescript-msw',
+      ],
     },
   },
   hooks: {
