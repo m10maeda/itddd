@@ -9,6 +9,7 @@
     "unifiedjs.vscode-mdx",
     "graphql.vscode-graphql",
     "graphql.vscode-graphql-syntax",
+    "capaj.graphql-codegen-vscode",
     "firsttris.vscode-jest-runner",
     "mikestead.dotenv",
     "circleci.circleci"
