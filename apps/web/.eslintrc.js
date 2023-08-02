@@ -6,11 +6,19 @@ module.exports = {
     project: 'tsconfig.json',
     tsconfigRootDir: __dirname,
   },
+  ignorePatterns: ['**/__generated__/**/*.ts', 'public/mockServiceWorker.js'],
   overrides: [
     {
       files: [
         '**/app/**/@(page|layout|template|loading|error|global-error|no-found).tsx',
       ],
+      rules: {
+        'import/prefer-default-export': 'error',
+        'import/no-default-export': 'off',
+      },
+    },
+    {
+      files: ['codegen.ts'],
       rules: {
         'import/prefer-default-export': 'error',
         'import/no-default-export': 'off',

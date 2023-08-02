@@ -4,7 +4,7 @@
 
 console.log('Starting code generation...');
 
-const process = $`pnpm run dev --scope=backend`.nothrow().quiet();
+const backendProcess = $`pnpm run dev --scope=backend`.nothrow().quiet();
 
 try {
   await retry(20, '2s', () =>
@@ -15,7 +15,21 @@ try {
 } catch (error) {
   console.error(error);
 } finally {
-  await process.kill();
+  await backendProcess.kill();
+}
+
+const bffProcess = $`pnpm run dev --scope=bff`.nothrow().quiet();
+
+try {
+  await retry(20, '2s', () =>
+    $`curl http://localhost:3334/graphql ${['--silent']}`.quiet(),
+  );
+
+  await $`pnpm --filter web codegen`;
+} catch (error) {
+  console.error(error);
+} finally {
+  await bffProcess.kill();
 }
 
 console.log('🚀 Code generation is complete!');
