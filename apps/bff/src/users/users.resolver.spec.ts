@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RegisterUserInput, UpdateUserInput } from './dto';
 import {
   CanNotRegisterUserError,
+  User,
   UserDelete,
   UserNotFoundError,
   UserType,
@@ -242,7 +243,7 @@ describe('UsersResolver', () => {
 
       const result = await resolver.register(new RegisterUserInput('Alice'));
 
-      const expected = expect.objectContaining({
+      const expected = expect.objectContaining<CanNotRegisterUserError>({
         name: 'Alice',
         message: expect.any(String),
       });
@@ -326,7 +327,7 @@ describe('UsersResolver', () => {
 
       const result = await resolver.update('1', new UpdateUserInput('Bob'));
 
-      const expected = expect.objectContaining({
+      const expected = expect.objectContaining<User>({
         id: '1',
         name: 'Alice',
         type: UserType.Normal,
@@ -361,7 +362,7 @@ describe('UsersResolver', () => {
 
       const result = await resolver.update('1', new UpdateUserInput('Alice'));
 
-      const expected = expect.objectContaining({
+      const expected = expect.objectContaining<CanNotRegisterUserError>({
         name: 'Alice',
         message: expect.any(String),
       });
@@ -378,7 +379,7 @@ describe('UsersResolver', () => {
 
       const result = await resolver.update('1', new UpdateUserInput('Alice'));
 
-      const expected = expect.objectContaining({
+      const expected = expect.objectContaining<CanNotRegisterUserError>({
         name: 'Alice',
         message: expect.any(String),
       });
