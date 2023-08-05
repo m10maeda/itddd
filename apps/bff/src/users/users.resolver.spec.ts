@@ -1,8 +1,12 @@
-import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { RegisterUserInput, UpdateUserInput } from './dto';
-import { CanNotRegisterUserError, UserType } from './models';
+import {
+  CanNotRegisterUserError,
+  UserDelete,
+  UserNotFoundError,
+  UserType,
+} from './models';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 import {
@@ -103,14 +107,21 @@ describe('UsersResolver', () => {
       expect(result).toEqual(expected);
     });
 
-    it('should throw NotFoundException, when users api response status code is 404', async () => {
+    it('should return UserNotFoundError, when users api response status code is 404', async () => {
       const stubError = createStubNotFoundResponseError();
 
       jest
         .spyOn(userApi, 'usersControllerGetBy')
         .mockRejectedValueOnce(stubError);
 
-      await expect(resolver.getBy('1')).rejects.toThrow(NotFoundException);
+      const result = await resolver.getBy('1');
+
+      const expected = expect.objectContaining<UserNotFoundError>({
+        id: '1',
+        message: expect.any(String),
+      });
+
+      expect(result).toEqual(expected);
     });
 
     it('should thorw StubResponseError, when users api response is unhandling error', async () => {
@@ -253,15 +264,20 @@ describe('UsersResolver', () => {
   });
 
   describe('delete method', () => {
-    it('should return true, when users api response status code is 204', async () => {
+    it('should return user delete model, when users api response status code is 204', async () => {
       jest.spyOn(userApi, 'usersControllerDelete').mockResolvedValueOnce();
 
       const result = await resolver.delete('1');
 
-      expect(result).toBeTrue();
+      const expected = expect.objectContaining<UserDelete>({
+        id: '1',
+        result: true,
+      });
+
+      expect(result).toEqual(expected);
     });
 
-    it('should return false, when users api response is unhandling error', async () => {
+    it('should return user delete model, when users api response is unhandling error', async () => {
       const stubError = new StubResponseError();
 
       jest
@@ -270,17 +286,29 @@ describe('UsersResolver', () => {
 
       const result = await resolver.delete('1');
 
-      expect(result).toBeFalse();
+      const expected = expect.objectContaining<UserDelete>({
+        id: '1',
+        result: false,
+      });
+
+      expect(result).toEqual(expected);
     });
 
-    it('should throw NotFoundException, when users api response status code is 404', async () => {
+    it('should return UserNotFoundError, when users api response status code is 404', async () => {
       const stubError = createStubNotFoundResponseError();
 
       jest
         .spyOn(userApi, 'usersControllerDelete')
         .mockRejectedValueOnce(stubError);
 
-      await expect(resolver.delete('1')).rejects.toThrow(NotFoundException);
+      const result = await resolver.delete('1');
+
+      const expected = expect.objectContaining<UserNotFoundError>({
+        id: '1',
+        message: expect.any(String),
+      });
+
+      expect(result).toEqual(expected);
     });
   });
 
@@ -307,16 +335,21 @@ describe('UsersResolver', () => {
       expect(result).toEqual(expected);
     });
 
-    it('should throw NotFoundException, when users api response status code is 404', async () => {
+    it('should return UserNotFoundError, when users api response status code is 404', async () => {
       const stubError = createStubNotFoundResponseError();
 
       jest
         .spyOn(userApi, 'usersControllerUpdate')
         .mockRejectedValueOnce(stubError);
 
-      await expect(
-        resolver.update('1', new UpdateUserInput('Bob')),
-      ).rejects.toThrow(NotFoundException);
+      const result = await resolver.update('1', new UpdateUserInput('Bob'));
+
+      const expected = expect.objectContaining<UserNotFoundError>({
+        id: '1',
+        message: expect.any(String),
+      });
+
+      expect(result).toEqual(expected);
     });
 
     it('should return CanNotRegisterUserError model, when users api response status code is 400', async () => {
