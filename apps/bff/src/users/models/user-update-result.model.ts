@@ -6,6 +6,6 @@ import { User } from './user.model';
 
 export const UserUpdateResult = createUnionType({
   name: 'UserUpdateResult',
-
+  description: 'User update result model',
   types: () => [User, UserNotFoundError, CanNotRegisterUserError] as const,
 });
