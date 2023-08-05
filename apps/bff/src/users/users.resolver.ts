@@ -1,11 +1,14 @@
-import { NotFoundException } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 
 import { RegisterUserInput, UpdateUserInput } from './dto';
 import {
   CanNotRegisterUserError,
   User,
+  UserDelete,
+  UserDeleteResult,
+  UserNotFoundError,
   UserRegistrationResult,
+  UserResult,
   UserUpdateResult,
 } from './models';
 import { UsersService } from './users.service';
@@ -13,30 +16,29 @@ import { ResponseError } from '../../lib/backend-adapter/v1.0';
 
 @Resolver(() => User)
 export class UsersResolver {
-  @Query(() => User, {
+  @Query(() => UserResult, {
     name: 'user',
     description: 'Get one user information by specified id',
   })
   public async getBy(
     @Args('id', { type: () => ID }) id: string,
-  ): Promise<User> {
+  ): Promise<typeof UserResult> {
     try {
       return await this.service.getBy(id);
     } catch (error) {
       if (error instanceof ResponseError) {
-        if (error.response.status === 404)
-          throw new NotFoundException(`User(id: "${id}") is not found.`);
+        if (error.response.status === 404) return new UserNotFoundError(id);
       }
 
       throw error;
     }
   }
 
-  @Query(() => [User], {
+  @Query(() => [UserResult], {
     name: 'users',
     description: 'Get all users information',
   })
-  public async getAll(): Promise<User[]> {
+  public async getAll(): Promise<(typeof UserResult)[]> {
     const users = await this.service.getAll();
 
     return Array.from(users);
@@ -69,24 +71,23 @@ export class UsersResolver {
     }
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => UserDeleteResult, {
     name: 'deleteUser',
     description: 'Delete the user with specivied id',
   })
   public async delete(
     @Args('id', { type: () => ID }) id: string,
-  ): Promise<boolean> {
+  ): Promise<typeof UserDeleteResult> {
     try {
       await this.service.delete(id);
 
-      return true;
+      return new UserDelete(id, true);
     } catch (error) {
       if (error instanceof ResponseError) {
-        if (error.response.status === 404)
-          throw new NotFoundException(`User(id: "${id}") is not found.`);
+        if (error.response.status === 404) return new UserNotFoundError(id);
       }
 
-      return false;
+      return new UserDelete(id, false);
     }
   }
 
@@ -107,8 +108,7 @@ export class UsersResolver {
         if (error.response.status === 400)
           return new CanNotRegisterUserError(name, `"${name}" is invalid.`);
 
-        if (error.response.status === 404)
-          throw new NotFoundException(`User(id: "${id}") is not found.`);
+        if (error.response.status === 404) return new UserNotFoundError(id);
 
         if (error.response.status === 409)
           return new CanNotRegisterUserError(
