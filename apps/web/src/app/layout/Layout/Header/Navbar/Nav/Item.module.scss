@@ -1,0 +1,14 @@
+.Item {
+  list-style: none;
+
+  &__link {
+    display: block;
+    padding: 0.5rem;
+    color: rgb(0 0 0 / 55%);
+    text-decoration: none;
+
+    &:hover {
+      color: rgb(0 0 0 / 90%);
+    }
+  }
+}
