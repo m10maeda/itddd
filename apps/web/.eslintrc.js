@@ -18,6 +18,12 @@ module.exports = {
       },
     },
     {
+      files: ['src/components/**/*.tsx'],
+      rules: {
+        'react/jsx-props-no-spreading': 'off',
+      },
+    },
+    {
       files: ['codegen.ts'],
       rules: {
         'import/prefer-default-export': 'error',
