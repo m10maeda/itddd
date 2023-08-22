@@ -34,11 +34,11 @@ export class UsersResolver {
     }
   }
 
-  @Query(() => [UserResult], {
+  @Query(() => [User], {
     name: 'users',
     description: 'Get all users information',
   })
-  public async getAll(): Promise<(typeof UserResult)[]> {
+  public async getAll(): Promise<User[]> {
     const users = await this.service.getAll();
 
     return Array.from(users);
