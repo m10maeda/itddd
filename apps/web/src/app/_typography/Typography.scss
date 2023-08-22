@@ -1,0 +1,46 @@
+%heading {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+h1 {
+  @extend %heading;
+
+  font-size: calc(1.375rem + 1.5vw);
+}
+
+h2 {
+  @extend %heading;
+
+  font-size: calc(1.325rem + 0.9vw);
+}
+
+h3 {
+  @extend %heading;
+
+  font-size: calc(1.3rem + 0.6vw);
+}
+
+h4 {
+  @extend %heading;
+
+  font-size: calc(1.275rem + 0.3vw);
+}
+
+h5 {
+  @extend %heading;
+
+  font-size: 1.25rem;
+}
+
+h6 {
+  @extend %heading;
+
+  font-size: 1rem;
+}
+
+p {
+  margin: 0 0 1rem;
+}

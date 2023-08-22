@@ -2,6 +2,9 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 
 import type { Preview } from '@storybook/react';
 
+import '../src/app/layout/Layout/Reboot.scss';
+import '../src/app/_typography/Typography.scss';
+
 initialize();
 
 const preview: Preview = {
