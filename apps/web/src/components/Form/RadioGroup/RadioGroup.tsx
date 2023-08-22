@@ -14,12 +14,12 @@ type Props = ComponentPropsWithoutRef<'input'> & {
 
 export const RadioGroup = forwardRef<ElementRef<'input'>, Props>(
   ({ children, className, ...props }, ref) => (
-      <div
-        className={classNames(styles.RadioGroup, className)}
-        {...props}
-        ref={ref}
-      >
-        {children}
-      </div>
-    ),
+    <div
+      className={classNames(styles.RadioGroup, className)}
+      {...props}
+      ref={ref}
+    >
+      {children}
+    </div>
+  ),
 );
