@@ -10,7 +10,8 @@ module.exports = {
   overrides: [
     {
       files: [
-        '**/app/**/@(page|layout|template|loading|error|global-error|no-found).tsx',
+        'src/app/**/@(page|layout|template|loading|error|global-error|not-found).tsx',
+        'src/app/**/@(page|layout|template|loading|error|global-error|not-found)/index.tsx',
       ],
       rules: {
         'import/prefer-default-export': 'error',
