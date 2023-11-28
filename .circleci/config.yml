@@ -3,7 +3,7 @@ version: 2.1
 executors:
   base:
     docker:
-      - image: cimg/node:18.16.0-browsers
+      - image: cimg/node:20.10.0-browsers
 
 commands:
   prepare-dependencies:
