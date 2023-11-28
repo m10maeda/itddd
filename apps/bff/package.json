@@ -47,9 +47,9 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.6"
   },
-  "packageManager": "pnpm@8.6.5",
+  "packageManager": "pnpm@8.11.0",
   "engines": {
     "node": "^20.10.0",
-    "pnpm": "^8.6.0"
+    "pnpm": "^8.11.0"
   }
 }
