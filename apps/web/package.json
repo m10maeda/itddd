@@ -15,8 +15,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@apollo/client": "^3.8.0-rc.1",
-    "@apollo/experimental-nextjs-app-support": "0.0.0-commit-7dad495",
+    "@apollo/client": "^3.8.7",
+    "@apollo/experimental-nextjs-app-support": "0.5.1",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@itddd/ui": "workspace:*",
     "@radix-ui/react-slot": "^1.0.2",
