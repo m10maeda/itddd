@@ -1,6 +1,6 @@
 import { type PropsWithChildren } from 'react';
 
-import { RootLayout as Layout } from './RootLayout';
+import { RootLayout as Layout } from './_layout';
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
