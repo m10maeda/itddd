@@ -8,6 +8,9 @@ import '../src/app/_typography/Typography.scss';
 initialize();
 
 const preview: Preview = {
+  argTypes: {
+    asChild: { control: false },
+  },
   parameters: {
     nextjs: {
       appDirectory: true,
