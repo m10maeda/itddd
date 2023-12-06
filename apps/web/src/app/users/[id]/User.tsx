@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { getUser } from './getUser';
+import { UserDeleteForm } from './UserDeleteForm';
 
 type Props = {
   userId: string;
@@ -13,9 +14,11 @@ export async function User({ userId }: Props) {
     <>
       <h1>{user.name}</h1>
 
-      <p>
+      <div>
         <Link href={`/users/${user.id}/edit`}>Edit</Link>
-      </p>
+
+        <UserDeleteForm userId={user.id} />
+      </div>
 
       <table>
         <colgroup>
