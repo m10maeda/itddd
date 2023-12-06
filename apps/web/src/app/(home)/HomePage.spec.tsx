@@ -1,13 +1,13 @@
 import { composeStories } from '@storybook/react';
 import { render } from '@testing-library/react';
 
-import * as stories from './IndexPage.stories';
+import * as stories from './HomePage.stories';
 
 describe('/', () => {
-  const { IndexPage } = composeStories(stories);
+  const { HomePage } = composeStories(stories);
 
   it('should render successfully', () => {
-    const { baseElement } = render(<IndexPage />);
+    const { baseElement } = render(<HomePage />);
 
     expect(baseElement).toBeTruthy();
   });

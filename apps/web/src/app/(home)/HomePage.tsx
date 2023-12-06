@@ -1,8 +1,8 @@
 import { Button } from '@itddd/ui';
 
-import styles from './IndexPage.module.scss';
+import styles from './HomePage.module.scss';
 
-export function IndexPage() {
+export function HomePage() {
   return (
     <div className={styles.Page}>
       <h1>Welcome Frontend Web Application!</h1>
