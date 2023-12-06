@@ -1,6 +1,6 @@
 import { within, userEvent } from '@storybook/testing-library';
 
-import { IndexPage as Component } from './IndexPage';
+import { HomePage as Component } from './HomePage';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -14,10 +14,10 @@ const meta: Meta<typeof Component> = {
 export default meta;
 type Story = StoryObj<typeof Component>;
 
-export const IndexPage: Story = {};
+export const HomePage: Story = {};
 
 export const Clicked: Story = {
-  ...IndexPage,
+  ...HomePage,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
