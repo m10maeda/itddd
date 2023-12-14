@@ -1,22 +1,25 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { UserListResult } from './dto';
 import { User, UserType } from './entities';
+import { PageInfo } from '../../features/shared/application/usecase';
 import {
   IUserDeleteUseCaseToken,
-  IUserGetAllUseCaseToken,
+  IUserFindAllUseCaseToken,
   IUserGetUseCaseToken,
   IUserRegisterUseCaseToken,
   IUserUpdateUseCaseToken,
 } from '../../features/users';
 import {
   IUserDeleteUseCase,
-  IUserGetAllUseCase,
+  IUserFindAllUseCase,
   IUserGetUseCase,
   IUserRegisterUseCase,
   IUserUpdateUseCase,
   UserData,
   UserDeleteRequest,
-  UserGetAllRequest,
+  UserFindAllRequest,
+  UserFindCriteria,
   UserGetRequest,
   UserRegisterRequest,
   UserUpdateRequest,
@@ -31,11 +34,25 @@ export class UsersService {
     return this.convert(user);
   }
 
-  public async getAll(): Promise<Iterable<User>> {
-    const request = new UserGetAllRequest();
-    const { users } = await this.getAllUseCase.handle(request);
+  public async findAll(
+    criteria?: {
+      query?: string;
+      includeIds?: string[];
+      excludeIds?: string[];
+    },
+    pageInfo?: { page: number; size: number },
+  ): Promise<UserListResult> {
+    const request = new UserFindAllRequest(
+      new UserFindCriteria(criteria),
+      pageInfo ? new PageInfo(pageInfo.page, pageInfo.size) : undefined,
+    );
 
-    return Array.from(users).map((user) => this.convert(user));
+    const { users, total } = await this.findAllUseCase.handle(request);
+
+    return new UserListResult(
+      Array.from(users).map((user) => this.convert(user)),
+      total,
+    );
   }
 
   public async register(name: string): Promise<User> {
@@ -64,14 +81,16 @@ export class UsersService {
 
   public constructor(
     @Inject(IUserGetUseCaseToken) getUseCase: IUserGetUseCase,
-    @Inject(IUserGetAllUseCaseToken) getAllUseCase: IUserGetAllUseCase,
+
+    @Inject(IUserFindAllUseCaseToken) findAllUseCase: IUserFindAllUseCase,
     @Inject(IUserRegisterUseCaseToken)
     registerUseCase: IUserRegisterUseCase,
     @Inject(IUserDeleteUseCaseToken) deleteUseCase: IUserDeleteUseCase,
     @Inject(IUserUpdateUseCaseToken) updateUseCase: IUserUpdateUseCase,
   ) {
     this.getUseCase = getUseCase;
-    this.getAllUseCase = getAllUseCase;
+
+    this.findAllUseCase = findAllUseCase;
     this.registerUseCase = registerUseCase;
     this.deleteUseCase = deleteUseCase;
     this.updateUseCase = updateUseCase;
@@ -79,7 +98,7 @@ export class UsersService {
 
   private readonly getUseCase: IUserGetUseCase;
 
-  private readonly getAllUseCase: IUserGetAllUseCase;
+  private readonly findAllUseCase: IUserFindAllUseCase;
 
   private readonly registerUseCase: IUserRegisterUseCase;
 

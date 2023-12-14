@@ -9,6 +9,7 @@ import {
   NotFoundException,
   BadRequestException,
   ConflictException,
+  Query,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -21,13 +22,19 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { RegisterUserInput, UpdateUserInput } from './dto';
+import {
+  RegisterUserInput,
+  UpdateUserInput,
+  UserFindQuery,
+  UserListResult,
+} from './dto';
 import { User } from './entities';
 import { UsersService } from './users.service';
 import {
   CanNotRegisterUserException,
   UserNotFoundException,
 } from '../../features/users/application/usecases';
+import { PageInfoQuery } from '../shared/dto';
 
 const notFoundResponseOption = {
   schema: {
@@ -63,10 +70,26 @@ const conflictResponseResponseOption = {
 @Controller('users')
 export class UsersController {
   @Get()
-  @ApiOperation({ summary: 'Get all users information' })
-  @ApiOkResponse({ type: [User] })
-  public getAll(): Promise<Iterable<User>> {
-    return this.usersService.getAll();
+  @ApiOperation({ summary: 'Find users information' })
+  @ApiOkResponse({ type: UserListResult })
+  public findAllBy(
+    @Query() criteria: UserFindQuery,
+    @Query() pageInfo: PageInfoQuery,
+  ): Promise<UserListResult> {
+    try {
+      return this.usersService.findAll(
+        {
+          query: criteria.query,
+          includeIds: criteria.includes,
+          excludeIds: criteria.excludes,
+        },
+        pageInfo.toJson(),
+      );
+    } catch (error) {
+      if (error instanceof RangeError) throw new BadRequestException();
+
+      throw error;
+    }
   }
 
   @Get(':id')

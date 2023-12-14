@@ -5,7 +5,12 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { RegisterUserInput, UpdateUserInput } from './dto';
+import {
+  RegisterUserInput,
+  UpdateUserInput,
+  UserFindQuery,
+  UserListResult,
+} from './dto';
 import { User as UserEntity, UserType } from './entities';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
@@ -15,6 +20,7 @@ import {
   UserNotFoundException,
 } from '../../features/users/application/usecases';
 import { User, UserId, UserName } from '../../features/users/domain';
+import { PageInfoQuery } from '../shared/dto';
 
 describe('UserController', () => {
   let controller: UsersController;
@@ -35,15 +41,20 @@ describe('UserController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('getAll method', () => {
+  describe('findAll method', () => {
     it('should return an array of users', async () => {
-      const result = [
-        new UserEntity('0', 'Alice', UserType.Normal),
-        new UserEntity('1', 'Bob', UserType.Premium),
-      ];
-      jest.spyOn(service, 'getAll').mockResolvedValue(result);
+      const result = new UserListResult(
+        [
+          new UserEntity('0', 'Alice', UserType.Normal),
+          new UserEntity('1', 'Bob', UserType.Premium),
+        ],
+        10,
+      );
+      jest.spyOn(service, 'findAll').mockResolvedValue(result);
 
-      expect(await controller.getAll()).toBe(result);
+      expect(
+        await controller.findAllBy(new UserFindQuery(), new PageInfoQuery()),
+      ).toBe(result);
     });
   });
 
