@@ -17,6 +17,9 @@ import { UsersService } from './users.service';
 import { UsersFeatureModule } from '../../features/users';
 import {
   CanNotRegisterUserException,
+  UserData,
+  UserFindAllResponse,
+  UserGetResponse,
   UserNotFoundException,
 } from '../../features/users/application/usecases';
 import { User, UserId, UserName } from '../../features/users/domain';
@@ -43,28 +46,44 @@ describe('UserController', () => {
 
   describe('findAll method', () => {
     it('should return an array of users', async () => {
-      const result = new UserListResult(
+      const response = new UserFindAllResponse(
+        [
+          new UserData('0', 'Alice', UserType.Normal),
+          new UserData('1', 'Bob', UserType.Premium),
+        ],
+        10,
+      );
+      jest.spyOn(service, 'findAll').mockResolvedValue(response);
+
+      const expected = new UserListResult(
         [
           new UserEntity('0', 'Alice', UserType.Normal),
           new UserEntity('1', 'Bob', UserType.Premium),
         ],
         10,
       );
-      jest.spyOn(service, 'findAll').mockResolvedValue(result);
 
-      expect(
-        await controller.findAllBy(new UserFindQuery(), new PageInfoQuery()),
-      ).toBe(result);
+      const result = await controller.findAllBy(
+        new UserFindQuery(),
+        new PageInfoQuery(),
+      );
+
+      expect(result).toEqual(expected);
     });
   });
 
   describe('getBy method', () => {
     it('should return user, when user service returns user', async () => {
       const id = '0';
-      const result = new UserEntity(id, 'Alice', UserType.Premium);
-      jest.spyOn(service, 'getBy').mockResolvedValue(result);
+      const response = new UserGetResponse(
+        new UserData(id, 'Alice', UserType.Premium),
+      );
+      jest.spyOn(service, 'getBy').mockResolvedValue(response);
 
-      expect(await controller.getBy(id)).toBe(result);
+      const expected = new UserEntity(id, 'Alice', UserType.Premium);
+      const result = await controller.getBy(id);
+
+      expect(result).toEqual(expected);
     });
 
     it('should throw NotFoundException, when user service throw UserNotFoundException', async () => {

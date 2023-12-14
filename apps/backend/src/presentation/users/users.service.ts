@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { UserListResult } from './dto';
-import { User, UserType } from './entities';
 import { PageInfo } from '../../features/shared/application/usecase';
 import {
   IUserDeleteUseCaseToken,
@@ -16,22 +14,25 @@ import {
   IUserGetUseCase,
   IUserRegisterUseCase,
   IUserUpdateUseCase,
-  UserData,
   UserDeleteRequest,
+  UserDeleteResponse,
   UserFindAllRequest,
+  UserFindAllResponse,
   UserFindCriteria,
   UserGetRequest,
+  UserGetResponse,
   UserRegisterRequest,
+  UserRegisterResponse,
   UserUpdateRequest,
+  UserUpdateResponse,
 } from '../../features/users/application/usecases';
 
 @Injectable()
 export class UsersService {
-  public async getBy(id: string): Promise<User> {
+  public async getBy(id: string): Promise<UserGetResponse> {
     const request = new UserGetRequest(id);
-    const { user } = await this.getUseCase.handle(request);
 
-    return this.convert(user);
+    return this.getUseCase.handle(request);
   }
 
   public async findAll(
@@ -41,42 +42,31 @@ export class UsersService {
       excludeIds?: string[];
     },
     pageInfo?: { page: number; size: number },
-  ): Promise<UserListResult> {
+  ): Promise<UserFindAllResponse> {
     const request = new UserFindAllRequest(
       new UserFindCriteria(criteria),
       pageInfo ? new PageInfo(pageInfo.page, pageInfo.size) : undefined,
     );
 
-    const { users, total } = await this.findAllUseCase.handle(request);
-
-    return new UserListResult(
-      Array.from(users).map((user) => this.convert(user)),
-      total,
-    );
+    return this.findAllUseCase.handle(request);
   }
 
-  public async register(name: string): Promise<User> {
+  public async register(name: string): Promise<UserRegisterResponse> {
     const request = new UserRegisterRequest(name);
-    const { createdUserId } = await this.registerUseCase.handle(request);
-    const { user } = await this.getUseCase.handle(
-      new UserGetRequest(createdUserId),
-    );
 
-    return this.convert(user);
+    return this.registerUseCase.handle(request);
   }
 
-  public async delete(id: string): Promise<void> {
+  public async delete(id: string): Promise<UserDeleteResponse> {
     const request = new UserDeleteRequest(id);
-    await this.deleteUseCase.handle(request);
+
+    return this.deleteUseCase.handle(request);
   }
 
-  public async update(id: string, name: string): Promise<User> {
+  public async update(id: string, name: string): Promise<UserUpdateResponse> {
     const request = new UserUpdateRequest(id, name);
-    await this.updateUseCase.handle(request);
 
-    const { user } = await this.getUseCase.handle(new UserGetRequest(id));
-
-    return this.convert(user);
+    return this.updateUseCase.handle(request);
   }
 
   public constructor(
@@ -105,13 +95,4 @@ export class UsersService {
   private readonly deleteUseCase: IUserDeleteUseCase;
 
   private readonly updateUseCase: IUserUpdateUseCase;
-
-  // eslint-disable-next-line class-methods-use-this
-  private convert(user: UserData): User {
-    return new User(
-      user.id,
-      user.name,
-      user.type === 'Normal' ? UserType.Normal : UserType.Premium,
-    );
-  }
 }
