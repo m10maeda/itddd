@@ -5,11 +5,11 @@ import {
   Get,
   Param,
   Post,
-  Put,
   NotFoundException,
   BadRequestException,
   ConflictException,
   Query,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -139,7 +139,7 @@ export class UsersController {
     }
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({
     summary: 'Update user information with specified id and input',
   })
