@@ -5,6 +5,7 @@ import {
   CanNotRegisterUserError,
   User,
   UserDelete,
+  UserList,
   UserNotFoundError,
   UserType,
 } from './models';
@@ -136,61 +137,59 @@ describe('UsersResolver', () => {
     });
   });
 
-  describe('getAll method', () => {
+  describe('findAll method', () => {
     it('should return all user model list based on response obtained from users api', async () => {
-      const stubResponse = [
-        createUserSchema({
-          id: '0',
-          name: 'Alice',
-          type: UserTypeEnumSchema.Premium,
-        }),
-        createUserSchema({
-          id: '1',
-          name: 'Bob',
-          type: UserTypeEnumSchema.Normal,
-        }),
-        createUserSchema({
-          id: '2',
-          name: 'Carol',
-          type: UserTypeEnumSchema.Premium,
-        }),
-      ];
+      const stubResponse = {
+        total: 12,
+        count: 3,
+        users: [
+          createUserSchema({
+            id: '0',
+            name: 'Alice',
+            type: UserTypeEnumSchema.Premium,
+          }),
+          createUserSchema({
+            id: '1',
+            name: 'Bob',
+            type: UserTypeEnumSchema.Normal,
+          }),
+          createUserSchema({
+            id: '2',
+            name: 'Carol',
+            type: UserTypeEnumSchema.Premium,
+          }),
+        ],
+      };
 
       jest
-        .spyOn(userApi, 'usersControllerGetAll')
+        .spyOn(userApi, 'usersControllerFindAllBy')
         .mockResolvedValueOnce(stubResponse);
 
-      const result = await resolver.getAll();
+      const result = await resolver.findAllBy();
 
-      const expected = [
-        expect.objectContaining<UserSchema>({
-          id: '0',
-          name: 'Alice',
-          type: UserType.Premium,
-        }),
-        expect.objectContaining<UserSchema>({
-          id: '1',
-          name: 'Bob',
-          type: UserType.Normal,
-        }),
-        expect.objectContaining<UserSchema>({
-          id: '2',
-          name: 'Carol',
-          type: UserType.Premium,
-        }),
-      ];
+      const expected = expect.objectContaining<UserList>({
+        total: 12,
+        count: 3,
+        results: [
+          expect.objectContaining<UserSchema>({
+            id: '0',
+            name: 'Alice',
+            type: UserType.Premium,
+          }),
+          expect.objectContaining<UserSchema>({
+            id: '1',
+            name: 'Bob',
+            type: UserType.Normal,
+          }),
+          expect.objectContaining<UserSchema>({
+            id: '2',
+            name: 'Carol',
+            type: UserType.Premium,
+          }),
+        ],
+      });
 
       expect(result).toEqual(expected);
-    });
-
-    it('should thorw StubResponseError, when users api response is unhandling error', async () => {
-      const stubError = new StubResponseError();
-
-      jest
-        .spyOn(userApi, 'usersControllerGetAll')
-        .mockRejectedValueOnce(stubError);
-
-      await expect(resolver.getAll()).rejects.toThrow(StubResponseError);
     });
   });
 

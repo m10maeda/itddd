@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { User, UserType } from './models';
+import { User, UserList, UserType } from './models';
 import {
   UsersApiInterface,
   User as UserSchema,
@@ -14,10 +14,23 @@ export class UsersService {
     return UsersService.toUserFrom(user);
   }
 
-  public async getAll(): Promise<Iterable<User>> {
-    const data = await this.apiClient.usersControllerGetAll();
+  public async findAllBy(
+    criteria?: {
+      query?: string;
+      includes?: string[];
+      excludes?: string[];
+    },
+    pageInfo?: { page: number; size: number },
+  ): Promise<UserList> {
+    const data = await this.apiClient.usersControllerFindAllBy({
+      ...criteria,
+      ...pageInfo,
+    });
 
-    return Array.from(data).map((schema) => UsersService.toUserFrom(schema));
+    return new UserList(
+      Array.from(data.users).map((schema) => UsersService.toUserFrom(schema)),
+      data.total,
+    );
   }
 
   public async register(name: string): Promise<User> {

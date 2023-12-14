@@ -1,4 +1,5 @@
 export * from './user.model';
+export * from './user-list.model';
 export * from './user-not-found-error.model';
 export * from './user-result.model';
 export * from './can-not-register-user-error.model';
