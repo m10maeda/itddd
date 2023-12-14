@@ -2,23 +2,28 @@ import { UserList } from './_components/UserList';
 import { graphql } from '../../lib/api-client/__generated__/gql';
 import { getClient } from '../../lib/api-client/client';
 
-const GetAllUsersQueryDocument = graphql(`
-  query getAllUsers {
+const FindAllUsersQueryDocument = graphql(`
+  query findAllUsers {
     users {
       __typename
-      id
-      name
-      type
+      results {
+        ... on User {
+          __typename
+          id
+          name
+          type
+        }
+      }
     }
   }
 `);
 
 export async function UserListContainer() {
   const { data } = await getClient().query({
-    query: GetAllUsersQueryDocument,
+    query: FindAllUsersQueryDocument,
   });
 
   const { users } = data;
 
-  return <UserList users={users} />;
+  return <UserList users={users.results} />;
 }
