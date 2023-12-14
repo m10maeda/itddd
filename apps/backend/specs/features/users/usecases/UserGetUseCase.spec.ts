@@ -16,7 +16,7 @@ import {
   UserGetQueryService,
 } from '../../../../src/features/users/infrastructure';
 
-describe('UserGetInteractor', () => {
+describe('UserGetUseCase', () => {
   let userRepository: IUserRepository;
 
   beforeEach(() => {
