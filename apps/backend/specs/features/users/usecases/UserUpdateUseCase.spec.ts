@@ -14,7 +14,7 @@ import {
 } from '../../../../src/features/users/domain';
 import { InMemoryUserRepository } from '../../../../src/features/users/infrastructure';
 
-describe('UserUpdateInteractor', () => {
+describe('UserUpdateUseCase', () => {
   let userRepository: IUserRepository;
   let userService: UserService;
 

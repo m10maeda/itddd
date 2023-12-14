@@ -8,14 +8,15 @@ import {
 import { IUserFactory, IUserRepository, UserService } from './domain';
 import {
   UsersInfrastructureModule,
-  UserGetAllQueryService,
+  UserFindAllQueryService,
   UserGetQueryService,
   IUserFactoryToken,
   IUserRepositoryToken,
 } from './infrastructure';
+import { UserSpecificationBuilder } from './infrastructure/query-services/specifications';
 
 export const IUserGetUseCaseToken = Symbol('IUserGetUseCase');
-export const IUserGetAllUseCaseToken = Symbol('IUserGetAllUseCase');
+export const IUserFindAllUseCaseToken = Symbol('IUserFindAllUseCase');
 export const IUserRegisterUseCaseToken = Symbol('IUserRegisterUseCase');
 export const IUserDeleteUseCaseToken = Symbol('IUserDeleteUseCase');
 export const IUserUpdateUseCaseToken = Symbol('IUserUpdateUseCase');
@@ -30,9 +31,12 @@ export const IUserUpdateUseCaseToken = Symbol('IUserUpdateUseCase');
       inject: [IUserRepositoryToken],
     },
     {
-      provide: IUserGetAllUseCaseToken,
+      provide: IUserFindAllUseCaseToken,
       useFactory: (userRepository: IUserRepository) =>
-        new UserGetAllQueryService(userRepository),
+        new UserFindAllQueryService(
+          userRepository,
+          new UserSpecificationBuilder(),
+        ),
       inject: [IUserRepositoryToken],
     },
     {
@@ -69,7 +73,7 @@ export const IUserUpdateUseCaseToken = Symbol('IUserUpdateUseCase');
   ],
   exports: [
     IUserGetUseCaseToken,
-    IUserGetAllUseCaseToken,
+    IUserFindAllUseCaseToken,
     IUserRegisterUseCaseToken,
     IUserDeleteUseCaseToken,
     IUserUpdateUseCaseToken,

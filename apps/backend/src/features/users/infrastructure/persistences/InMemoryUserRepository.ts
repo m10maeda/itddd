@@ -1,4 +1,10 @@
-import { IUserRepository, User, UserId, UserName } from '../../domain';
+import {
+  IUserRepository,
+  IUserSpecification,
+  User,
+  UserId,
+  UserName,
+} from '../../domain';
 
 export class InMemoryUserRepository implements IUserRepository {
   public async findBy(id: UserId): Promise<User | undefined>;
@@ -14,11 +20,10 @@ export class InMemoryUserRepository implements IUserRepository {
     return Promise.resolve(this.clone(user));
   }
 
-  public async findAllBy(ids: Iterable<UserId>): Promise<Iterable<User>> {
-    const idArray = Array.from(ids);
-    const users = this.toArray().filter((user) =>
-      idArray.some((id) => id.equals(user.id)),
-    );
+  public async findAllBy(
+    criteria: IUserSpecification,
+  ): Promise<Iterable<User>> {
+    const users = this.toArray().filter((user) => criteria.isSatisfiedBy(user));
 
     return Promise.resolve(users.map((user) => this.clone(user)));
   }

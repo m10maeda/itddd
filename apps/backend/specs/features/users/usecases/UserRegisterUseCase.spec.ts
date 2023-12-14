@@ -18,7 +18,7 @@ import {
   InMemoryUserFactory,
 } from '../../../../src/features/users/infrastructure';
 
-describe('UserRegisterInteractor', () => {
+describe('UserRegisterUseCase', () => {
   let userRepository: IUserRepository;
   let userFactory: IUserFactory;
   let userService: UserService;

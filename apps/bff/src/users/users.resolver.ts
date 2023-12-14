@@ -1,11 +1,12 @@
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 
-import { RegisterUserInput, UpdateUserInput } from './dto';
+import { FindUsersArgs, RegisterUserInput, UpdateUserInput } from './dto';
 import {
   CanNotRegisterUserError,
   User,
   UserDelete,
   UserDeleteResult,
+  UserList,
   UserNotFoundError,
   UserRegistrationResult,
   UserResult,
@@ -13,6 +14,7 @@ import {
 } from './models';
 import { UsersService } from './users.service';
 import { ResponseError } from '../../lib/backend-adapter/v1.0';
+import { PageInfoArgs } from '../shared';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -34,14 +36,15 @@ export class UsersResolver {
     }
   }
 
-  @Query(() => [User], {
+  @Query(() => UserList, {
     name: 'users',
-    description: 'Get all users information',
+    description: 'Find all users information',
   })
-  public async getAll(): Promise<User[]> {
-    const users = await this.service.getAll();
-
-    return Array.from(users);
+  public async findAllBy(
+    @Args({ nullable: true }) findUsersArgs?: FindUsersArgs,
+    @Args({ nullable: true }) pageInfoArgs?: PageInfoArgs,
+  ): Promise<UserList> {
+    return this.service.findAllBy(findUsersArgs, pageInfoArgs);
   }
 
   @Mutation(() => UserRegistrationResult, {

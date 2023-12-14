@@ -1,2 +1,2 @@
-export * from './UserGetAllQueryService';
+export * from './UserFindAllQueryService';
 export * from './UserGetQueryService';

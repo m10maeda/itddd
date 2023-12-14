@@ -1,7 +1,7 @@
 export * from './shared';
 
 export * from './get';
-export * from './get-all';
+export * from './find-all';
 export * from './register';
 export * from './delete';
 export * from './update';

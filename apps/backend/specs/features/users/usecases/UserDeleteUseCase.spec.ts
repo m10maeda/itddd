@@ -12,7 +12,7 @@ import {
 } from '../../../../src/features/users/domain';
 import { InMemoryUserRepository } from '../../../../src/features/users/infrastructure';
 
-describe('UserDeleteInteractor', () => {
+describe('UserDeleteUseCase', () => {
   let userRepository: IUserRepository;
 
   beforeEach(() => {
