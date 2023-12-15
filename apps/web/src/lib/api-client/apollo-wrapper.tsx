@@ -35,6 +35,7 @@ function makeClient() {
             httpLink,
           ])
         : httpLink,
+    connectToDevTools: process.env.NODE_ENV === 'development',
   });
 }
 
