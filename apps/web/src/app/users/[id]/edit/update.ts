@@ -8,8 +8,8 @@ import { graphql } from '../../../../lib/api-client/__generated__/gql';
 import { getClient } from '../../../../lib/api-client/client';
 
 const UpdateUserMutationDocument = graphql(`
-  mutation updateUser($id: ID!, $updateUserData: UpdateUserInput!) {
-    updateUser(id: $id, updateUserData: $updateUserData) {
+  mutation updateUser($updateUserData: UpdateUserInput!) {
+    updateUser(updateUserData: $updateUserData) {
       ... on User {
         __typename
         id

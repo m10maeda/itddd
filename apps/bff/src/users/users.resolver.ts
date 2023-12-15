@@ -52,9 +52,9 @@ export class UsersResolver {
     description: 'Register a new user with specified input',
   })
   public async register(
-    @Args('registerUserData') registerUserInput: RegisterUserInput,
+    @Args('registerUserData') registerUserData: RegisterUserInput,
   ): Promise<typeof UserRegistrationResult> {
-    const { name } = registerUserInput;
+    const { name } = registerUserData;
 
     try {
       return await this.service.register(name);
@@ -99,10 +99,9 @@ export class UsersResolver {
     description: 'Update user information with specified id and input',
   })
   public async update(
-    @Args('id', { type: () => ID }) id: string,
     @Args('updateUserData') updateUserData: UpdateUserInput,
   ): Promise<typeof UserUpdateResult> {
-    const { name } = updateUserData;
+    const { id, name } = updateUserData;
 
     try {
       return await this.service.update(id, name);

@@ -324,7 +324,7 @@ describe('UsersResolver', () => {
         .spyOn(userApi, 'usersControllerUpdate')
         .mockResolvedValueOnce(stubResponse);
 
-      const result = await resolver.update('1', new UpdateUserInput('Bob'));
+      const result = await resolver.update(new UpdateUserInput('1', 'Bob'));
 
       const expected = expect.objectContaining<User>({
         id: '1',
@@ -342,7 +342,7 @@ describe('UsersResolver', () => {
         .spyOn(userApi, 'usersControllerUpdate')
         .mockRejectedValueOnce(stubError);
 
-      const result = await resolver.update('1', new UpdateUserInput('Bob'));
+      const result = await resolver.update(new UpdateUserInput('1', 'Bob'));
 
       const expected = expect.objectContaining<UserNotFoundError>({
         id: '1',
@@ -359,7 +359,7 @@ describe('UsersResolver', () => {
         .spyOn(userApi, 'usersControllerUpdate')
         .mockRejectedValueOnce(stubError);
 
-      const result = await resolver.update('1', new UpdateUserInput('Alice'));
+      const result = await resolver.update(new UpdateUserInput('1', 'Alice'));
 
       const expected = expect.objectContaining<CanNotRegisterUserError>({
         name: 'Alice',
@@ -376,7 +376,7 @@ describe('UsersResolver', () => {
         .spyOn(userApi, 'usersControllerUpdate')
         .mockRejectedValueOnce(stubError);
 
-      const result = await resolver.update('1', new UpdateUserInput('Alice'));
+      const result = await resolver.update(new UpdateUserInput('1', 'Alice'));
 
       const expected = expect.objectContaining<CanNotRegisterUserError>({
         name: 'Alice',
@@ -394,7 +394,7 @@ describe('UsersResolver', () => {
         .mockRejectedValueOnce(stubError);
 
       await expect(
-        resolver.update('1', new UpdateUserInput('Alice')),
+        resolver.update(new UpdateUserInput('1', 'Alice')),
       ).rejects.toThrow(StubResponseError);
     });
   });
