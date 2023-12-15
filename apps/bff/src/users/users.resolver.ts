@@ -1,9 +1,11 @@
+import { Inject } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 
 import { FindUsersArgs, RegisterUserInput, UpdateUserInput } from './dto';
 import {
   CanNotRegisterUserError,
   User,
+  UserType,
   UserDelete,
   UserDeleteResult,
   UserList,
@@ -12,8 +14,11 @@ import {
   UserResult,
   UserUpdateResult,
 } from './models';
-import { UsersService } from './users.service';
-import { ResponseError } from '../../lib/backend-adapter/v1.0';
+import {
+  ResponseError,
+  UsersApiInterface,
+  User as UserSchema,
+} from '../../lib/backend-adapter/v1.0';
 import { PageInfoArgs } from '../shared';
 
 @Resolver(() => User)
@@ -26,7 +31,9 @@ export class UsersResolver {
     @Args('id', { type: () => ID }) id: string,
   ): Promise<typeof UserResult> {
     try {
-      return await this.service.getBy(id);
+      const user = await this.apiClient.usersControllerGetBy({ id });
+
+      return this.convertToUserModel(user);
     } catch (error) {
       if (error instanceof ResponseError) {
         if (error.response.status === 404) return new UserNotFoundError(id);
@@ -41,10 +48,18 @@ export class UsersResolver {
     description: 'Find all users information',
   })
   public async findAllBy(
-    @Args({ nullable: true }) findUsersArgs?: FindUsersArgs,
-    @Args({ nullable: true }) pageInfoArgs?: PageInfoArgs,
+    @Args({ nullable: true }) pageInfoArgs: PageInfoArgs,
+    @Args({ nullable: true }) findUsersArgs: FindUsersArgs,
   ): Promise<UserList> {
-    return this.service.findAllBy(findUsersArgs, pageInfoArgs);
+    const data = await this.apiClient.usersControllerFindAllBy({
+      ...findUsersArgs,
+      ...pageInfoArgs,
+    });
+
+    return new UserList(
+      Array.from(data.users).map((schema) => this.convertToUserModel(schema)),
+      data.total,
+    );
   }
 
   @Mutation(() => UserRegistrationResult, {
@@ -57,7 +72,11 @@ export class UsersResolver {
     const { name } = registerUserData;
 
     try {
-      return await this.service.register(name);
+      const data = await this.apiClient.usersControllerRegister({
+        registerUserInput: { name },
+      });
+
+      return this.convertToUserModel(data);
     } catch (error) {
       if (error instanceof ResponseError) {
         if (error.response.status === 400)
@@ -82,7 +101,7 @@ export class UsersResolver {
     @Args('id', { type: () => ID }) id: string,
   ): Promise<typeof UserDeleteResult> {
     try {
-      await this.service.delete(id);
+      await this.apiClient.usersControllerDelete({ id });
 
       return new UserDelete(id, true);
     } catch (error) {
@@ -104,7 +123,12 @@ export class UsersResolver {
     const { id, name } = updateUserData;
 
     try {
-      return await this.service.update(id, name);
+      const data = await this.apiClient.usersControllerUpdate({
+        id,
+        updateUserInput: { name },
+      });
+
+      return this.convertToUserModel(data);
     } catch (error) {
       if (error instanceof ResponseError) {
         if (error.response.status === 400)
@@ -123,9 +147,20 @@ export class UsersResolver {
     }
   }
 
-  public constructor(service: UsersService) {
-    this.service = service;
+  public constructor(
+    @Inject('UsersApiInterface') apiClient: UsersApiInterface,
+  ) {
+    this.apiClient = apiClient;
   }
 
-  private readonly service: UsersService;
+  private readonly apiClient: UsersApiInterface;
+
+  // eslint-disable-next-line class-methods-use-this
+  private convertToUserModel(schema: UserSchema): User {
+    return new User(
+      schema.id,
+      schema.name,
+      schema.type === 'Premium' ? UserType.Premium : UserType.Normal,
+    );
+  }
 }

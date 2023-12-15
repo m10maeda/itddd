@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { RegisterUserInput, UpdateUserInput } from './dto';
+import { FindUsersArgs, RegisterUserInput, UpdateUserInput } from './dto';
 import {
   CanNotRegisterUserError,
   User,
@@ -10,13 +10,13 @@ import {
   UserType,
 } from './models';
 import { UsersResolver } from './users.resolver';
-import { UsersService } from './users.service';
 import {
   ResponseError,
   UsersApi,
   UserTypeEnum as UserTypeEnumSchema,
   User as UserSchema,
 } from '../../lib/backend-adapter/v1.0';
+import { PageInfoArgs } from '../shared';
 
 describe('UsersResolver', () => {
   let resolver: UsersResolver;
@@ -74,7 +74,6 @@ describe('UsersResolver', () => {
       providers: [
         { provide: 'UsersApiInterface', useClass: UsersApi },
         UsersResolver,
-        UsersService,
       ],
     }).compile();
 
@@ -165,7 +164,9 @@ describe('UsersResolver', () => {
         .spyOn(userApi, 'usersControllerFindAllBy')
         .mockResolvedValueOnce(stubResponse);
 
-      const result = await resolver.findAllBy();
+      const pageInfoArgs = new PageInfoArgs();
+      const findUsersArgs = new FindUsersArgs();
+      const result = await resolver.findAllBy(pageInfoArgs, findUsersArgs);
 
       const expected = expect.objectContaining<UserList>({
         total: 12,

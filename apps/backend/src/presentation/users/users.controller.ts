@@ -5,11 +5,11 @@ import {
   Get,
   Param,
   Post,
-  Put,
   NotFoundException,
   BadRequestException,
   ConflictException,
   Query,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -28,10 +28,11 @@ import {
   UserFindQuery,
   UserListResult,
 } from './dto';
-import { User } from './entities';
+import { User, UserType } from './entities';
 import { UsersService } from './users.service';
 import {
   CanNotRegisterUserException,
+  UserData,
   UserNotFoundException,
 } from '../../features/users/application/usecases';
 import { PageInfoQuery } from '../shared/dto';
@@ -72,18 +73,23 @@ export class UsersController {
   @Get()
   @ApiOperation({ summary: 'Find users information' })
   @ApiOkResponse({ type: UserListResult })
-  public findAllBy(
+  public async findAllBy(
     @Query() criteria: UserFindQuery,
     @Query() pageInfo: PageInfoQuery,
   ): Promise<UserListResult> {
     try {
-      return this.usersService.findAll(
+      const { users, total } = await this.usersService.findAll(
         {
           query: criteria.query,
           includeIds: criteria.includes,
           excludeIds: criteria.excludes,
         },
         pageInfo.toJson(),
+      );
+
+      return new UserListResult(
+        Array.from(users).map((user) => this.convert(user)),
+        total,
       );
     } catch (error) {
       if (error instanceof RangeError) throw new BadRequestException();
@@ -98,7 +104,9 @@ export class UsersController {
   @ApiNotFoundResponse(notFoundResponseOption)
   public async getBy(@Param('id') id: string): Promise<User> {
     try {
-      return await this.usersService.getBy(id);
+      const { user } = await this.usersService.getBy(id);
+
+      return this.convert(user);
     } catch (error) {
       if (error instanceof UserNotFoundException)
         throw new NotFoundException(error.message);
@@ -116,7 +124,11 @@ export class UsersController {
     @Body() createUserDto: RegisterUserInput,
   ): Promise<User> {
     try {
-      return await this.usersService.register(createUserDto.name);
+      const { createdUserId } = await this.usersService.register(
+        createUserDto.name,
+      );
+
+      return await this.getBy(createdUserId);
     } catch (error) {
       if (error instanceof RangeError)
         throw new BadRequestException(error.message);
@@ -127,7 +139,7 @@ export class UsersController {
     }
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({
     summary: 'Update user information with specified id and input',
   })
@@ -140,7 +152,9 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserInput,
   ): Promise<User> {
     try {
-      return await this.usersService.update(id, updateUserDto.name);
+      await this.usersService.update(id, updateUserDto.name);
+
+      return await this.getBy(id);
     } catch (error) {
       if (error instanceof UserNotFoundException)
         throw new NotFoundException(error.message);
@@ -159,7 +173,7 @@ export class UsersController {
   @ApiNotFoundResponse(notFoundResponseOption)
   public async delete(@Param('id') id: string): Promise<void> {
     try {
-      return await this.usersService.delete(id);
+      await this.usersService.delete(id);
     } catch (error) {
       if (error instanceof UserNotFoundException)
         throw new NotFoundException(error.message);
@@ -173,4 +187,13 @@ export class UsersController {
   }
 
   private readonly usersService: UsersService;
+
+  // eslint-disable-next-line class-methods-use-this
+  private convert(user: UserData): User {
+    return new User(
+      user.id,
+      user.name,
+      user.type === 'Normal' ? UserType.Normal : UserType.Premium,
+    );
+  }
 }
