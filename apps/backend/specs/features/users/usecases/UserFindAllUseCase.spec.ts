@@ -1,6 +1,7 @@
 import { PageInfo } from '../../../../src/features/shared/application/usecase';
 import {
   UserData,
+  UserType as UserTypeData,
   UserFindAllRequest,
   UserFindAllResponse,
   UserFindCriteria,
@@ -46,12 +47,12 @@ describe('UserFindAllUseCase', () => {
     const actual = await interactor.handle(request);
     const expected = new UserFindAllResponse(
       [
-        new UserData('0', 'Alice', UserType.Premium.toString()),
-        new UserData('1', 'Bob', UserType.Normal.toString()),
-        new UserData('2', 'Carol', UserType.Normal.toString()),
-        new UserData('3', 'Dave', UserType.Normal.toString()),
-        new UserData('4', 'Ellen', UserType.Normal.toString()),
-        new UserData('5', 'Frank', UserType.Normal.toString()),
+        new UserData('0', 'Alice', UserTypeData.Premium),
+        new UserData('1', 'Bob', UserTypeData.Normal),
+        new UserData('2', 'Carol', UserTypeData.Normal),
+        new UserData('3', 'Dave', UserTypeData.Normal),
+        new UserData('4', 'Ellen', UserTypeData.Normal),
+        new UserData('5', 'Frank', UserTypeData.Normal),
       ],
       mockUsers.length,
     );
@@ -72,7 +73,7 @@ describe('UserFindAllUseCase', () => {
 
     const actual = await interactor.handle(request);
     const expected = new UserFindAllResponse(
-      [new UserData('0', 'Alice', UserType.Premium.toString())],
+      [new UserData('0', 'Alice', UserTypeData.Premium)],
       1,
     );
 
@@ -93,8 +94,8 @@ describe('UserFindAllUseCase', () => {
     const actual = await interactor.handle(request);
     const expected = new UserFindAllResponse(
       [
-        new UserData('0', 'Alice', UserType.Premium.toString()),
-        new UserData('2', 'Carol', UserType.Normal.toString()),
+        new UserData('0', 'Alice', UserTypeData.Premium),
+        new UserData('2', 'Carol', UserTypeData.Normal),
       ],
       2,
     );
@@ -116,8 +117,8 @@ describe('UserFindAllUseCase', () => {
     const actual = await interactor.handle(request);
     const expected = new UserFindAllResponse(
       [
-        new UserData('1', 'Bob', UserType.Normal.toString()),
-        new UserData('3', 'Dave', UserType.Normal.toString()),
+        new UserData('1', 'Bob', UserTypeData.Normal),
+        new UserData('3', 'Dave', UserTypeData.Normal),
       ],
       2,
     );
@@ -140,8 +141,8 @@ describe('UserFindAllUseCase', () => {
     const actual = await interactor.handle(request);
     const expected = new UserFindAllResponse(
       [
-        new UserData('3', 'Dave', UserType.Normal.toString()),
-        new UserData('5', 'Frank', UserType.Normal.toString()),
+        new UserData('3', 'Dave', UserTypeData.Normal),
+        new UserData('5', 'Frank', UserTypeData.Normal),
       ],
       4,
     );

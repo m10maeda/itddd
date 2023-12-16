@@ -4,6 +4,7 @@ import {
   UserGetRequest,
   UserGetResponse,
   UserNotFoundException,
+  UserType,
 } from '../../application/usecases';
 import { IUserRepository, UserId } from '../../domain';
 
@@ -17,7 +18,7 @@ export class UserGetQueryService implements IUserGetUseCase {
     const data = new UserData(
       user.id.toString(),
       user.name.toString(),
-      user.type.toString(),
+      user.isPremium() ? UserType.Premium : UserType.Normal,
     );
 
     return new UserGetResponse(data);

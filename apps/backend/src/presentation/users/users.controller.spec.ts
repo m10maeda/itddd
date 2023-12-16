@@ -18,6 +18,7 @@ import { UsersFeatureModule } from '../../features/users';
 import {
   CanNotRegisterUserException,
   UserData,
+  UserType as UserTypeData,
   UserFindAllResponse,
   UserGetResponse,
   UserNotFoundException,
@@ -48,8 +49,8 @@ describe('UserController', () => {
     it('should return an array of users', async () => {
       const response = new UserFindAllResponse(
         [
-          new UserData('0', 'Alice', UserType.Normal),
-          new UserData('1', 'Bob', UserType.Premium),
+          new UserData('0', 'Alice', UserTypeData.Normal),
+          new UserData('1', 'Bob', UserTypeData.Premium),
         ],
         10,
       );
@@ -76,7 +77,7 @@ describe('UserController', () => {
     it('should return user, when user service returns user', async () => {
       const id = '0';
       const response = new UserGetResponse(
-        new UserData(id, 'Alice', UserType.Premium),
+        new UserData(id, 'Alice', UserTypeData.Premium),
       );
       jest.spyOn(service, 'getBy').mockResolvedValue(response);
 
