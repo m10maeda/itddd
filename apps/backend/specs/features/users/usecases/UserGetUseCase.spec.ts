@@ -1,5 +1,6 @@
 import {
   UserData,
+  UserType as UserTypeData,
   UserGetRequest,
   UserNotFoundException,
   UserGetResponse,
@@ -34,9 +35,7 @@ describe('UserGetUseCase', () => {
     const actual = await interactor.handle(request);
 
     expect(actual).toEqual(
-      new UserGetResponse(
-        new UserData('0', 'Alice', UserType.Premium.toString()),
-      ),
+      new UserGetResponse(new UserData('0', 'Alice', UserTypeData.Premium)),
     );
   });
 

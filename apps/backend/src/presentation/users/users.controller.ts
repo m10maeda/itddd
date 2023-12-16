@@ -193,7 +193,7 @@ export class UsersController {
     return new User(
       user.id,
       user.name,
-      user.type === 'Normal' ? UserType.Normal : UserType.Premium,
+      user.isPremium() ? UserType.Premium : UserType.Normal,
     );
   }
 }

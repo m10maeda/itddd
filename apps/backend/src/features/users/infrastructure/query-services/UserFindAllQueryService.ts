@@ -5,6 +5,7 @@ import {
   UserFindAllResponse,
   UserFindCriteria,
   UserData,
+  UserType,
 } from '../../application/usecases';
 import { IUserRepository, IUserSpecification, UserId } from '../../domain';
 
@@ -27,7 +28,7 @@ export class UserFindAllQueryService implements IUserFindAllUseCase {
           new UserData(
             user.id.toString(),
             user.name.toString(),
-            user.type.toString(),
+            user.isPremium() ? UserType.Premium : UserType.Normal,
           ),
       ),
       total,
