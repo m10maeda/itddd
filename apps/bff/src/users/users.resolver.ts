@@ -5,7 +5,6 @@ import { FindUsersArgs, RegisterUserInput, UpdateUserInput } from './dto';
 import {
   CanNotRegisterUserError,
   User,
-  UserType,
   UserDelete,
   UserDeleteResult,
   UserList,
@@ -14,11 +13,7 @@ import {
   UserResult,
   UserUpdateResult,
 } from './models';
-import {
-  ResponseError,
-  UsersApiInterface,
-  User as UserSchema,
-} from '../../lib/backend-adapter/v1.0';
+import { IUsersDataAccess, USERS_DATA_ACCESS } from './users.data-access';
 import { PageInfoArgs } from '../shared';
 
 @Resolver(() => User)
@@ -31,13 +26,9 @@ export class UsersResolver {
     @Args('id', { type: () => ID }) id: string,
   ): Promise<typeof UserResult> {
     try {
-      const user = await this.apiClient.usersControllerGetBy({ id });
-
-      return this.convertToUserModel(user);
+      return await this.usersDataAccess.getBy(id);
     } catch (error) {
-      if (error instanceof ResponseError) {
-        if (error.response.status === 404) return new UserNotFoundError(id);
-      }
+      if (error instanceof UserNotFoundError) return error;
 
       throw error;
     }
@@ -51,15 +42,17 @@ export class UsersResolver {
     @Args({ nullable: true }) pageInfoArgs: PageInfoArgs,
     @Args({ nullable: true }) findUsersArgs: FindUsersArgs,
   ): Promise<UserList> {
-    const data = await this.apiClient.usersControllerFindAllBy({
-      ...findUsersArgs,
-      ...pageInfoArgs,
-    });
+    const pageInfo = {
+      page: pageInfoArgs.page,
+      size: pageInfoArgs.size,
+    };
+    const criteria = {
+      query: findUsersArgs.query,
+      includes: findUsersArgs.includes,
+      excludes: findUsersArgs.excludes,
+    };
 
-    return new UserList(
-      Array.from(data.users).map((schema) => this.convertToUserModel(schema)),
-      data.total,
-    );
+    return this.usersDataAccess.findAllBy(criteria, pageInfo);
   }
 
   @Mutation(() => UserRegistrationResult, {
@@ -72,22 +65,9 @@ export class UsersResolver {
     const { name } = registerUserData;
 
     try {
-      const data = await this.apiClient.usersControllerRegister({
-        registerUserInput: { name },
-      });
-
-      return this.convertToUserModel(data);
+      return await this.usersDataAccess.register(name);
     } catch (error) {
-      if (error instanceof ResponseError) {
-        if (error.response.status === 400)
-          return new CanNotRegisterUserError(name, `"${name}" is invalid.`);
-
-        if (error.response.status === 409)
-          return new CanNotRegisterUserError(
-            name,
-            `"${name}" is already registered.`,
-          );
-      }
+      if (error instanceof CanNotRegisterUserError) return error;
 
       throw error;
     }
@@ -101,13 +81,11 @@ export class UsersResolver {
     @Args('id', { type: () => ID }) id: string,
   ): Promise<typeof UserDeleteResult> {
     try {
-      await this.apiClient.usersControllerDelete({ id });
+      await this.usersDataAccess.delete(id);
 
       return new UserDelete(id, true);
     } catch (error) {
-      if (error instanceof ResponseError) {
-        if (error.response.status === 404) return new UserNotFoundError(id);
-      }
+      if (error instanceof UserNotFoundError) return new UserNotFoundError(id);
 
       return new UserDelete(id, false);
     }
@@ -123,44 +101,20 @@ export class UsersResolver {
     const { id, name } = updateUserData;
 
     try {
-      const data = await this.apiClient.usersControllerUpdate({
-        id,
-        updateUserInput: { name },
-      });
-
-      return this.convertToUserModel(data);
+      return await this.usersDataAccess.update(id, name);
     } catch (error) {
-      if (error instanceof ResponseError) {
-        if (error.response.status === 400)
-          return new CanNotRegisterUserError(name, `"${name}" is invalid.`);
-
-        if (error.response.status === 404) return new UserNotFoundError(id);
-
-        if (error.response.status === 409)
-          return new CanNotRegisterUserError(
-            name,
-            `"${name}" is already registerd.`,
-          );
-      }
+      if (error instanceof CanNotRegisterUserError) return error;
+      if (error instanceof UserNotFoundError) return error;
 
       throw error;
     }
   }
 
   public constructor(
-    @Inject('UsersApiInterface') apiClient: UsersApiInterface,
+    @Inject(USERS_DATA_ACCESS) usersDataAccess: IUsersDataAccess,
   ) {
-    this.apiClient = apiClient;
+    this.usersDataAccess = usersDataAccess;
   }
 
-  private readonly apiClient: UsersApiInterface;
-
-  // eslint-disable-next-line class-methods-use-this
-  private convertToUserModel(schema: UserSchema): User {
-    return new User(
-      schema.id,
-      schema.name,
-      schema.type === 'Premium' ? UserType.Premium : UserType.Normal,
-    );
-  }
+  private readonly usersDataAccess: IUsersDataAccess;
 }
