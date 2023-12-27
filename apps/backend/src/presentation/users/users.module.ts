@@ -8,6 +8,6 @@ import { UsersFeatureModule } from '../../features/users';
   imports: [UsersFeatureModule],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [],
+  exports: [UsersService],
 })
 export class UsersPresentationModule {}
