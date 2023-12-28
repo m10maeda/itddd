@@ -5,7 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
