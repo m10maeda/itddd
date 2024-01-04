@@ -27,6 +27,7 @@ import {
   AcceptMemberInput,
   CircleFindQuery,
   CircleListResult,
+  ExceptMemberInput,
   RegisterCircleInput,
   UpdateCircleInput,
 } from './dto';
@@ -240,8 +241,10 @@ export class CirclesController {
   @ApiNotFoundResponse(notFoundResponseOption)
   public async exceptMember(
     @Param('id') id: string,
-    @Param('memberId') memberId: string,
+    @Body() exceptMemberData: ExceptMemberInput,
   ): Promise<Circle> {
+    const { memberId } = exceptMemberData;
+
     await this.circlesService.except(id, memberId);
 
     return this.getBy(id);
