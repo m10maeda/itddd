@@ -249,7 +249,7 @@ export class CirclesController {
 
   @Get(':id/candidates')
   @ApiOperation({ summary: 'Get circle member candidates' })
-  @ApiOkResponse({ type: Circle })
+  @ApiOkResponse({ type: UserListResult })
   @ApiNotFoundResponse(notFoundResponseOption)
   public async getCandidates(
     @Param('id') id: string,
