@@ -5,6 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CirclesModule } from './circles/circles.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -15,6 +16,7 @@ import { UsersModule } from './users/users.module';
       playground: true,
     }),
     UsersModule,
+    CirclesModule,
   ],
   controllers: [AppController],
   providers: [
