@@ -10,37 +10,37 @@ import {
   UsersInfrastructureModule,
   UserFindAllQueryService,
   UserGetQueryService,
-  IUserFactoryToken,
-  IUserRepositoryToken,
+  USER_FACTORY_TOKEN,
+  USER_REPOSITORY_TOKEN,
 } from './infrastructure';
 import { UserSpecificationBuilder } from './infrastructure/query-services/specifications';
 
-export const IUserGetUseCaseToken = Symbol('IUserGetUseCase');
-export const IUserFindAllUseCaseToken = Symbol('IUserFindAllUseCase');
-export const IUserRegisterUseCaseToken = Symbol('IUserRegisterUseCase');
-export const IUserDeleteUseCaseToken = Symbol('IUserDeleteUseCase');
-export const IUserUpdateUseCaseToken = Symbol('IUserUpdateUseCase');
+export const USER_GET_USE_CASE_TOKEN = Symbol('USER_GET_USE_CASE');
+export const USER_FIND_ALL_USE_CASE_TOKEN = Symbol('USER_FIND_ALL_USE_CASE');
+export const USER_REGISTER_USE_CASE_TOKEN = Symbol('USER_REGISTER_USE_CASE');
+export const USER_DELETE_USE_CASE_TOKEN = Symbol('USER_DELETE_USE_CASE');
+export const USER_UPDATE_USE_CASE_TOKEN = Symbol('USER_UPDATE_USE_CASE');
 
 @Module({
   imports: [UsersInfrastructureModule],
   providers: [
     {
-      provide: IUserGetUseCaseToken,
+      provide: USER_GET_USE_CASE_TOKEN,
       useFactory: (userRepository: IUserRepository) =>
         new UserGetQueryService(userRepository),
-      inject: [IUserRepositoryToken],
+      inject: [USER_REPOSITORY_TOKEN],
     },
     {
-      provide: IUserFindAllUseCaseToken,
+      provide: USER_FIND_ALL_USE_CASE_TOKEN,
       useFactory: (userRepository: IUserRepository) =>
         new UserFindAllQueryService(
           userRepository,
           new UserSpecificationBuilder(),
         ),
-      inject: [IUserRepositoryToken],
+      inject: [USER_REPOSITORY_TOKEN],
     },
     {
-      provide: IUserRegisterUseCaseToken,
+      provide: USER_REGISTER_USE_CASE_TOKEN,
       useFactory: (
         userRepository: IUserRepository,
         userFactory: IUserFactory,
@@ -53,30 +53,30 @@ export const IUserUpdateUseCaseToken = Symbol('IUserUpdateUseCase');
           userService,
         );
       },
-      inject: [IUserRepositoryToken, IUserFactoryToken],
+      inject: [USER_REPOSITORY_TOKEN, USER_FACTORY_TOKEN],
     },
     {
-      provide: IUserDeleteUseCaseToken,
+      provide: USER_DELETE_USE_CASE_TOKEN,
       useFactory: (userRepository: IUserRepository) =>
         new UserDeleteInteractor(userRepository),
-      inject: [IUserRepositoryToken],
+      inject: [USER_REPOSITORY_TOKEN],
     },
     {
-      provide: IUserUpdateUseCaseToken,
+      provide: USER_UPDATE_USE_CASE_TOKEN,
       useFactory: (userRepository: IUserRepository) => {
         const userService = new UserService(userRepository);
 
         return new UserUpdateInteractor(userRepository, userService);
       },
-      inject: [IUserRepositoryToken],
+      inject: [USER_REPOSITORY_TOKEN],
     },
   ],
   exports: [
-    IUserGetUseCaseToken,
-    IUserFindAllUseCaseToken,
-    IUserRegisterUseCaseToken,
-    IUserDeleteUseCaseToken,
-    IUserUpdateUseCaseToken,
+    USER_GET_USE_CASE_TOKEN,
+    USER_FIND_ALL_USE_CASE_TOKEN,
+    USER_REGISTER_USE_CASE_TOKEN,
+    USER_DELETE_USE_CASE_TOKEN,
+    USER_UPDATE_USE_CASE_TOKEN,
   ],
 })
 export class UsersFeatureModule {}

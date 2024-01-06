@@ -12,24 +12,24 @@ const mockUsers = [
   new User(new UserId('3'), new UserName('Dave')),
 ];
 
-export const IUserRepositoryToken = Symbol('IUserRepository');
-export const IUserFactoryToken = Symbol('IUserFactory');
+export const USER_REPOSITORY_TOKEN = Symbol('USER_REPOSITORY');
+export const USER_FACTORY_TOKEN = Symbol('USER_FACTORY');
 
 @Module({
   providers: [
     {
-      provide: IUserRepositoryToken,
+      provide: USER_REPOSITORY_TOKEN,
       // TODO: Switch by environment
       useValue: new InMemoryUserRepository(mockUsers),
     },
     {
-      provide: IUserFactoryToken,
+      provide: USER_FACTORY_TOKEN,
       // TODO: Switch by environment
       useValue: new InMemoryUserFactory(
         new InMemorySerialNumberAssigner(mockUsers.length),
       ),
     },
   ],
-  exports: [IUserRepositoryToken, IUserFactoryToken],
+  exports: [USER_REPOSITORY_TOKEN, USER_FACTORY_TOKEN],
 })
 export class UsersPersistenceModule {}

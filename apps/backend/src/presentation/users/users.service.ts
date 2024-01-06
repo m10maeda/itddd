@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { PageInfo } from '../../features/shared/application/usecase';
 import {
-  IUserDeleteUseCaseToken,
-  IUserFindAllUseCaseToken,
-  IUserGetUseCaseToken,
-  IUserRegisterUseCaseToken,
-  IUserUpdateUseCaseToken,
+  USER_DELETE_USE_CASE_TOKEN,
+  USER_FIND_ALL_USE_CASE_TOKEN,
+  USER_GET_USE_CASE_TOKEN,
+  USER_REGISTER_USE_CASE_TOKEN,
+  USER_UPDATE_USE_CASE_TOKEN,
 } from '../../features/users';
 import {
   IUserDeleteUseCase,
@@ -70,13 +70,13 @@ export class UsersService {
   }
 
   public constructor(
-    @Inject(IUserGetUseCaseToken) getUseCase: IUserGetUseCase,
+    @Inject(USER_GET_USE_CASE_TOKEN) getUseCase: IUserGetUseCase,
 
-    @Inject(IUserFindAllUseCaseToken) findAllUseCase: IUserFindAllUseCase,
-    @Inject(IUserRegisterUseCaseToken)
+    @Inject(USER_FIND_ALL_USE_CASE_TOKEN) findAllUseCase: IUserFindAllUseCase,
+    @Inject(USER_REGISTER_USE_CASE_TOKEN)
     registerUseCase: IUserRegisterUseCase,
-    @Inject(IUserDeleteUseCaseToken) deleteUseCase: IUserDeleteUseCase,
-    @Inject(IUserUpdateUseCaseToken) updateUseCase: IUserUpdateUseCase,
+    @Inject(USER_DELETE_USE_CASE_TOKEN) deleteUseCase: IUserDeleteUseCase,
+    @Inject(USER_UPDATE_USE_CASE_TOKEN) updateUseCase: IUserUpdateUseCase,
   ) {
     this.getUseCase = getUseCase;
 
