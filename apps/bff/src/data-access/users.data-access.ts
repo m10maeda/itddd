@@ -1,13 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
+import createClient from 'openapi-fetch';
 
-import {
-  ResponseError,
-  UsersApiInterface,
-  User as UserSchema,
-} from '../../lib/backend-adapter/v1.0';
+import { paths, type components } from '../../lib/schema';
 import {
   User,
-  CanNotRegisterUserError,
+  // CanNotRegisterUserError,
   UserType,
   UserList,
   UserNotFoundError,
@@ -18,30 +15,39 @@ import {
   type Criteria,
 } from '../users/users.data-access';
 
+type ApiClient = ReturnType<typeof createClient<paths>>;
+
 @Injectable()
 export class UsersDataAccess implements IUsersDataAccess {
   public async getBy(id: string): Promise<User> {
-    try {
-      const user = await this.apiClient.usersControllerGetBy({ id });
+    const { data, error } = await this.apiClient.get('/users/{id}', {
+      params: {
+        path: { id },
+      },
+    });
 
-      return this.convertToUserModel(user);
-    } catch (error) {
-      if (error instanceof ResponseError) {
-        if (error.response.status === 404) throw new UserNotFoundError(id);
-      }
+    // FIXME: Implement error detail
+    if (error) throw new Error();
+    if (data === undefined) throw new UserNotFoundError(id);
 
-      throw error;
-    }
+    return this.convertToUserModel(data);
   }
 
   public async findAllBy(
     criteria?: Criteria,
     pageInfo?: PageInfo,
   ): Promise<UserList> {
-    const data = await this.apiClient.usersControllerFindAllBy({
-      ...criteria,
-      ...pageInfo,
+    const { data } = await this.apiClient.get('/users', {
+      params: {
+        query: {
+          ...criteria,
+          ...pageInfo,
+        },
+      },
     });
+
+    // FIXME: Implement error detail
+    if (data === undefined) throw new Error();
 
     return new UserList(
       Array.from(data.users).map((schema) => this.convertToUserModel(schema)),
@@ -50,74 +56,59 @@ export class UsersDataAccess implements IUsersDataAccess {
   }
 
   public async register(name: string): Promise<User> {
-    try {
-      const data = await this.apiClient.usersControllerRegister({
-        registerUserInput: { name },
-      });
+    const { data, error } = await this.apiClient.post('/users', {
+      body: { name },
+    });
 
-      return this.convertToUserModel(data);
-    } catch (error) {
-      if (error instanceof ResponseError) {
-        if (error.response.status === 400)
-          throw new CanNotRegisterUserError(name, `"${name}" is invalid.`);
+    // FIXME: Implement error detail
+    if (error) throw new Error();
+    // FIXME: Implement error detail
+    if (data === undefined) throw new Error();
+    // throw new CanNotRegisterUserError(name, `"${name}" is invalid.`);
+    // throw new CanNotRegisterUserError(
+    //   name,
+    //   `"${name}" is already registered.`,
+    // );
 
-        if (error.response.status === 409)
-          throw new CanNotRegisterUserError(
-            name,
-            `"${name}" is already registered.`,
-          );
-      }
-
-      throw error;
-    }
+    return this.convertToUserModel(data);
   }
 
   public async delete(id: string): Promise<void> {
-    try {
-      await this.apiClient.usersControllerDelete({ id });
-    } catch (error) {
-      if (error instanceof ResponseError) {
-        if (error.response.status === 404) throw new UserNotFoundError(id);
-      }
+    const { error } = await this.apiClient.del('/users/{id}', {
+      params: { path: { id } },
+    });
 
-      throw error;
-    }
+    // FIXME: Implement error detail
+    if (error) throw new Error();
   }
 
   public async update(id: string, name: string): Promise<User> {
-    try {
-      const user = await this.apiClient.usersControllerUpdate({
-        id,
-        updateUserInput: { name },
-      });
+    const { data, error } = await this.apiClient.patch('/users/{id}', {
+      params: { path: { id } },
+      body: { name },
+    });
 
-      return this.convertToUserModel(user);
-    } catch (error) {
-      if (error instanceof ResponseError) {
-        if (error.response.status === 400)
-          throw new CanNotRegisterUserError(name, `"${name}" is invalid.`);
+    // FIXME: Implement error detail
+    if (error) throw new Error();
+    // FIXME: Implement error detail
+    if (data === undefined) throw new Error();
+    // throw new CanNotRegisterUserError(name, `"${name}" is invalid.`);
+    // throw new CanNotRegisterUserError(
+    //   name,
+    //   `"${name}" is already registerd.`,
+    // );
 
-        if (error.response.status === 404) throw new UserNotFoundError(id);
-
-        if (error.response.status === 409)
-          throw new CanNotRegisterUserError(
-            name,
-            `"${name}" is already registerd.`,
-          );
-      }
-
-      throw error;
-    }
+    return this.convertToUserModel(data);
   }
 
-  public constructor(@Inject('USERS_API_CLIENT') apiClient: UsersApiInterface) {
+  public constructor(@Inject('USERS_API_CLIENT') apiClient: ApiClient) {
     this.apiClient = apiClient;
   }
 
-  private readonly apiClient: UsersApiInterface;
+  private readonly apiClient: ApiClient;
 
   // eslint-disable-next-line class-methods-use-this
-  private convertToUserModel(schema: UserSchema): User {
+  private convertToUserModel(schema: components['schemas']['User']): User {
     return new User(
       schema.id,
       schema.name,
