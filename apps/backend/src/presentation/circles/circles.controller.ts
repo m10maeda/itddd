@@ -20,6 +20,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger';
 
 import { CirclesService } from './circles.service';
@@ -37,37 +38,47 @@ import {
   CircleData,
   CircleNotFoundException,
 } from '../../features/circles/application/usecases';
+import { ProbremDetail } from '../exception-filters';
 import { PageInfoQuery } from '../shared/dto';
 import { UserListResult } from '../users/dto';
 import { User, UserType } from '../users/entities';
 import { UsersService } from '../users/users.service';
 
 const notFoundResponseOption = {
-  schema: {
-    example: {
-      statusCode: 404,
-      message: 'Circle("id: 1") not found.',
-      error: 'Not Found',
+  description: 'When circle not found.',
+  content: {
+    'application/problem+json': {
+      schema: { $ref: getSchemaPath(ProbremDetail) },
+      example: {
+        title: 'Circle not found.',
+        statusCode: 404,
+      },
     },
   },
 };
 
 const badRequestResponseOption = {
-  schema: {
-    example: {
-      statusCode: 400,
-      message: 'CircleName must not be empty.',
-      error: 'Bad Request',
+  description: 'When any paramerers are invalid.',
+  content: {
+    'application/problem+json': {
+      schema: { $ref: getSchemaPath(ProbremDetail) },
+      example: {
+        title: "Your request parameters didn't validate.",
+        statusCode: 400,
+      },
     },
   },
 };
 
 const conflictResponseResponseOption = {
-  schema: {
-    example: {
-      statusCode: 409,
-      message: 'Can not register circle("name: Baseball").',
-      error: 'Conflict',
+  description: 'When circle name is conflicted.',
+  content: {
+    'application/problem+json': {
+      schema: { $ref: getSchemaPath(ProbremDetail) },
+      example: {
+        title: 'Circle name is already exists.',
+        statusCode: 409,
+      },
     },
   },
 };

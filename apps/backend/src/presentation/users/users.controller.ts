@@ -5,11 +5,11 @@ import {
   Get,
   Param,
   Post,
-  NotFoundException,
   BadRequestException,
   ConflictException,
   Query,
   Patch,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -20,6 +20,7 @@ import {
   ApiBadRequestResponse,
   ApiConflictResponse,
   ApiTags,
+  getSchemaPath,
 } from '@nestjs/swagger';
 
 import {
@@ -35,34 +36,44 @@ import {
   UserData,
   UserNotFoundException,
 } from '../../features/users/application/usecases';
+import { ProbremDetail } from '../exception-filters';
 import { PageInfoQuery } from '../shared/dto';
 
 const notFoundResponseOption = {
-  schema: {
-    example: {
-      statusCode: 404,
-      message: 'User("id: 1") not found.',
-      error: 'Not Found',
+  description: 'When user not found.',
+  content: {
+    'application/problem+json': {
+      schema: { $ref: getSchemaPath(ProbremDetail) },
+      example: {
+        title: 'User not found.',
+        statusCode: 404,
+      },
     },
   },
 };
 
 const badRequestResponseOption = {
-  schema: {
-    example: {
-      statusCode: 400,
-      message: 'UserName must not be empty.',
-      error: 'Bad Request',
+  description: 'When any paramerers are invalid.',
+  content: {
+    'application/problem+json': {
+      schema: { $ref: getSchemaPath(ProbremDetail) },
+      example: {
+        title: "Your request parameters didn't validate.",
+        statusCode: 400,
+      },
     },
   },
 };
 
 const conflictResponseResponseOption = {
-  schema: {
-    example: {
-      statusCode: 409,
-      message: 'Can not register user("name: Alice").',
-      error: 'Conflict',
+  description: 'When user name is conflicted.',
+  content: {
+    'application/problem+json': {
+      schema: { $ref: getSchemaPath(ProbremDetail) },
+      example: {
+        title: 'User name is already exists.',
+        statusCode: 409,
+      },
     },
   },
 };
@@ -72,7 +83,11 @@ const conflictResponseResponseOption = {
 export class UsersController {
   @Get()
   @ApiOperation({ summary: 'Find users information' })
-  @ApiOkResponse({ type: UserListResult })
+  @ApiOkResponse({
+    type: UserListResult,
+    description: 'When some users are found.',
+  })
+  @ApiBadRequestResponse(badRequestResponseOption)
   public async findAllBy(
     @Query() criteria: UserFindQuery,
     @Query() pageInfo: PageInfoQuery,
@@ -101,6 +116,7 @@ export class UsersController {
   @Get(':id')
   @ApiOperation({ summary: 'Get one user information by specified id' })
   @ApiOkResponse({ type: User })
+  @ApiBadRequestResponse(badRequestResponseOption)
   @ApiNotFoundResponse(notFoundResponseOption)
   public async getBy(@Param('id') id: string): Promise<User> {
     try {
@@ -108,8 +124,12 @@ export class UsersController {
 
       return this.convert(user);
     } catch (error) {
-      if (error instanceof UserNotFoundException)
-        throw new NotFoundException(error.message);
+      if (error instanceof UserNotFoundException) {
+        throw new NotFoundException(
+          'User not found.',
+          `Could not find user with ID: ${id}.`,
+        );
+      }
 
       throw error;
     }
@@ -157,7 +177,10 @@ export class UsersController {
       return await this.getBy(id);
     } catch (error) {
       if (error instanceof UserNotFoundException)
-        throw new NotFoundException(error.message);
+        throw new NotFoundException(
+          'User not found.',
+          `Could not find user with ID: ${id}.`,
+        );
       if (error instanceof RangeError)
         throw new BadRequestException(error.message);
       if (error instanceof CanNotRegisterUserException)
@@ -170,13 +193,17 @@ export class UsersController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete the user with specivied id' })
   @ApiNoContentResponse()
+  @ApiBadRequestResponse(badRequestResponseOption)
   @ApiNotFoundResponse(notFoundResponseOption)
   public async delete(@Param('id') id: string): Promise<void> {
     try {
       await this.usersService.delete(id);
     } catch (error) {
       if (error instanceof UserNotFoundException)
-        throw new NotFoundException(error.message);
+        throw new NotFoundException(
+          'User not found.',
+          `Could not find user with ID: ${id}.`,
+        );
 
       throw error;
     }
