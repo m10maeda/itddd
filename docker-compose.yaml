@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  profiles:
+    container_name: profiles
+    build:
+      context: .
+      dockerfile: ./apps/profiles/Dockerfile
+    restart: always
+    environment:
+      - PORT=3001
+    ports:
+      - 3001:3001
+
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+    restart: always
+    environment:
+      - PROFILES_SERVICE_URL=http://profiles:3001
+    ports:
+      - 3000:3000
+    depends_on:
+      - profiles

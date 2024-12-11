@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "unional.vscode-sort-package-json",
+    "redhat.vscode-yaml",
+    "vercel.turbo-vsc",
+    "dbaeumer.vscode-eslint",
+    "firsttris.vscode-jest-runner",
+    "mikestead.dotenv",
+    "circleci.circleci",
+    "codecov.codecov"
+  ]
+}

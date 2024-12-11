@@ -1,0 +1,15 @@
+{
+  "extends": "@itddd/typescript-config/nestjs.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "baseUrl": "./"
+  },
+  "include": [
+    "src",
+    "test",
+    "jest.config.ts",
+    "jest.setup.ts",
+    "eslint.config.mjs"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

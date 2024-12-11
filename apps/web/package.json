@@ -1,0 +1,50 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "build-storybook": "storybook build",
+    "check-types": "tsc --noEmit",
+    "dev": "next dev --turbopack",
+    "lint": "next lint --max-warnings 0",
+    "start": "next start",
+    "storybook": "storybook dev -p 6006",
+    "test": "vitest run",
+    "test:ci": "vitest run --coverage"
+  },
+  "dependencies": {
+    "next": "^15.0.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@chromatic-com/storybook": "^3.2.2",
+    "@itddd/eslint-config": "workspace:*",
+    "@itddd/typescript-config": "workspace:*",
+    "@storybook/addon-a11y": "^8.4.7",
+    "@storybook/addon-essentials": "^8.4.7",
+    "@storybook/addon-interactions": "^8.4.7",
+    "@storybook/blocks": "^8.4.7",
+    "@storybook/experimental-nextjs-vite": "^8.4.7",
+    "@storybook/nextjs": "^8.4.7",
+    "@storybook/react": "^8.4.7",
+    "@storybook/test": "^8.4.7",
+    "@testing-library/react": "^16.1.0",
+    "@types/node": "^22.10.1",
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^2.1.8",
+    "jsdom": "^25.0.1",
+    "storybook": "^8.4.7",
+    "typescript": "^5.7.2",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^2.1.8"
+  },
+  "packageManager": "pnpm@9.14.0",
+  "engines": {
+    "node": ">=22"
+  }
+}

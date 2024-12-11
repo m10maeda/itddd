@@ -1,0 +1,73 @@
+version: 2.1
+
+executors:
+  base:
+    docker:
+      - image: cimg/node:22.11.0-browsers
+
+commands:
+  prepare-dependencies:
+    steps:
+      - checkout
+
+      - restore_cache:
+          name: Restore pnpm Package Cache
+          keys:
+            - pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
+
+      - run:
+          name: Install pnpm package manager
+          command: |
+            sudo corepack enable
+            sudo corepack prepare pnpm@latest-9 --activate
+            pnpm config set store-dir .pnpm-store
+
+      - run:
+          name: Install Dependencies
+          command: |
+            pnpm install
+
+      - save_cache:
+          name: Save pnpm Package Cache
+          key: pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - .pnpm-store
+
+jobs:
+  test:
+    executor: base
+
+    steps:
+      - checkout
+
+      - prepare-dependencies
+
+      - run:
+          name: Format Check
+          command: |
+            pnpm run format:check
+
+      - run:
+          name: Run Lint
+          command: |
+            pnpm run lint --continue
+
+      - run:
+          name: Run Check Types
+          command: |
+            pnpm run check-types --continue
+
+      - run:
+          name: Run Unit Test
+          command: |
+            pnpm run test:ci --continue
+
+      - run:
+          name: Run Integration Test
+          command: |
+            pnpm run test:integration:ci --continue
+
+workflows:
+  main:
+    jobs:
+      - test

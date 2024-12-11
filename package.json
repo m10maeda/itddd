@@ -1,0 +1,37 @@
+{
+  "name": "itddd",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "turbo build",
+    "check-types": "turbo check-types",
+    "dev": "turbo dev",
+    "format": "prettier --write --ignore-unknown .",
+    "format:check": "prettier --list-different --ignore-unknown .",
+    "preinstall": "npx only-allow pnpm",
+    "lint": "turbo lint",
+    "prepare": "husky",
+    "test": "turbo test",
+    "test:ci": "turbo test:ci",
+    "test:integration": "turbo test:integration",
+    "test:integration:ci": "turbo test:integration:ci"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/config-pnpm-scopes": "^19.5.0",
+    "@commitlint/types": "^19.5.0",
+    "@itddd/eslint-config": "workspace:*",
+    "eslint": "^9.16.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.4.2",
+    "sort-package-json": "^2.12.0",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  },
+  "packageManager": "pnpm@9.14.0",
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,10 @@
+# Build Outputs
+.next/
+out/
+build
+dist
+
+.pnpm-store
+pnpm-lock.yaml
+
+**/turbo/generators/templates/*.hbs
