@@ -15,7 +15,13 @@
     "test:ci": "vitest run --coverage"
   },
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@itddd/profiles-api": "workspace:*",
+    "@mui/icons-material": "^6.2.0",
+    "@mui/material": "^6.2.0",
+    "@mui/material-nextjs": "^6.2.0",
     "next": "^15.0.4",
     "openapi-fetch": "^0.13.3",
     "react": "^19.0.0",
