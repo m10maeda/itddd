@@ -8,3 +8,5 @@ dist
 pnpm-lock.yaml
 
 **/turbo/generators/templates/*.hbs
+
+packages/profiles-api/src
