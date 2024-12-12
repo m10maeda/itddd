@@ -15,7 +15,9 @@
     "test:ci": "vitest run --coverage"
   },
   "dependencies": {
+    "@itddd/profiles-api": "workspace:*",
     "next": "^15.0.4",
+    "openapi-fetch": "^0.13.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
