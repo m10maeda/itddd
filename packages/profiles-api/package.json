@@ -1,0 +1,20 @@
+{
+  "name": "@itddd/profiles-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.d.ts"
+  },
+  "scripts": {
+    "codegen": "node ./scripts/code-generator.js",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@itddd/eslint-config": "workspace:*",
+    "@types/node": "^22.10.1",
+    "eslint": "^9.16.0",
+    "openapi-typescript": "^7.4.4"
+  }
+}
