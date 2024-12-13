@@ -45,6 +45,94 @@ importers:
         specifier: ^5.7.2
         version: 5.7.2
 
+  apps/circles:
+    dependencies:
+      '@nestjs/common':
+        specifier: ^10.4.9
+        version: 10.4.13(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/core':
+        specifier: ^10.4.9
+        version: 10.4.13(@nestjs/common@10.4.13(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.13)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/platform-express':
+        specifier: ^10.4.9
+        version: 10.4.13(@nestjs/common@10.4.13(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.13)
+      '@nestjs/swagger':
+        specifier: ^8.1.0
+        version: 8.1.0(@nestjs/common@10.4.13(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.13)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
+      class-validator:
+        specifier: ^0.14.1
+        version: 0.14.1
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@golevelup/ts-jest':
+        specifier: ^0.6.1
+        version: 0.6.1
+      '@itddd/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@itddd/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@nestjs/cli':
+        specifier: ^10.4.8
+        version: 10.4.8
+      '@nestjs/schematics':
+        specifier: ^10.2.3
+        version: 10.2.3(chokidar@3.6.0)(typescript@5.7.2)
+      '@nestjs/testing':
+        specifier: ^10.4.9
+        version: 10.4.13(@nestjs/common@10.4.13(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.13)(@nestjs/platform-express@10.4.13)
+      '@types/express':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
+      '@types/node':
+        specifier: ^22.10.1
+        version: 22.10.1
+      '@types/supertest':
+        specifier: ^6.0.2
+        version: 6.0.2
+      eslint:
+        specifier: ^9.16.0
+        version: 9.16.0(jiti@1.21.6)
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@22.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.10.1)(typescript@5.7.2))
+      jest-extended:
+        specifier: ^4.0.2
+        version: 4.0.2(jest@29.7.0(@types/node@22.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.10.1)(typescript@5.7.2)))
+      source-map-support:
+        specifier: ^0.5.21
+        version: 0.5.21
+      supertest:
+        specifier: ^7.0.0
+        version: 7.0.0
+      ts-jest:
+        specifier: ^29.2.5
+        version: 29.2.5(@babel/core@7.26.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.0))(jest@29.7.0(@types/node@22.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.10.1)(typescript@5.7.2)))(typescript@5.7.2)
+      ts-loader:
+        specifier: ^9.5.1
+        version: 9.5.1(typescript@5.7.2)(webpack@5.96.1)
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@22.10.1)(typescript@5.7.2)
+      tsconfig-paths:
+        specifier: ^4.2.0
+        version: 4.2.0
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
+
   apps/profiles:
     dependencies:
       '@nestjs/common':
