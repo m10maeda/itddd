@@ -1,12 +1,30 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 import { CircleData } from '../../application/use-case/input-ports';
 
 export class Circle {
+  @ApiProperty({
+    example: '0',
+    description: 'The id of the Circle',
+  })
   public readonly id: string;
 
+  @ApiProperty({
+    example: ['1', '3'],
+    description: 'The ids of the circle members',
+  })
   public readonly members: string[];
 
+  @ApiProperty({
+    example: 'Baseball',
+    description: 'The name of the Circle',
+  })
   public readonly name: string;
 
+  @ApiProperty({
+    example: '0',
+    description: 'The id of the circle owner',
+  })
   public readonly owner: string;
 
   public constructor(
