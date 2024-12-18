@@ -12,7 +12,19 @@ import {
   Put,
   Query,
   Res,
+  UseFilters,
 } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  getSchemaPath,
+} from '@nestjs/swagger';
 
 import { CircleService } from './circle.service';
 import {
@@ -23,6 +35,7 @@ import {
   RenameCircleDto,
 } from './dto';
 import { Circle, Member } from './entities';
+import { ErrorResponseFilter, ProblemDetail } from './exception-filters';
 import {
   CanNotRegisterCircleException,
   CanNotRenameCircleException,
@@ -33,10 +46,34 @@ import {
 import type { Response } from 'express';
 
 @Controller()
+@UseFilters(ErrorResponseFilter)
+@ApiExtraModels(ProblemDetail)
+@ApiInternalServerErrorResponse({
+  content: {
+    'application/problem+json': {
+      schema: { $ref: getSchemaPath(ProblemDetail) },
+    },
+  },
+})
 export class CircleController {
   private readonly service: CircleService;
 
   @Post(':id/members')
+  @ApiCreatedResponse()
+  @ApiBadRequestResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
+  @ApiConflictResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
   public async addMember(
     @Param('id') id: string,
     @Body() acceptMemberDto: AddMemberDto,
@@ -53,6 +90,28 @@ export class CircleController {
 
   @Put(':id/owner')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
+  @ApiConflictResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
   public async changeOwner(
     @Param('id') id: string,
     @Body() { id: ownerId }: ChangeOwnerDto,
@@ -69,6 +128,20 @@ export class CircleController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBadRequestResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
   public async delete(@Param('id') id: string): Promise<void> {
     try {
       await this.service.delete(id);
@@ -81,6 +154,13 @@ export class CircleController {
   }
 
   @Get()
+  @ApiOkResponse({
+    type: [Circle],
+    example: [
+      { id: '0', name: 'Baseball', owner: '0', members: ['1', '4'] },
+      { id: '1', name: 'Football', owner: '2', members: ['3', '4'] },
+    ],
+  })
   public async findAllBy(
     @Query() { page, size }: PageInfoDto,
   ): Promise<Iterable<Circle>> {
@@ -90,6 +170,14 @@ export class CircleController {
   }
 
   @Get(':id')
+  @ApiOkResponse({ type: Circle })
+  @ApiNotFoundResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
   public async getBy(@Param('id') id: string): Promise<Circle> {
     try {
       const circle = await this.service.getBy(id);
@@ -104,6 +192,17 @@ export class CircleController {
   }
 
   @Get(':id/candidates')
+  @ApiOkResponse({
+    type: [Member],
+    example: [{ id: '2' }, { id: '3' }],
+  })
+  @ApiNotFoundResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
   public async getCandidatesBy(@Param('id') id: string): Promise<Member[]> {
     try {
       const candidates = await this.service.getCandidates(id);
@@ -120,6 +219,21 @@ export class CircleController {
   }
 
   @Post()
+  @ApiCreatedResponse()
+  @ApiBadRequestResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
+  @ApiConflictResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
   public async register(
     @Body() registerCircleDto: RegisterCircleDto,
     @Res() response: Response,
@@ -143,6 +257,20 @@ export class CircleController {
 
   @Delete(':id/members/:memberId')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBadRequestResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
   public async removeMember(
     @Param('id') id: string,
     @Param('memberId') memberId: string,
@@ -161,6 +289,27 @@ export class CircleController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBadRequestResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
+  @ApiConflictResponse({
+    content: {
+      'application/problem+json': {
+        schema: { $ref: getSchemaPath(ProblemDetail) },
+      },
+    },
+  })
   public async update(
     @Param('id') id: string,
     @Body() renameCircleDto: RenameCircleDto,
