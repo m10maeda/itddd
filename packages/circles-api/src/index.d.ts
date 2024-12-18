@@ -134,8 +134,38 @@ export interface components {
       /** @example 2 */
       id: string;
     };
-    Circle: Record<string, never>;
-    Member: Record<string, never>;
+    Circle: {
+      /**
+       * @description The id of the Circle
+       * @example 0
+       */
+      id: string;
+      /**
+       * @description The ids of the circle members
+       * @example [
+       *       "1",
+       *       "3"
+       *     ]
+       */
+      members: string[];
+      /**
+       * @description The name of the Circle
+       * @example Baseball
+       */
+      name: string;
+      /**
+       * @description The id of the circle owner
+       * @example 0
+       */
+      owner: string;
+    };
+    Member: {
+      /**
+       * @description The id of the Member
+       * @example 0
+       */
+      id: string;
+    };
     RegisterCircleDto: {
       /** @example Baseball */
       name: string;
