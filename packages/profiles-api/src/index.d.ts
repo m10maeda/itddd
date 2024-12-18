@@ -147,9 +147,7 @@ export interface operations {
         headers: {
           [name: string]: unknown;
         };
-        content: {
-          'application/problem+json': components['schemas']['ProblemDetail'];
-        };
+        content?: never;
       };
       400: {
         headers: {
