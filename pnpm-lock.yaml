@@ -47,6 +47,9 @@ importers:
 
   apps/circles:
     dependencies:
+      '@itddd/profiles-api':
+        specifier: workspace:*
+        version: link:../../packages/profiles-api
       '@nestjs/common':
         specifier: ^10.4.9
         version: 10.4.13(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -65,6 +68,9 @@ importers:
       class-validator:
         specifier: ^0.14.1
         version: 0.14.1
+      openapi-fetch:
+        specifier: ^0.13.3
+        version: 0.13.3
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
