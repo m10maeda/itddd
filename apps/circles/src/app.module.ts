@@ -28,6 +28,7 @@ import {
 } from './domain/models/circle';
 import { IMemberRepository } from './domain/models/member';
 import {
+  ChangeOwnerIfOwnerDeletedProcess,
   CreateOwnerRelationIfCircleRegisteredProcess,
   DeleteCirclesIfNoRelationsProcess,
   DeleteRelationIfCircleDeletedProcess,
@@ -243,6 +244,18 @@ const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
         RelationEventBus,
       ],
     } satisfies Provider<DeleteCirclesIfNoRelationsProcess>,
+
+    {
+      provide: ChangeOwnerIfOwnerDeletedProcess,
+      useFactory: (repository: IRelationRepository, bus: RelationEventBus) => {
+        const policy = new ChangeOwnerIfOwnerDeletedProcess(bus, repository);
+
+        bus.subscribe(RelationDeleted, policy);
+
+        return policy;
+      },
+      inject: [RELATION_REPOSITORY, RelationEventBus],
+    } satisfies Provider<ChangeOwnerIfOwnerDeletedProcess>,
 
     {
       provide: CircleService,
