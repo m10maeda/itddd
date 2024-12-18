@@ -150,13 +150,7 @@ export class ProfileController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiNoContentResponse({
-    content: {
-      'application/problem+json': {
-        schema: { $ref: getSchemaPath(ProblemDetail) },
-      },
-    },
-  })
+  @ApiNoContentResponse()
   @ApiBadRequestResponse({
     content: {
       'application/problem+json': {
