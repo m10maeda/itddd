@@ -238,6 +238,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.14.0
         version: 11.14.0(@emotion/react@11.14.0(@types/react@19.0.0)(react@19.0.0))(@types/react@19.0.0)(react@19.0.0)
+      '@itddd/circles-api':
+        specifier: workspace:*
+        version: link:../../packages/circles-api
       '@itddd/profiles-api':
         specifier: workspace:*
         version: link:../../packages/profiles-api
