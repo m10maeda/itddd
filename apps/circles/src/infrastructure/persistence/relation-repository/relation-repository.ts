@@ -28,10 +28,13 @@ export class RelationRepository implements IRelationRepository {
       )
     ).filter((relation): relation is Relation => relation !== undefined);
 
-    const chunk = relations.filter(
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      async (relation) => await criteria.isSatisfiedBy(relation),
-    );
+    const chunk = (
+      await Promise.all(
+        relations.map(async (relation) =>
+          (await criteria.isSatisfiedBy(relation)) ? relation : undefined,
+        ),
+      )
+    ).filter((relation): relation is Relation => relation !== undefined);
 
     return chunk;
   }
