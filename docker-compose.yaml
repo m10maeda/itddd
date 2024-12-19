@@ -33,6 +33,7 @@ services:
     restart: always
     environment:
       - PROFILES_SERVICE_URL=http://profiles:3001
+      - CIRCLES_SERVICE_URL=http://circles:3002
     ports:
       - 3000:3000
     depends_on:
