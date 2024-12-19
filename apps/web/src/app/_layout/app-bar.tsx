@@ -19,6 +19,10 @@ const pages = [
     label: 'Users',
     href: '/users',
   },
+  {
+    label: 'Circles',
+    href: '/circles',
+  },
 ];
 
 export function AppBar() {

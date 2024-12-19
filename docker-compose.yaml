@@ -12,6 +12,19 @@ services:
     ports:
       - 3001:3001
 
+  circles:
+    container_name: circles
+    build:
+      context: .
+      dockerfile: ./apps/circles/Dockerfile
+    restart: always
+    environment:
+      - PORT=3002
+    ports:
+      - 3002:3002
+    depends_on:
+      - profiles
+
   web:
     container_name: web
     build:
@@ -20,7 +33,9 @@ services:
     restart: always
     environment:
       - PROFILES_SERVICE_URL=http://profiles:3001
+      - CIRCLES_SERVICE_URL=http://circles:3002
     ports:
       - 3000:3000
     depends_on:
       - profiles
+      - circles
