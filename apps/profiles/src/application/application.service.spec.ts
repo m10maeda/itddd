@@ -103,7 +103,7 @@ describe('ApplicationService', () => {
       it('should return some profile data', async () => {
         const sut = createApplicationService();
 
-        const result = await sut.findAll();
+        const result = await sut.getAll();
 
         expect(result).toEqual([
           new ProfileData('DUMMY_ID_1', 'Alice'),
