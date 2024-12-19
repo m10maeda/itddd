@@ -10,8 +10,11 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Res,
   UseFilters,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -25,7 +28,11 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 
-import { RegisterProfileDto, UpdateProfileDto } from './dto';
+import {
+  FindAllProfilesDto,
+  RegisterProfileDto,
+  UpdateProfileDto,
+} from './dto';
 import { Profile } from './entities';
 import { ApplicationService, ProfileNotFoundException } from '../application';
 import { ErrorResponseFilter, ProblemDetail } from './exception-filters';
@@ -77,6 +84,7 @@ export class ProfileController {
   }
 
   @Get()
+  @UsePipes(new ValidationPipe({ transform: true }))
   @ApiOkResponse({
     type: [Profile],
     example: [
@@ -84,12 +92,21 @@ export class ProfileController {
       { id: '1', name: 'Bob' },
     ],
   })
-  public async getAll(): Promise<Profile[]> {
-    const profiles = await this.service.findAll();
+  public async findAllBy(
+    @Query() { includes, excludes }: FindAllProfilesDto,
+  ): Promise<Profile[]> {
+    if (includes.length)
+      return Array.from(await this.service.findAllBy(includes)).map(
+        (profile) => new Profile(profile.id, profile.name),
+      );
 
-    return Array.from(profiles).map(
-      (profile) => new Profile(profile.id, profile.name),
-    );
+    const profiles = await this.service.getAll();
+
+    console.log(excludes);
+
+    return Array.from(profiles)
+      .map((profile) => new Profile(profile.id, profile.name))
+      .filter((profile) => !excludes.includes(profile.id));
   }
 
   @Get(':id')
