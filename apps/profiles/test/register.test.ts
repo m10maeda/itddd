@@ -1,3 +1,4 @@
+import { createMock } from '@golevelup/ts-jest';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
@@ -8,6 +9,8 @@ import {
   PROFILE_FACTORY,
   PROFILE_REPOSITORY,
 } from '../src/infrastructure/infrastructure.module';
+import { Messenger } from '../src/infrastructure/messenger';
+import { MESSENGER } from '../src/infrastructure/messenger/messenger.module';
 import {
   InMemoryProfileFactory,
   InMemoryProfileRepository,
@@ -31,6 +34,9 @@ describe('Delete profile use case', () => {
       .useValue(new InMemoryProfileRepository(mockProfiles))
       .overrideProvider(PROFILE_FACTORY)
       .useValue(new InMemoryProfileFactory(mockProfiles.length))
+      .overrideProvider(MESSENGER)
+      .useValue(createMock<Messenger>())
+
       .compile();
 
     app = moduleFixture.createNestApplication();

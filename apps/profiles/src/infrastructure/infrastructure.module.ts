@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { EventBusModule } from './event-bus/event-bus.module';
+import { MessengerModule } from './messenger/messenger.module';
 import { PersistenceModule } from './persistence/persistence.module';
 
 export {
@@ -9,7 +10,7 @@ export {
 } from './persistence/persistence.module';
 
 @Module({
-  imports: [PersistenceModule, EventBusModule],
+  imports: [PersistenceModule, EventBusModule, MessengerModule],
 
   exports: [PersistenceModule, EventBusModule],
 })
