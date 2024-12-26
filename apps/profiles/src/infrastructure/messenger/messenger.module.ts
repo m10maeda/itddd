@@ -21,7 +21,7 @@ export const MESSENGER_CLIENT = Symbol('MESSENGER_CLIENT');
         options: {
           client: {
             clientId: 'profiles',
-            brokers: ['kafka:9092'],
+            brokers: [process.env.KAFKA_BROKER_URL ?? 'localhost:9094'],
           },
           consumer: {
             groupId: 'profiles-consumer',

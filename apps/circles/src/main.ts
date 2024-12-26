@@ -13,7 +13,8 @@ async function bootstrap() {
 
     options: {
       client: {
-        brokers: ['kafka:9092'],
+        clientId: 'circles',
+        brokers: [process.env.KAFKA_BROKER_URL ?? 'localhost:9094'],
       },
       consumer: {
         groupId: 'circles-consumer',

@@ -89,7 +89,7 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
         options: {
           client: {
             clientId: 'circles',
-            brokers: ['kafka:9092'],
+            brokers: [process.env.KAFKA_BROKER_URL ?? 'localhost:9094'],
           },
           consumer: {
             groupId: 'circles-consumer',
