@@ -28,9 +28,8 @@ import {
 } from './domain/models/circle';
 import { IMemberRepository } from './domain/models/member';
 import {
-  ChangeOwnerIfOwnerDeletedProcess,
+  ChangeOwnerOrDeleteCircleIfOwnerDeletedProcess,
   CreateOwnerRelationIfCircleRegisteredProcess,
-  DeleteCirclesIfNoRelationsProcess,
   DeleteRelationIfCircleDeletedProcess,
   IRelationRepository,
   RelationDeleted,
@@ -220,17 +219,18 @@ const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
     } satisfies Provider<DeleteRelationIfCircleDeletedProcess>,
 
     {
-      provide: DeleteCirclesIfNoRelationsProcess,
+      provide: ChangeOwnerOrDeleteCircleIfOwnerDeletedProcess,
       useFactory: (
-        circleEventBus: CircleEventBus,
         circleRepository: ICircleRepository,
         relationRepository: IRelationRepository,
+        circleEventBus: CircleEventBus,
         relationEventBus: RelationEventBus,
       ) => {
-        const policy = new DeleteCirclesIfNoRelationsProcess(
+        const policy = new ChangeOwnerOrDeleteCircleIfOwnerDeletedProcess(
+          relationEventBus,
           circleEventBus,
-          circleRepository,
           relationRepository,
+          circleRepository,
         );
 
         relationEventBus.subscribe(RelationDeleted, policy);
@@ -238,24 +238,12 @@ const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
         return policy;
       },
       inject: [
-        CircleEventBus,
         CIRCLE_REPOSITORY,
         RELATION_REPOSITORY,
+        CircleEventBus,
         RelationEventBus,
       ],
-    } satisfies Provider<DeleteCirclesIfNoRelationsProcess>,
-
-    {
-      provide: ChangeOwnerIfOwnerDeletedProcess,
-      useFactory: (repository: IRelationRepository, bus: RelationEventBus) => {
-        const policy = new ChangeOwnerIfOwnerDeletedProcess(bus, repository);
-
-        bus.subscribe(RelationDeleted, policy);
-
-        return policy;
-      },
-      inject: [RELATION_REPOSITORY, RelationEventBus],
-    } satisfies Provider<ChangeOwnerIfOwnerDeletedProcess>,
+    } satisfies Provider<ChangeOwnerOrDeleteCircleIfOwnerDeletedProcess>,
 
     {
       provide: CircleService,
