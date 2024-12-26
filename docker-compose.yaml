@@ -49,6 +49,12 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:3001/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
 
   circles:
     container_name: circles
@@ -63,7 +69,14 @@ services:
     ports:
       - 3002:3002
     depends_on:
-      - profiles
+      profiles:
+        condition: service_healthy
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:3002/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
 
   web:
     container_name: web
@@ -77,5 +90,7 @@ services:
     ports:
       - 3000:3000
     depends_on:
-      - profiles
-      - circles
+      profiles:
+        condition: service_healthy
+      circles:
+        condition: service_healthy
