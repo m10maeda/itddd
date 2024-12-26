@@ -15,13 +15,18 @@ import {
 } from './relation-repository';
 import {
   CircleEvent,
+  CircleId,
+  CircleName,
+  CircleRegistered,
   ICircleFactory,
   ICircleRepository,
 } from '../../domain/models/circle';
-import { IMemberRepository } from '../../domain/models/member';
+import { IMemberRepository, MemberId } from '../../domain/models/member';
 import {
   IRelationRepository,
+  RelationCreated,
   RelationEvent,
+  RelationType,
 } from '../../domain/models/relation';
 import { CircleEventBus } from '../event-bus/circle-event-bus';
 import { EventBusModule } from '../event-bus/event-bus.module';
@@ -45,7 +50,18 @@ export const MEMBER_REPOSITORY = Symbol('MEMBER_REPOSITORY');
     {
       provide: CIRCLE_EVENT_LOADER,
       useFactory: (bus: CircleEventBus) => {
-        const store = new InMemoryCircleEventStore([]);
+        const store = new InMemoryCircleEventStore([
+          new CircleRegistered(
+            new CircleId('0'),
+            new CircleName('Baseball'),
+            new MemberId('0'),
+          ),
+          new CircleRegistered(
+            new CircleId('1'),
+            new CircleName('Football'),
+            new MemberId('2'),
+          ),
+        ]);
 
         bus.subscribe(CircleEvent, store);
 
@@ -63,13 +79,44 @@ export const MEMBER_REPOSITORY = Symbol('MEMBER_REPOSITORY');
 
     {
       provide: CIRCLE_FACTORY,
-      useFactory: () => new InMemoryCircleFactory(),
+      useFactory: () => new InMemoryCircleFactory(2),
     } satisfies Provider<ICircleFactory>,
 
     {
       provide: RELATION_EVENT_LOADER,
       useFactory: (bus: RelationEventBus) => {
-        const store = new InMemoryRelationEventStore([]);
+        const store = new InMemoryRelationEventStore([
+          new RelationCreated(
+            new CircleId('0'),
+            new MemberId('0'),
+            RelationType.Owner,
+          ),
+          new RelationCreated(
+            new CircleId('0'),
+            new MemberId('1'),
+            RelationType.Member,
+          ),
+          new RelationCreated(
+            new CircleId('0'),
+            new MemberId('2'),
+            RelationType.Member,
+          ),
+          new RelationCreated(
+            new CircleId('1'),
+            new MemberId('2'),
+            RelationType.Owner,
+          ),
+          new RelationCreated(
+            new CircleId('1'),
+            new MemberId('3'),
+            RelationType.Member,
+          ),
+          new RelationCreated(
+            new CircleId('1'),
+            new MemberId('4'),
+            RelationType.Member,
+          ),
+        ]);
 
         bus.subscribe(RelationEvent, store);
 
