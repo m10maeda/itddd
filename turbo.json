@@ -1,7 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["PORT", "PROFILES_SERVICE_URL", "CIRCLES_SERVICE_URL"],
+  "globalEnv": [
+    "PORT",
+    "PROFILES_SERVICE_URL",
+    "CIRCLES_SERVICE_URL",
+    "KAFKA_BROKER_URL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

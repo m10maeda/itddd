@@ -43,6 +43,7 @@ services:
     restart: always
     environment:
       - PORT=3001
+      - KAFKA_BROKER_URL=kafka:9092
     ports:
       - 3001:3001
     depends_on:
@@ -57,6 +58,7 @@ services:
     restart: always
     environment:
       - PORT=3002
+      - KAFKA_BROKER_URL=kafka:9092
       - PROFILES_SERVICE_URL=http://profiles:3001
     ports:
       - 3002:3002
