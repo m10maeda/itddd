@@ -20,11 +20,11 @@ export const MESSENGER_CLIENT = Symbol('MESSENGER_CLIENT');
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: 'profile',
+            clientId: 'profiles',
             brokers: ['kafka:9092'],
           },
           consumer: {
-            groupId: 'profile-consumer',
+            groupId: 'profiles-consumer',
             allowAutoTopicCreation: true,
           },
           producer: {
