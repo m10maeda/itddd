@@ -1,10 +1,13 @@
 import { Module, type Provider, ValidationPipe } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { Partitioners } from 'kafkajs';
 
 import {
   AddMemberInteractor,
   ChangeOwnerInteractor,
   DeleteCircleInteractor,
+  DeleteRelationsInteractor,
   RegisterCircleInteractor,
   RemoveMemberInteractor,
   RenameCircleInteractor,
@@ -13,6 +16,7 @@ import {
   IAddMemberUseCaseInputPort,
   IChangeOwnerUseCaseInputPort,
   IDeleteCircleUseCaseInputPort,
+  IDeleteRelationsUseCaseInputPort,
   IFindAllCirclesUseCaseInputPort,
   IGetCandidatesUseCaseInputPort,
   IGetCircleUseCaseInputPort,
@@ -52,7 +56,7 @@ import {
   GET_CANDIDATES_USE_CASE_INPUT_PORT,
   GET_CIRCLE_USE_CASE_INPUT_PORT,
 } from './infrastructure/query-service/query-service.module';
-import { CircleController } from './presentation';
+import { CircleController, KAFKA_CLIENT } from './presentation';
 import { CircleService } from './presentation/circle.service';
 
 const REGISTER_CIRCLE_USE_CASE_INPUT_PORT = Symbol(
@@ -71,9 +75,34 @@ const REMOVE_MEMBER_USE_CASE_INPUT_PORT = Symbol(
 const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
   'CHANGE_OWNER_USE_CASE_INPUT_PORT',
 );
+const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
+  'DELETE_RELATIONS_USE_CASE_INPUT_PORT',
+);
 
 @Module({
-  imports: [InfrastructureModule],
+  imports: [
+    InfrastructureModule,
+    ClientsModule.register([
+      {
+        name: KAFKA_CLIENT,
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'circles',
+            brokers: ['kafka:9092'],
+          },
+          consumer: {
+            groupId: 'circles-consumer',
+            allowAutoTopicCreation: true,
+          },
+          producer: {
+            allowAutoTopicCreation: true,
+            createPartitioner: Partitioners.DefaultPartitioner,
+          },
+        },
+      },
+    ]),
+  ],
   providers: [
     {
       provide: CircleExistenceService,
@@ -183,6 +212,15 @@ const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
     } satisfies Provider<IChangeOwnerUseCaseInputPort>,
 
     {
+      provide: DELETE_RELATIONS_USE_CASE_INPUT_PORT,
+      useFactory: (
+        eventBus: RelationEventBus,
+        relationRepository: IRelationRepository,
+      ) => new DeleteRelationsInteractor(eventBus, relationRepository),
+      inject: [RelationEventBus, RELATION_REPOSITORY],
+    } satisfies Provider<IDeleteRelationsUseCaseInputPort>,
+
+    {
       provide: CreateOwnerRelationIfCircleRegisteredProcess,
       useFactory: (
         relationEventBus: RelationEventBus,
@@ -257,6 +295,7 @@ const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
         addMemberUseCase: IAddMemberUseCaseInputPort,
         removeMemberUseCase: IRemoveMemberUseCaseInputPort,
         changeOwnerUseCase: IChangeOwnerUseCaseInputPort,
+        deleteRelationsUseCase: IDeleteRelationsUseCaseInputPort,
       ) =>
         new CircleService(
           registerUseCase,
@@ -268,6 +307,7 @@ const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
           addMemberUseCase,
           removeMemberUseCase,
           changeOwnerUseCase,
+          deleteRelationsUseCase,
         ),
       inject: [
         REGISTER_CIRCLE_USE_CASE_INPUT_PORT,
@@ -279,6 +319,7 @@ const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
         ADD_MEMBER_USE_CASE_INPUT_PORT,
         REMOVE_MEMBER_USE_CASE_INPUT_PORT,
         CHANGE_OWNER_USE_CASE_INPUT_PORT,
+        DELETE_RELATIONS_USE_CASE_INPUT_PORT,
       ],
     } satisfies Provider<CircleService>,
 

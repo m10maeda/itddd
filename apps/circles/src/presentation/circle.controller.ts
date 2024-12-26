@@ -6,14 +6,24 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   NotFoundException,
+  OnModuleDestroy,
+  OnModuleInit,
   Param,
   Post,
   Put,
   Query,
   Res,
   UseFilters,
+  ValidationPipe,
 } from '@nestjs/common';
+import {
+  ClientKafka,
+  EventPattern,
+  Payload,
+  Transport,
+} from '@nestjs/microservices';
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
@@ -30,7 +40,9 @@ import { CircleService } from './circle.service';
 import {
   AddMemberDto,
   ChangeOwnerDto,
+  EventType,
   PageInfoDto,
+  ProfileEventDto,
   RegisterCircleDto,
   RenameCircleDto,
 } from './dto';
@@ -45,6 +57,8 @@ import {
 
 import type { Response } from 'express';
 
+export const KAFKA_CLIENT = Symbol('KAFKA_CLIENT');
+
 @Controller()
 @UseFilters(ErrorResponseFilter)
 @ApiExtraModels(ProblemDetail)
@@ -55,7 +69,9 @@ import type { Response } from 'express';
     },
   },
 })
-export class CircleController {
+export class CircleController implements OnModuleDestroy, OnModuleInit {
+  private readonly client: ClientKafka;
+
   private readonly service: CircleService;
 
   @Post(':id/members')
@@ -218,6 +234,23 @@ export class CircleController {
     }
   }
 
+  @EventPattern('profiles', Transport.KAFKA)
+  public async handle(@Payload(ValidationPipe) message: ProfileEventDto) {
+    if (message.type === EventType.deleted) {
+      await this.service.deleteRelations(message.id);
+    }
+  }
+
+  public async onModuleDestroy() {
+    await this.client.close();
+  }
+
+  public async onModuleInit() {
+    this.client.subscribeToResponseOf('profiles');
+
+    await this.client.connect();
+  }
+
   @Post()
   @ApiCreatedResponse()
   @ApiBadRequestResponse({
@@ -326,7 +359,11 @@ export class CircleController {
     }
   }
 
-  public constructor(service: CircleService) {
+  public constructor(
+    service: CircleService,
+    @Inject(KAFKA_CLIENT) client: ClientKafka,
+  ) {
     this.service = service;
+    this.client = client;
   }
 }
