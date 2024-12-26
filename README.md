@@ -20,3 +20,8 @@ To shutdown all running containers:
 ```shell
 docker kill $(docker ps -q) && docker rm $(docker ps -a -q)
 ```
+
+## Read more
+
+- [Documents](docs/README.md)
+- [Architecture](ARCHITECTURE.md)
