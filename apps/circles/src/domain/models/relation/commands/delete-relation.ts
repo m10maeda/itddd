@@ -8,7 +8,11 @@ export class DeleteRelation extends Command {
   private readonly target: Relation;
 
   public async execute(): Promise<void> {
-    const event = new RelationDeleted(this.target.circle, this.target.member);
+    const event = new RelationDeleted(
+      this.target.circle,
+      this.target.member,
+      this.target.type,
+    );
 
     await this.eventPublisher.publish(event);
   }
