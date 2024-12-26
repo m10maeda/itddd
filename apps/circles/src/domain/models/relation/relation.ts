@@ -7,7 +7,7 @@ export abstract class Relation {
 
   public readonly member: MemberId;
 
-  private readonly type: RelationType;
+  public readonly type: RelationType;
 
   public equals(other: Relation): boolean {
     return this.circle.equals(other.circle) && this.member.equals(other.member);
