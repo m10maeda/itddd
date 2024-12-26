@@ -27,11 +27,7 @@ export class ChangeOwnerOrDeleteCircleIfOwnerDeletedProcess
 
     const circle = await this.circleRepository.getBy(event.circle);
 
-    // TODO: specify error
-    if (circle === undefined)
-      throw new Error(
-        'Can not change owner, because circle with deleted owner is not found.',
-      );
+    if (circle === undefined) return;
 
     const relations = await this.relationRepository.getAllBy(circle.id);
     const candidates = Array.from(relations).filter(
