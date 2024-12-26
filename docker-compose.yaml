@@ -1,6 +1,40 @@
 version: '3'
 
 services:
+  kafka:
+    container_name: kafka
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9094:9094'
+    environment:
+      KAFKA_CFG_NODE_ID: 0
+      KAFKA_CFG_CONTROLLER_BROKER_ID: 0
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    healthcheck:
+      test: kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1
+      interval: 60s
+      timeout: 10s
+      retries: 5
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: 'provectuslabs/kafka-ui:latest'
+    ports:
+      - '8080:8080'
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      TZ: Asia/Tokyo
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
   profiles:
     container_name: profiles
     build:
@@ -9,8 +43,40 @@ services:
     restart: always
     environment:
       - PORT=3001
+      - KAFKA_BROKER_URL=kafka:9092
     ports:
       - 3001:3001
+    depends_on:
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:3001/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  circles:
+    container_name: circles
+    build:
+      context: .
+      dockerfile: ./apps/circles/Dockerfile
+    restart: always
+    environment:
+      - PORT=3002
+      - KAFKA_BROKER_URL=kafka:9092
+      - PROFILES_SERVICE_URL=http://profiles:3001
+    ports:
+      - 3002:3002
+    depends_on:
+      profiles:
+        condition: service_healthy
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:3002/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
 
   web:
     container_name: web
@@ -20,7 +86,11 @@ services:
     restart: always
     environment:
       - PROFILES_SERVICE_URL=http://profiles:3001
+      - CIRCLES_SERVICE_URL=http://circles:3002
     ports:
       - 3000:3000
     depends_on:
-      - profiles
+      profiles:
+        condition: service_healthy
+      circles:
+        condition: service_healthy

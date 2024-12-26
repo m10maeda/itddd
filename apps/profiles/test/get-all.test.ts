@@ -1,3 +1,4 @@
+import { createMock } from '@golevelup/ts-jest';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
@@ -5,6 +6,8 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { Profile, ProfileId, ProfileName } from '../src/domain/models';
 import { PROFILE_REPOSITORY } from '../src/infrastructure/infrastructure.module';
+import { Messenger } from '../src/infrastructure/messenger';
+import { MESSENGER } from '../src/infrastructure/messenger/messenger.module';
 import { InMemoryProfileRepository } from '../src/infrastructure/persistence';
 
 describe('Get all profiles use case', () => {
@@ -23,6 +26,8 @@ describe('Get all profiles use case', () => {
           new Profile(new ProfileId('3'), new ProfileName('Dave')),
         ]),
       )
+      .overrideProvider(MESSENGER)
+      .useValue(createMock<Messenger>())
       .compile();
 
     app = moduleFixture.createNestApplication();
