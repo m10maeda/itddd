@@ -36,7 +36,25 @@ export class ApplicationService {
     await this.eventPublisher.publish(event);
   }
 
-  public async findAll(): Promise<Iterable<ProfileData>> {
+  public async findAllBy(
+    ids: Iterable<string>,
+  ): Promise<Iterable<ProfileData>> {
+    return (
+      await Promise.all(
+        Array.from(ids).map(async (id) => {
+          try {
+            return await this.getBy(id);
+          } catch (error) {
+            if (error instanceof ProfileNotFoundException) return undefined;
+
+            throw error;
+          }
+        }),
+      )
+    ).filter((profile) => profile !== undefined);
+  }
+
+  public async getAll(): Promise<Iterable<ProfileData>> {
     const profiles = await this.repository.getAll();
 
     return Array.from(profiles).map(

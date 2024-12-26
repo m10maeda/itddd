@@ -22,7 +22,7 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get: operations['ProfileController_getAll'];
+    get: operations['ProfileController_findAllBy'];
     put?: never;
     post: operations['ProfileController_register'];
     delete?: never;
@@ -220,9 +220,12 @@ export interface operations {
       };
     };
   };
-  ProfileController_getAll: {
+  ProfileController_findAllBy: {
     parameters: {
-      query?: never;
+      query?: {
+        excludes?: string[];
+        includes?: string[];
+      };
       header?: never;
       path?: never;
       cookie?: never;
