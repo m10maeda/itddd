@@ -1,3 +1,5 @@
+import { createMock } from '@golevelup/ts-jest';
+import { ClientKafka } from '@nestjs/microservices';
 import { Test, TestingModuleBuilder } from '@nestjs/testing';
 
 import { circleEvents, circles, relationEvents } from './mocks';
@@ -18,6 +20,7 @@ import {
 import { InMemoryRelationEventStore } from '../../src/infrastructure/persistence/relation-repository';
 import { InMemoryCircleDataStore } from '../../src/infrastructure/query-service/in-memory-circle-data-store';
 import { CIRCLE_DATA_ACCESS } from '../../src/infrastructure/query-service/query-service.module';
+import { KAFKA_CLIENT } from '../../src/presentation';
 
 export function createTestingModule(): TestingModuleBuilder {
   return Test.createTestingModule({
@@ -63,5 +66,7 @@ export function createTestingModule(): TestingModuleBuilder {
     .overrideProvider(MEMBER_REPOSITORY)
     .useValue(stubMemberRepository)
     .overrideProvider(CIRCLE_FACTORY)
-    .useValue(new InMemoryCircleFactory(2));
+    .useValue(new InMemoryCircleFactory(2))
+    .overrideProvider(KAFKA_CLIENT)
+    .useValue(createMock<ClientKafka>());
 }
