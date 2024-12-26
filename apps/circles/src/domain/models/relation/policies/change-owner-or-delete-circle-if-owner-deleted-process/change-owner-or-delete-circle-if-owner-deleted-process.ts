@@ -23,8 +23,6 @@ export class ChangeOwnerOrDeleteCircleIfOwnerDeletedProcess
   private readonly relationRepository: IRelationRepository;
 
   public async handle(event: RelationDeleted): Promise<void> {
-    console.log('ChangeOwnerProcess catch', event);
-
     if (!event.type.isOwner()) return;
 
     const circle = await this.circleRepository.getBy(event.circle);
