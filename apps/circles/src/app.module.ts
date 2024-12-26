@@ -5,6 +5,7 @@ import {
   AddMemberInteractor,
   ChangeOwnerInteractor,
   DeleteCircleInteractor,
+  DeleteRelationsInteractor,
   RegisterCircleInteractor,
   RemoveMemberInteractor,
   RenameCircleInteractor,
@@ -13,6 +14,7 @@ import {
   IAddMemberUseCaseInputPort,
   IChangeOwnerUseCaseInputPort,
   IDeleteCircleUseCaseInputPort,
+  IDeleteRelationsUseCaseInputPort,
   IFindAllCirclesUseCaseInputPort,
   IGetCandidatesUseCaseInputPort,
   IGetCircleUseCaseInputPort,
@@ -70,6 +72,9 @@ const REMOVE_MEMBER_USE_CASE_INPUT_PORT = Symbol(
 );
 const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
   'CHANGE_OWNER_USE_CASE_INPUT_PORT',
+);
+const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
+  'DELETE_RELATIONS_USE_CASE_INPUT_PORT',
 );
 
 @Module({
@@ -183,6 +188,15 @@ const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
     } satisfies Provider<IChangeOwnerUseCaseInputPort>,
 
     {
+      provide: DELETE_RELATIONS_USE_CASE_INPUT_PORT,
+      useFactory: (
+        eventBus: RelationEventBus,
+        relationRepository: IRelationRepository,
+      ) => new DeleteRelationsInteractor(eventBus, relationRepository),
+      inject: [RelationEventBus, RELATION_REPOSITORY],
+    } satisfies Provider<IDeleteRelationsUseCaseInputPort>,
+
+    {
       provide: CreateOwnerRelationIfCircleRegisteredProcess,
       useFactory: (
         relationEventBus: RelationEventBus,
@@ -257,6 +271,7 @@ const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
         addMemberUseCase: IAddMemberUseCaseInputPort,
         removeMemberUseCase: IRemoveMemberUseCaseInputPort,
         changeOwnerUseCase: IChangeOwnerUseCaseInputPort,
+        deleteRelationsUseCase: IDeleteRelationsUseCaseInputPort,
       ) =>
         new CircleService(
           registerUseCase,
@@ -268,6 +283,7 @@ const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
           addMemberUseCase,
           removeMemberUseCase,
           changeOwnerUseCase,
+          deleteRelationsUseCase,
         ),
       inject: [
         REGISTER_CIRCLE_USE_CASE_INPUT_PORT,
@@ -279,6 +295,7 @@ const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
         ADD_MEMBER_USE_CASE_INPUT_PORT,
         REMOVE_MEMBER_USE_CASE_INPUT_PORT,
         CHANGE_OWNER_USE_CASE_INPUT_PORT,
+        DELETE_RELATIONS_USE_CASE_INPUT_PORT,
       ],
     } satisfies Provider<CircleService>,
 

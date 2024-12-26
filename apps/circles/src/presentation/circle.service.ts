@@ -10,6 +10,7 @@ import {
   type IAddMemberUseCaseInputPort,
   type IChangeOwnerUseCaseInputPort,
   type IDeleteCircleUseCaseInputPort,
+  type IDeleteRelationsUseCaseInputPort,
   type IRemoveMemberUseCaseInputPort,
   type IFindAllCirclesUseCaseInputPort,
   type IGetCandidatesUseCaseInputPort,
@@ -18,12 +19,15 @@ import {
   type IRenameCircleUseCaseInputPort,
   type MemberData,
   type CircleData,
+  DeleteRelationsUseCaseInputData,
 } from '../application/use-case/input-ports';
 
 export class CircleService {
   private readonly addMemberUseCase: IAddMemberUseCaseInputPort;
 
   private readonly changeOwnerUseCase: IChangeOwnerUseCaseInputPort;
+
+  private readonly deleteRelationsUseCase: IDeleteRelationsUseCaseInputPort;
 
   private readonly deleteUseCase: IDeleteCircleUseCaseInputPort;
 
@@ -53,6 +57,12 @@ export class CircleService {
 
   public async delete(circleId: string): Promise<void> {
     await this.deleteUseCase.handle(new DeleteCircleUseCaseInputData(circleId));
+  }
+
+  public async deleteRelations(memberId: string): Promise<void> {
+    await this.deleteRelationsUseCase.handle(
+      new DeleteRelationsUseCaseInputData(memberId),
+    );
   }
 
   public async findAllBy(page = 1, size = 20): Promise<Iterable<CircleData>> {
@@ -109,6 +119,7 @@ export class CircleService {
     addMemberUseCase: IAddMemberUseCaseInputPort,
     removeMemberUseCase: IRemoveMemberUseCaseInputPort,
     changeOwnerUseCase: IChangeOwnerUseCaseInputPort,
+    deleteRelationsUseCase: IDeleteRelationsUseCaseInputPort,
   ) {
     this.registerUseCase = registerUseCase;
     this.getUseCase = getUseCase;
@@ -119,5 +130,6 @@ export class CircleService {
     this.addMemberUseCase = addMemberUseCase;
     this.removeMemberUseCase = removeMemberUseCase;
     this.changeOwnerUseCase = changeOwnerUseCase;
+    this.deleteRelationsUseCase = deleteRelationsUseCase;
   }
 }
