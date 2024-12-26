@@ -57,6 +57,7 @@ services:
     restart: always
     environment:
       - PORT=3002
+      - PROFILES_SERVICE_URL=http://profiles:3001
     ports:
       - 3002:3002
     depends_on:
