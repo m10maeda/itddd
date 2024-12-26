@@ -1,5 +1,7 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module, ValidationPipe, type Provider } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
+import { TerminusModule } from '@nestjs/terminus';
 
 import { ApplicationService } from './application';
 import {
@@ -15,10 +17,11 @@ import {
   PROFILE_REPOSITORY,
 } from './infrastructure/infrastructure.module';
 import { ProfileController } from './presentation';
+import { HealthController } from './presentation/health/health.controller';
 
 @Module({
-  controllers: [ProfileController],
-  imports: [InfrastructureModule],
+  controllers: [HealthController, ProfileController],
+  imports: [InfrastructureModule, TerminusModule, HttpModule],
   providers: [
     {
       provide: ProfileExistenceService,
