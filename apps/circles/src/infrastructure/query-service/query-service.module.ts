@@ -7,6 +7,7 @@ import { GetCandidatesQueryService } from './get-candidates.query-service';
 import { GetCircleQueryService } from './get-circle.query-service';
 import { InMemoryCircleDataStore } from './in-memory-circle-data-store';
 import {
+  CircleData,
   IFindAllCirclesUseCaseInputPort,
   IGetCandidatesUseCaseInputPort,
   IGetCircleUseCaseInputPort,
@@ -41,7 +42,10 @@ export const GET_CANDIDATES_USE_CASE_INPUT_PORT = Symbol(
         circleEventBus: CircleEventBus,
         relationEventBus: RelationEventBus,
       ) => {
-        const store = new InMemoryCircleDataStore([]);
+        const store = new InMemoryCircleDataStore([
+          new CircleData('0', 'Baseball', '0', ['1', '2']),
+          new CircleData('1', 'Football', '2', ['3', '4']),
+        ]);
 
         circleEventBus.subscribe(CircleEvent, store);
         relationEventBus.subscribe(RelationEvent, store);
