@@ -1,5 +1,7 @@
 import { Module, type Provider, ValidationPipe } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { Partitioners } from 'kafkajs';
 
 import {
   AddMemberInteractor,
@@ -54,7 +56,7 @@ import {
   GET_CANDIDATES_USE_CASE_INPUT_PORT,
   GET_CIRCLE_USE_CASE_INPUT_PORT,
 } from './infrastructure/query-service/query-service.module';
-import { CircleController } from './presentation';
+import { CircleController, KAFKA_CLIENT } from './presentation';
 import { CircleService } from './presentation/circle.service';
 
 const REGISTER_CIRCLE_USE_CASE_INPUT_PORT = Symbol(
@@ -78,7 +80,29 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
 );
 
 @Module({
-  imports: [InfrastructureModule],
+  imports: [
+    InfrastructureModule,
+    ClientsModule.register([
+      {
+        name: KAFKA_CLIENT,
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'circles',
+            brokers: ['kafka:9092'],
+          },
+          consumer: {
+            groupId: 'circles-consumer',
+            allowAutoTopicCreation: true,
+          },
+          producer: {
+            allowAutoTopicCreation: true,
+            createPartitioner: Partitioners.DefaultPartitioner,
+          },
+        },
+      },
+    ]),
+  ],
   providers: [
     {
       provide: CircleExistenceService,
