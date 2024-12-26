@@ -1,6 +1,8 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module, type Provider, ValidationPipe } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { TerminusModule } from '@nestjs/terminus';
 import { Partitioners } from 'kafkajs';
 
 import {
@@ -58,6 +60,7 @@ import {
 } from './infrastructure/query-service/query-service.module';
 import { CircleController, KAFKA_CLIENT } from './presentation';
 import { CircleService } from './presentation/circle.service';
+import { HealthController } from './presentation/health/health.controller';
 
 const REGISTER_CIRCLE_USE_CASE_INPUT_PORT = Symbol(
   'REGISTER_CIRCLE_USE_CASE_INPUT_PORT',
@@ -102,6 +105,8 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
         },
       },
     ]),
+    TerminusModule,
+    HttpModule,
   ],
   providers: [
     {
@@ -328,6 +333,6 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
       useClass: ValidationPipe,
     } satisfies Provider<ValidationPipe>,
   ],
-  controllers: [CircleController],
+  controllers: [HealthController, CircleController],
 })
 export class AppModule {}
