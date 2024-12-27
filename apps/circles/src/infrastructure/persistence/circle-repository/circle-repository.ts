@@ -41,13 +41,21 @@ export class CircleRepository implements ICircleRepository {
   public async getBy(
     idOrName: CircleId | CircleName,
   ): Promise<Circle | undefined> {
-    const id = await this.takeId(idOrName);
+    if (idOrName instanceof CircleId)
+      return this.replay(await this.eventLoader.loadAllBy(idOrName));
 
-    if (id === undefined) return undefined;
+    const events =
+      await this.eventLoader.loadRegisteredOrRenamedEventsWith(idOrName);
+    const candidates = (
+      await Promise.all(
+        Array.from(events).map(async (event) => {
+          const _events = await this.eventLoader.loadAllBy(event.id);
+          return this.replay(_events);
+        }),
+      )
+    ).filter((candidate): candidate is Circle => candidate !== undefined);
 
-    const events = await this.eventLoader.loadAllBy(id);
-
-    return this.replay(events);
+    return candidates.find((candidate) => candidate.name.equals(idOrName));
   }
 
   private replay(events: Iterable<CircleEvent>): Circle | undefined {
@@ -69,22 +77,11 @@ export class CircleRepository implements ICircleRepository {
 
     restEvents.forEach((event) => {
       if (event instanceof CircleRenamed) {
-        circle.renameTo(event.name);
+        circle.renameTo(event.newName);
       }
     });
 
     return circle;
-  }
-
-  private async takeId(
-    idOrName: CircleId | CircleName,
-  ): Promise<CircleId | undefined> {
-    if (idOrName instanceof CircleId) return idOrName;
-
-    const registeredOrRenamedEvent =
-      await this.eventLoader.loadLastRegisteredOrRenamedEventWith(idOrName);
-
-    return registeredOrRenamedEvent?.id;
   }
 
   public constructor(eventLoader: ICircleEventLoader) {
