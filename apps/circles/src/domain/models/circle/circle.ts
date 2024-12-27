@@ -12,9 +12,11 @@ export class Circle {
   }
 
   public renameTo(name: CircleName): CircleRenamed {
+    const event = new CircleRenamed(this.id, name, this.name);
+
     this._name = name;
 
-    return new CircleRenamed(this.id, this.name);
+    return event;
   }
 
   public constructor(id: CircleId, name: CircleName) {

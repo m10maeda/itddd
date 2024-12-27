@@ -3,11 +3,14 @@ import { type CircleId } from '../id/circle-id';
 import { type CircleName } from '../name/circle-name';
 
 export class CircleRenamed extends CircleEvent {
-  public readonly name: CircleName;
+  public readonly lastName: CircleName;
 
-  public constructor(id: CircleId, name: CircleName) {
+  public readonly newName: CircleName;
+
+  public constructor(id: CircleId, newName: CircleName, lastName: CircleName) {
     super(id);
 
-    this.name = name;
+    this.newName = newName;
+    this.lastName = lastName;
   }
 }

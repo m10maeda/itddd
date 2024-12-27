@@ -9,7 +9,7 @@ import {
 export interface ICircleEventLoader {
   loadAllBy(id: CircleId): Promise<Iterable<CircleEvent>>;
   loadAllRegisteredEvents(): Promise<Iterable<CircleRegistered>>;
-  loadLastRegisteredOrRenamedEventWith(
+  loadRegisteredOrRenamedEventsWith(
     name: CircleName,
-  ): Promise<CircleRegistered | CircleRenamed | undefined>;
+  ): Promise<Iterable<CircleRegistered | CircleRenamed>>;
 }

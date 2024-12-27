@@ -55,7 +55,7 @@ export class InMemoryCircleDataStore
 
         return {
           ...circle,
-          name: event.name.toString(),
+          name: event.newName.toString(),
         };
       });
     }

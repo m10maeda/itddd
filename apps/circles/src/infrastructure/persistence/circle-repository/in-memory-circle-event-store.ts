@@ -29,19 +29,17 @@ export class InMemoryCircleEventStore
     );
   }
 
-  public async loadLastRegisteredOrRenamedEventWith(
+  public async loadRegisteredOrRenamedEventsWith(
     name: CircleName,
-  ): Promise<CircleRegistered | CircleRenamed | undefined> {
-    const events = this.events.filter(
-      (event): event is CircleRegistered | CircleRenamed => {
-        if (event instanceof CircleRegistered || event instanceof CircleRenamed)
-          return event.name.equals(name);
+  ): Promise<Iterable<CircleRegistered | CircleRenamed>> {
+    return Promise.resolve(
+      this.events.filter((event): event is CircleRegistered | CircleRenamed => {
+        if (event instanceof CircleRegistered) return event.name.equals(name);
+        if (event instanceof CircleRenamed) return event.newName.equals(name);
 
         return false;
-      },
+      }),
     );
-
-    return Promise.resolve(events[events.length - 1]);
   }
 
   public constructor(events: Iterable<CircleEvent>) {
