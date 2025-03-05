@@ -14,7 +14,7 @@ import { InMemoryCircleFactory } from '../../src/infrastructure/persistence/in-m
 import {
   CIRCLE_EVENT_LOADER,
   CIRCLE_FACTORY,
-  MEMBER_REPOSITORY,
+  MEMBER_EXISTENCES_SERVICE,
   RELATION_EVENT_LOADER,
 } from '../../src/infrastructure/persistence/persistence.module';
 import { InMemoryRelationEventStore } from '../../src/infrastructure/persistence/relation-repository';
@@ -63,7 +63,7 @@ export function createTestingModule(): TestingModuleBuilder {
       },
       inject: [CircleEventBus, RelationEventBus],
     })
-    .overrideProvider(MEMBER_REPOSITORY)
+    .overrideProvider(MEMBER_EXISTENCES_SERVICE)
     .useValue(stubMemberRepository)
     .overrideProvider(CIRCLE_FACTORY)
     .useValue(new InMemoryCircleFactory(2))
