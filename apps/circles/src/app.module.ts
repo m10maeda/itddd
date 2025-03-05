@@ -32,7 +32,7 @@ import {
   ICircleFactory,
   ICircleRepository,
 } from './domain/models/circle';
-import { IMemberRepository } from './domain/models/member';
+import { IMemberExistenceService } from './domain/models/member';
 import {
   ChangeOwnerOrDeleteCircleIfOwnerDeletedProcess,
   CreateOwnerRelationIfCircleRegisteredProcess,
@@ -50,7 +50,7 @@ import { InfrastructureModule } from './infrastructure/infrastructure.module';
 import {
   CIRCLE_FACTORY,
   CIRCLE_REPOSITORY,
-  MEMBER_REPOSITORY,
+  MEMBER_EXISTENCES_SERVICE,
   RELATION_REPOSITORY,
 } from './infrastructure/persistence/persistence.module';
 import {
@@ -154,19 +154,19 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
       provide: ADD_MEMBER_USE_CASE_INPUT_PORT,
       useFactory: (
         circleRepository: ICircleRepository,
-        memberRepository: IMemberRepository,
+        memberExistenceService: IMemberExistenceService,
         eventBus: RelationEventBus,
         service: RelationExistenceService,
       ) =>
         new AddMemberInteractor(
           eventBus,
           circleRepository,
-          memberRepository,
+          memberExistenceService,
           service,
         ),
       inject: [
         CIRCLE_REPOSITORY,
-        MEMBER_REPOSITORY,
+        MEMBER_EXISTENCES_SERVICE,
         RelationEventBus,
         RelationExistenceService,
       ],
@@ -177,19 +177,19 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
       useFactory: (
         circleRepository: ICircleRepository,
         relationRepository: IRelationRepository,
-        memberRepository: IMemberRepository,
+        memberExistenceService: IMemberExistenceService,
         eventBus: RelationEventBus,
       ) =>
         new RemoveMemberInteractor(
           eventBus,
           circleRepository,
           relationRepository,
-          memberRepository,
+          memberExistenceService,
         ),
       inject: [
         CIRCLE_REPOSITORY,
         RELATION_REPOSITORY,
-        MEMBER_REPOSITORY,
+        MEMBER_EXISTENCES_SERVICE,
         RelationEventBus,
       ],
     } satisfies Provider<IRemoveMemberUseCaseInputPort>,
@@ -199,19 +199,19 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
       useFactory: (
         circleRepository: ICircleRepository,
         relationRepository: IRelationRepository,
-        memberRepository: IMemberRepository,
+        memberExistenceService: IMemberExistenceService,
         eventBus: RelationEventBus,
       ) =>
         new ChangeOwnerInteractor(
           eventBus,
           circleRepository,
           relationRepository,
-          memberRepository,
+          memberExistenceService,
         ),
       inject: [
         CIRCLE_REPOSITORY,
         RELATION_REPOSITORY,
-        MEMBER_REPOSITORY,
+        MEMBER_EXISTENCES_SERVICE,
         RelationEventBus,
       ],
     } satisfies Provider<IChangeOwnerUseCaseInputPort>,

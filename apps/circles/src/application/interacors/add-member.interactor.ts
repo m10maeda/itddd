@@ -1,5 +1,9 @@
 import { CircleId, type ICircleRepository } from '../../domain/models/circle';
-import { MemberId, type IMemberRepository } from '../../domain/models/member';
+import {
+  Member,
+  MemberId,
+  type IMemberExistenceService,
+} from '../../domain/models/member';
 import {
   CreateMemberRelation,
   type IRelationEventPublisher,
@@ -24,7 +28,7 @@ export class AddMemberInteractor implements IAddMemberUseCaseInputPort {
 
   private readonly existenceService: RelationExistenceService;
 
-  private readonly memberRepository: IMemberRepository;
+  private readonly memberExistenceService: IMemberExistenceService;
 
   public async handle(
     input: AddMemberUseCaseInputData,
@@ -34,13 +38,12 @@ export class AddMemberInteractor implements IAddMemberUseCaseInputPort {
 
     if (circle === undefined) throw new CircleNotFoundException(id.toString());
 
-    const memberId = new MemberId(input.member);
-    const member = await this.memberRepository.getBy(memberId);
+    const member = new Member(new MemberId(input.member));
 
-    if (member === undefined)
-      throw new MemberNotFoundException(memberId.toString());
+    if (!(await this.memberExistenceService.exists(member)))
+      throw new MemberNotFoundException(member.id.toString());
 
-    const relation = new MemberRelation(id, memberId);
+    const relation = new MemberRelation(id, member.id);
 
     if (await this.existenceService.exists(relation))
       throw new CanNotAddMemberException(
@@ -58,12 +61,12 @@ export class AddMemberInteractor implements IAddMemberUseCaseInputPort {
   public constructor(
     eventPublisher: IRelationEventPublisher,
     circleRepository: ICircleRepository,
-    memberRepository: IMemberRepository,
+    memberExistenceService: IMemberExistenceService,
     existenceService: RelationExistenceService,
   ) {
     this.eventPublisher = eventPublisher;
     this.circleRepository = circleRepository;
-    this.memberRepository = memberRepository;
+    this.memberExistenceService = memberExistenceService;
     this.existenceService = existenceService;
   }
 }

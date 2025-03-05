@@ -7,7 +7,7 @@ import {
   InMemoryCircleEventStore,
 } from './circle-repository';
 import { InMemoryCircleFactory } from './in-memory-circle-factory';
-import { MemberRepository } from './member-repository';
+import { MemberExistenceService } from './member';
 import {
   InMemoryRelationEventStore,
   IRelationEventLoader,
@@ -21,7 +21,7 @@ import {
   ICircleFactory,
   ICircleRepository,
 } from '../../domain/models/circle';
-import { IMemberRepository, MemberId } from '../../domain/models/member';
+import { IMemberExistenceService, MemberId } from '../../domain/models/member';
 import {
   IRelationRepository,
   RelationCreated,
@@ -41,7 +41,7 @@ export const CIRCLE_FACTORY = Symbol('CIRCLE_FACTORY');
 export const RELATION_EVENT_LOADER = Symbol('RELATION_EVENT_LOADER');
 export const RELATION_REPOSITORY = Symbol('RELATION_REPOSITORY');
 
-export const MEMBER_REPOSITORY = Symbol('MEMBER_REPOSITORY');
+export const MEMBER_EXISTENCES_SERVICE = Symbol('MEMBER_EXISTENCES_SERVICE');
 
 @Module({
   imports: [EventBusModule],
@@ -133,21 +133,21 @@ export const MEMBER_REPOSITORY = Symbol('MEMBER_REPOSITORY');
     } satisfies Provider<IRelationRepository>,
 
     {
-      provide: MEMBER_REPOSITORY,
+      provide: MEMBER_EXISTENCES_SERVICE,
       useFactory: () => {
         const client = createClient<paths>({
           baseUrl: process.env.PROFILES_SERVICE_URL ?? 'http://localhost:3001',
         });
 
-        return new MemberRepository(client);
+        return new MemberExistenceService(client);
       },
-    } satisfies Provider<IMemberRepository>,
+    } satisfies Provider<IMemberExistenceService>,
   ],
   exports: [
     CIRCLE_REPOSITORY,
     CIRCLE_FACTORY,
     RELATION_REPOSITORY,
-    MEMBER_REPOSITORY,
+    MEMBER_EXISTENCES_SERVICE,
   ],
 })
 export class PersistenceModule {}

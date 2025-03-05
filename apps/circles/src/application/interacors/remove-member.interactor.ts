@@ -1,5 +1,9 @@
 import { CircleId, type ICircleRepository } from '../../domain/models/circle';
-import { MemberId, type IMemberRepository } from '../../domain/models/member';
+import {
+  Member,
+  MemberId,
+  type IMemberExistenceService,
+} from '../../domain/models/member';
 import {
   DeleteRelation,
   type IRelationRepository,
@@ -21,7 +25,7 @@ export class RemoveMemberInteractor implements IRemoveMemberUseCaseInputPort {
 
   private readonly eventPublisher: IRelationEventPublisher;
 
-  private readonly memberRepository: IMemberRepository;
+  private readonly memberExistenceService: IMemberExistenceService;
 
   private readonly relationRepository: IRelationRepository;
 
@@ -33,16 +37,15 @@ export class RemoveMemberInteractor implements IRemoveMemberUseCaseInputPort {
 
     if (circle === undefined) throw new CircleNotFoundException(id.toString());
 
-    const memberId = new MemberId(input.member);
-    const member = await this.memberRepository.getBy(memberId);
+    const member = new Member(new MemberId(input.member));
 
-    if (member === undefined)
-      throw new MemberNotFoundException(memberId.toString());
+    if (!(await this.memberExistenceService.exists(member)))
+      throw new MemberNotFoundException(member.id.toString());
 
     const relation = await this.relationRepository.getBy(circle.id, member.id);
 
     if (relation === undefined)
-      throw new RelationNotFoundException(id.toString(), memberId.toString());
+      throw new RelationNotFoundException(id.toString(), member.id.toString());
 
     const command = new DeleteRelation(relation, this.eventPublisher);
 
@@ -55,11 +58,11 @@ export class RemoveMemberInteractor implements IRemoveMemberUseCaseInputPort {
     eventPublisher: IRelationEventPublisher,
     circleRepository: ICircleRepository,
     relationRepository: IRelationRepository,
-    memberRepository: IMemberRepository,
+    memberExistenceService: IMemberExistenceService,
   ) {
     this.eventPublisher = eventPublisher;
     this.circleRepository = circleRepository;
     this.relationRepository = relationRepository;
-    this.memberRepository = memberRepository;
+    this.memberExistenceService = memberExistenceService;
   }
 }

@@ -1,4 +1,4 @@
-export class MemberRepositoryException extends Error {
+export class MemberExistenceException extends Error {
   public readonly status: number;
 
   public constructor(status: number, message: string) {
