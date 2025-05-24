@@ -1,18 +1,16 @@
-import { CircleId, type ICircleRepository } from '../../domain/models/circle';
+import {
+  CircleId,
+  ICircleEventPublisher,
+  type ICircleRepository,
+} from '../../domain/models/circle';
 import {
   Member,
   MemberId,
   type IMemberExistenceService,
 } from '../../domain/models/member';
 import {
-  DeleteRelation,
-  type IRelationRepository,
-  type IRelationEventPublisher,
-} from '../../domain/models/relation';
-import {
   CircleNotFoundException,
   MemberNotFoundException,
-  RelationNotFoundException,
 } from '../use-case/exceptions';
 import {
   type RemoveMemberUseCaseInputData,
@@ -23,11 +21,9 @@ import {
 export class RemoveMemberInteractor implements IRemoveMemberUseCaseInputPort {
   private readonly circleRepository: ICircleRepository;
 
-  private readonly eventPublisher: IRelationEventPublisher;
+  private readonly eventPublisher: ICircleEventPublisher;
 
   private readonly memberExistenceService: IMemberExistenceService;
-
-  private readonly relationRepository: IRelationRepository;
 
   public async handle(
     input: RemoveMemberUseCaseInputData,
@@ -42,27 +38,20 @@ export class RemoveMemberInteractor implements IRemoveMemberUseCaseInputPort {
     if (!(await this.memberExistenceService.exists(member)))
       throw new MemberNotFoundException(member.id.toString());
 
-    const relation = await this.relationRepository.getBy(circle.id, member.id);
+    const event = circle.remove(member);
 
-    if (relation === undefined)
-      throw new RelationNotFoundException(id.toString(), member.id.toString());
-
-    const command = new DeleteRelation(relation, this.eventPublisher);
-
-    await command.execute();
+    await this.eventPublisher.publish(event);
 
     return new RemoveMemberUseCaseOutputData();
   }
 
   public constructor(
-    eventPublisher: IRelationEventPublisher,
+    eventPublisher: ICircleEventPublisher,
     circleRepository: ICircleRepository,
-    relationRepository: IRelationRepository,
     memberExistenceService: IMemberExistenceService,
   ) {
     this.eventPublisher = eventPublisher;
     this.circleRepository = circleRepository;
-    this.relationRepository = relationRepository;
     this.memberExistenceService = memberExistenceService;
   }
 }
