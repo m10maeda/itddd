@@ -11,6 +11,5 @@ export * from './change-owner';
 export * from './add-member';
 export * from './remove-member';
 export * from './get-candidates';
-export * from './delete-relations';
 
 export * from './dto';
