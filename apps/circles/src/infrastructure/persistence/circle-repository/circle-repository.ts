@@ -1,15 +1,20 @@
 import { type ICircleEventLoader } from './circle-event-loader';
 import {
   Circle,
+  CircleAddedMember,
+  CircleChangedOwner,
   CircleDeleted,
   type CircleEvent,
   CircleId,
   CircleName,
   CircleRegistered,
+  CircleRemovedMember,
   CircleRenamed,
   type ICircleRepository,
   type ICircleSpecification,
+  Members,
 } from '../../../domain/models/circle';
+import { Member } from '../../../domain/models/member';
 
 export class CircleRepository implements ICircleRepository {
   private readonly eventLoader: ICircleEventLoader;
@@ -73,11 +78,28 @@ export class CircleRepository implements ICircleRepository {
       (event) => !(event instanceof CircleRegistered),
     );
 
-    const circle = new Circle(registered.id, registered.name);
+    const circle = new Circle(
+      registered.id,
+      registered.name,
+      registered.owner,
+      new Members([]),
+    );
 
     restEvents.forEach((event) => {
       if (event instanceof CircleRenamed) {
         circle.renameTo(event.newName);
+      }
+
+      if (event instanceof CircleChangedOwner) {
+        circle.changeOwnerTo(new Member(event.owner));
+      }
+
+      if (event instanceof CircleAddedMember) {
+        circle.add(new Member(event.member));
+      }
+
+      if (event instanceof CircleRemovedMember) {
+        circle.remove(new Member(event.member));
       }
     });
 
