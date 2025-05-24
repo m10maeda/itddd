@@ -16,8 +16,7 @@ rectangle profiles {
 
 
   object ProfileRenamed<<Event>> {
-    old name
-    new name
+    name
   }
 
   ProfileRenamed --|> ProfileEvent
@@ -37,6 +36,13 @@ rectangle profiles {
 
 
 rectangle circles {
+  package member {
+    object Member<<Aggregate>>
+
+    Member "1" -- "1" Profile
+  }
+
+
   package circle {
     package event {
       object CircleEvent<<Event>>
@@ -44,15 +50,14 @@ rectangle circles {
 
       object CircleRegistered<<Event>> {
         name
-        owner id
       }
 
       CircleRegistered --|> CircleEvent
+      CircleRegistered "1" -- "1" Member : Owner
 
 
       object CircleRenamed<<Event>> {
-        old name
-        new name
+        name
       }
 
       CircleRenamed --|> CircleEvent
@@ -61,6 +66,24 @@ rectangle circles {
       object CircleDeleted<<Event>>
 
       CircleDeleted --|> CircleEvent
+
+
+      object CircleChangedOwner<<Event>>
+
+      CircleChangedOwner --|> CircleEvent
+      CircleChangedOwner "1" -- "1" Member
+
+
+      object CircleAddedMember<<Event>>
+
+      CircleAddedMember --|> CircleEvent
+      CircleAddedMember "1" -- "1" Member
+
+
+      object CircleRemovedMember<<Event>>
+
+      CircleRemovedMember "1" -- "1" Member
+      CircleRemovedMember --|> CircleEvent
     }
 
 
@@ -69,103 +92,8 @@ rectangle circles {
     }
 
     Circle "1" -u- "1" CircleEvent
-
-
-    package commands {
-      object DeleteCircle<<Command>>
-
-      DeleteCircle "1" -- "1" Circle
-    }
-  }
-
-
-  package member {
-    object Member<<Aggregate>>
-
-    Member "1" -- "1" Profile
-  }
-
-
-  package relation {
-    package event {
-      object RelationEvent<<Event>> {
-        type(owner/member)
-      }
-
-      'RelationEvent "1" -- "1" Circle
-      'RelationEvent "1" -- "1" Member
-
-
-      object RelationCreated<<Event>>
-
-      RelationCreated --|> RelationEvent
-
-
-      object RelationDeleted<<Event>>
-
-      RelationDeleted --|> RelationEvent
-    }
-
-    object Relation<<Aggregate>> {
-    }
-
-    Relation "1" -u- "1" RelationEvent
-    Relation "1" -- "1" Member
-
-
-    object OwnerRelation<<Aggregate>>
-
-    OwnerRelation -u-|> Relation
-    OwnerRelation "1" -- "1" Circle
-
-    object MemberRelation<<Aggregate>>
-
-    MemberRelation -u-|> Relation
-    MemberRelation "*" -- "1" Circle
-
-
-    object CreatableMemberRelationSpecification
-
-    CreatableMemberRelationSpecification "1" -- "1" MemberRelation
-  }
-
-
-  package commands {
-    object CreateOwnerRelation<<Command>>
-
-    CreateOwnerRelation "1" -- "1" OwnerRelation
-
-
-    object DeleteRelation<<Command>>
-
-    DeleteRelation "1" -- "1" Relation
-
-
-    object ChangeOwner<<Command>>
-
-    ChangeOwner "1" -- "1" CreateOwnerRelation : create new owner relation >
-    ChangeOwner "1" -- "1" DeleteRelation : delete last owner relation >
-  }
-
-
-  package policies {
-    object DeleteRelationsIfCircleDeletedProcess<<Policy>>
-
-    DeleteRelationsIfCircleDeletedProcess "1" -- "1" CircleDeleted
-    DeleteRelationsIfCircleDeletedProcess "1" -- "1" DeleteRelation
-
-
-    object ChangeOwnerOrDeleteCircleIfRelationDeletedProcess<<Policy>>
-
-    ChangeOwnerOrDeleteCircleIfRelationDeletedProcess "1" -- "1" ChangeOwner
-    ChangeOwnerOrDeleteCircleIfRelationDeletedProcess "1" -- "1" DeleteCircle
-    ChangeOwnerOrDeleteCircleIfRelationDeletedProcess "1" -- "1" RelationDeleted
-
-
-    object CreateOwnerRelationIfCircleRegistered<<Policy>>
-
-    CreateOwnerRelationIfCircleRegistered "1" -- "1" CreateOwnerRelation
-    CreateOwnerRelationIfCircleRegistered "1" -- "1" CircleRegistered
+    Circle "1" -- "1" Member : Owner
+    Circle "1" -- "*" Member : Member
   }
 }
 
