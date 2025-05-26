@@ -5,11 +5,11 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TerminusModule } from '@nestjs/terminus';
 import { Partitioners } from 'kafkajs';
 
+import { MemberDeletedHandler } from './application/event-handler';
 import {
   AddMemberInteractor,
   ChangeOwnerInteractor,
   DeleteCircleInteractor,
-  DeleteRelationsInteractor,
   RegisterCircleInteractor,
   RemoveMemberInteractor,
   RenameCircleInteractor,
@@ -18,7 +18,6 @@ import {
   IAddMemberUseCaseInputPort,
   IChangeOwnerUseCaseInputPort,
   IDeleteCircleUseCaseInputPort,
-  IDeleteRelationsUseCaseInputPort,
   IFindAllCirclesUseCaseInputPort,
   IGetCandidatesUseCaseInputPort,
   IGetCircleUseCaseInputPort,
@@ -26,32 +25,18 @@ import {
   IRemoveMemberUseCaseInputPort,
   IRenameCircleUseCaseInputPort,
 } from './application/use-case/input-ports';
+import { ICircleFactory, ICircleRepository } from './domain/models/circle';
 import {
-  CircleDeleted,
-  CircleRegistered,
-  ICircleFactory,
-  ICircleRepository,
-} from './domain/models/circle';
-import { IMemberExistenceService } from './domain/models/member';
-import {
-  ChangeOwnerOrDeleteCircleIfOwnerDeletedProcess,
-  CreateOwnerRelationIfCircleRegisteredProcess,
-  DeleteRelationIfCircleDeletedProcess,
-  IRelationRepository,
-  RelationDeleted,
-} from './domain/models/relation';
-import {
-  CircleExistenceService,
-  RelationExistenceService,
-} from './domain/services';
+  IMemberDeletedHandler,
+  IMemberExistenceService,
+} from './domain/models/member';
+import { CircleExistenceService } from './domain/services';
 import { CircleEventBus } from './infrastructure/event-bus/circle-event-bus';
-import { RelationEventBus } from './infrastructure/event-bus/relation-event-bus';
 import { InfrastructureModule } from './infrastructure/infrastructure.module';
 import {
   CIRCLE_FACTORY,
   CIRCLE_REPOSITORY,
   MEMBER_EXISTENCES_SERVICE,
-  RELATION_REPOSITORY,
 } from './infrastructure/persistence/persistence.module';
 import {
   FIND_ALL_CIRCLES_USE_CASE_INPUT_PORT,
@@ -77,9 +62,6 @@ const REMOVE_MEMBER_USE_CASE_INPUT_PORT = Symbol(
 );
 const CHANGE_OWNER_USE_CASE_INPUT_PORT = Symbol(
   'CHANGE_OWNER_USE_CASE_INPUT_PORT',
-);
-const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
-  'DELETE_RELATIONS_USE_CASE_INPUT_PORT',
 );
 
 @Module({
@@ -117,13 +99,6 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
     } satisfies Provider<CircleExistenceService>,
 
     {
-      provide: RelationExistenceService,
-      useFactory: (repository: IRelationRepository) =>
-        new RelationExistenceService(repository),
-      inject: [RELATION_REPOSITORY],
-    } satisfies Provider<RelationExistenceService>,
-
-    {
       provide: REGISTER_CIRCLE_USE_CASE_INPUT_PORT,
       useFactory: (
         factory: ICircleFactory,
@@ -153,140 +128,69 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
     {
       provide: ADD_MEMBER_USE_CASE_INPUT_PORT,
       useFactory: (
+        eventBus: CircleEventBus,
         circleRepository: ICircleRepository,
         memberExistenceService: IMemberExistenceService,
-        eventBus: RelationEventBus,
-        service: RelationExistenceService,
       ) =>
         new AddMemberInteractor(
           eventBus,
           circleRepository,
           memberExistenceService,
-          service,
         ),
-      inject: [
-        CIRCLE_REPOSITORY,
-        MEMBER_EXISTENCES_SERVICE,
-        RelationEventBus,
-        RelationExistenceService,
-      ],
+      inject: [CircleEventBus, CIRCLE_REPOSITORY, MEMBER_EXISTENCES_SERVICE],
     } satisfies Provider<IAddMemberUseCaseInputPort>,
 
     {
       provide: REMOVE_MEMBER_USE_CASE_INPUT_PORT,
       useFactory: (
+        eventBus: CircleEventBus,
         circleRepository: ICircleRepository,
-        relationRepository: IRelationRepository,
         memberExistenceService: IMemberExistenceService,
-        eventBus: RelationEventBus,
       ) =>
         new RemoveMemberInteractor(
           eventBus,
           circleRepository,
-          relationRepository,
           memberExistenceService,
         ),
-      inject: [
-        CIRCLE_REPOSITORY,
-        RELATION_REPOSITORY,
-        MEMBER_EXISTENCES_SERVICE,
-        RelationEventBus,
-      ],
+      inject: [CircleEventBus, CIRCLE_REPOSITORY, MEMBER_EXISTENCES_SERVICE],
     } satisfies Provider<IRemoveMemberUseCaseInputPort>,
 
     {
       provide: CHANGE_OWNER_USE_CASE_INPUT_PORT,
       useFactory: (
+        eventBus: CircleEventBus,
         circleRepository: ICircleRepository,
-        relationRepository: IRelationRepository,
         memberExistenceService: IMemberExistenceService,
-        eventBus: RelationEventBus,
       ) =>
         new ChangeOwnerInteractor(
           eventBus,
           circleRepository,
-          relationRepository,
           memberExistenceService,
         ),
-      inject: [
-        CIRCLE_REPOSITORY,
-        RELATION_REPOSITORY,
-        MEMBER_EXISTENCES_SERVICE,
-        RelationEventBus,
-      ],
+      inject: [CircleEventBus, CIRCLE_REPOSITORY, MEMBER_EXISTENCES_SERVICE],
     } satisfies Provider<IChangeOwnerUseCaseInputPort>,
 
     {
-      provide: DELETE_RELATIONS_USE_CASE_INPUT_PORT,
-      useFactory: (
-        eventBus: RelationEventBus,
-        relationRepository: IRelationRepository,
-      ) => new DeleteRelationsInteractor(eventBus, relationRepository),
-      inject: [RelationEventBus, RELATION_REPOSITORY],
-    } satisfies Provider<IDeleteRelationsUseCaseInputPort>,
-
-    {
-      provide: CreateOwnerRelationIfCircleRegisteredProcess,
-      useFactory: (
-        relationEventBus: RelationEventBus,
-        circleEventBus: CircleEventBus,
-      ) => {
-        const policy = new CreateOwnerRelationIfCircleRegisteredProcess(
-          relationEventBus,
-        );
-
-        circleEventBus.subscribe(CircleRegistered, policy);
-
-        return policy;
-      },
-      inject: [RelationEventBus, CircleEventBus],
-    } satisfies Provider<CreateOwnerRelationIfCircleRegisteredProcess>,
-
-    {
-      provide: DeleteRelationIfCircleDeletedProcess,
-      useFactory: (
-        relationEventBus: RelationEventBus,
-        relationRepository: IRelationRepository,
-        circleEventBus: CircleEventBus,
-      ) => {
-        const policy = new DeleteRelationIfCircleDeletedProcess(
-          relationEventBus,
-          relationRepository,
-        );
-
-        circleEventBus.subscribe(CircleDeleted, policy);
-
-        return policy;
-      },
-      inject: [RelationEventBus, RELATION_REPOSITORY, CircleEventBus],
-    } satisfies Provider<DeleteRelationIfCircleDeletedProcess>,
-
-    {
-      provide: ChangeOwnerOrDeleteCircleIfOwnerDeletedProcess,
+      provide: MemberDeletedHandler,
       useFactory: (
         circleRepository: ICircleRepository,
-        relationRepository: IRelationRepository,
-        circleEventBus: CircleEventBus,
-        relationEventBus: RelationEventBus,
-      ) => {
-        const policy = new ChangeOwnerOrDeleteCircleIfOwnerDeletedProcess(
-          relationEventBus,
-          circleEventBus,
-          relationRepository,
+        removeMemberUseCase: IRemoveMemberUseCaseInputPort,
+        changeOwnerUseCase: IChangeOwnerUseCaseInputPort,
+        deleteUseCase: IDeleteCircleUseCaseInputPort,
+      ) =>
+        new MemberDeletedHandler(
           circleRepository,
-        );
-
-        relationEventBus.subscribe(RelationDeleted, policy);
-
-        return policy;
-      },
+          removeMemberUseCase,
+          changeOwnerUseCase,
+          deleteUseCase,
+        ),
       inject: [
         CIRCLE_REPOSITORY,
-        RELATION_REPOSITORY,
-        CircleEventBus,
-        RelationEventBus,
+        REMOVE_MEMBER_USE_CASE_INPUT_PORT,
+        CHANGE_OWNER_USE_CASE_INPUT_PORT,
+        DELETE_CIRCLE_USE_CASE_INPUT_PORT,
       ],
-    } satisfies Provider<ChangeOwnerOrDeleteCircleIfOwnerDeletedProcess>,
+    } satisfies Provider<IMemberDeletedHandler>,
 
     {
       provide: CircleService,
@@ -300,7 +204,7 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
         addMemberUseCase: IAddMemberUseCaseInputPort,
         removeMemberUseCase: IRemoveMemberUseCaseInputPort,
         changeOwnerUseCase: IChangeOwnerUseCaseInputPort,
-        deleteRelationsUseCase: IDeleteRelationsUseCaseInputPort,
+        memberDeletedHandler: MemberDeletedHandler,
       ) =>
         new CircleService(
           registerUseCase,
@@ -312,7 +216,7 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
           addMemberUseCase,
           removeMemberUseCase,
           changeOwnerUseCase,
-          deleteRelationsUseCase,
+          memberDeletedHandler,
         ),
       inject: [
         REGISTER_CIRCLE_USE_CASE_INPUT_PORT,
@@ -324,7 +228,7 @@ const DELETE_RELATIONS_USE_CASE_INPUT_PORT = Symbol(
         ADD_MEMBER_USE_CASE_INPUT_PORT,
         REMOVE_MEMBER_USE_CASE_INPUT_PORT,
         CHANGE_OWNER_USE_CASE_INPUT_PORT,
-        DELETE_RELATIONS_USE_CASE_INPUT_PORT,
+        MemberDeletedHandler,
       ],
     } satisfies Provider<CircleService>,
 
