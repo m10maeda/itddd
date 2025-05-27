@@ -1,7 +1,3 @@
-// import { AndSpecification } from './and-specification';
-// import { NotSpecification } from './not-specification';
-// import { OrSpecification } from './or-specification';
-
 export interface ISpecification<T> {
   and(spec: ISpecification<T>): ISpecification<T>;
   andNot(spec: ISpecification<T>): ISpecification<T>;
