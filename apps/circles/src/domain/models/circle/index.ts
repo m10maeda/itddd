@@ -15,5 +15,3 @@ export * from './owner-already-owned.exception';
 
 export * from './circle-repository';
 export * from './circle-factory';
-
-export * from './commands';

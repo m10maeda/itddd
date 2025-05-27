@@ -1,6 +1,6 @@
 import {
+  CircleDeleted,
   CircleId,
-  DeleteCircle,
   type ICircleEventPublisher,
   type ICircleRepository,
 } from '../../domain/models/circle';
@@ -23,8 +23,9 @@ export class DeleteCircleInteractor implements IDeleteCircleUseCaseInputPort {
 
     if (circle === undefined) throw new CircleNotFoundException(input.id);
 
-    const command = new DeleteCircle(circle, this.eventPublisher);
-    await command.execute();
+    const event = new CircleDeleted(circle.id);
+
+    await this.eventPublisher.publish(event);
 
     return new DeleteCircleUseCaseOutputData();
   }
