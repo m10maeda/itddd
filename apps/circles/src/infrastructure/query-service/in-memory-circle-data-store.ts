@@ -1,21 +1,18 @@
 import { ICircleDataAccess } from './circle-data-access';
 import { type CircleData } from '../../application/use-case/input-ports';
 import {
+  CircleAddedMember,
+  CircleChangedOwner,
   CircleDeleted,
   CircleEvent,
   CircleRegistered,
+  CircleRemovedMember,
   CircleRenamed,
   ICircleEventSubscriber,
 } from '../../domain/models/circle';
-import {
-  IRelationEventSubscriber,
-  RelationCreated,
-  RelationDeleted,
-  RelationEvent,
-} from '../../domain/models/relation';
 
 export class InMemoryCircleDataStore
-  implements ICircleDataAccess, ICircleEventSubscriber, IRelationEventSubscriber
+  implements ICircleDataAccess, ICircleEventSubscriber
 {
   private circles: CircleData[];
 
@@ -30,7 +27,7 @@ export class InMemoryCircleDataStore
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async handle(event: CircleEvent | RelationEvent): Promise<void> {
+  public async handle(event: CircleEvent): Promise<void> {
     if (event instanceof CircleRegistered) {
       this.circles = [
         ...this.circles,
@@ -60,15 +57,9 @@ export class InMemoryCircleDataStore
       });
     }
 
-    if (event instanceof RelationCreated) {
+    if (event instanceof CircleAddedMember) {
       this.circles = this.circles.map((circle) => {
-        if (circle.id !== event.circle.toString()) return circle;
-
-        if (event.type.isOwner())
-          return {
-            ...circle,
-            owner: event.member.toString(),
-          };
+        if (circle.id !== event.id.toString()) return circle;
 
         return {
           ...circle,
@@ -77,15 +68,26 @@ export class InMemoryCircleDataStore
       });
     }
 
-    if (event instanceof RelationDeleted) {
+    if (event instanceof CircleRemovedMember) {
       this.circles = this.circles.map((circle) => {
-        if (circle.id !== event.circle.toString()) return circle;
+        if (circle.id !== event.id.toString()) return circle;
 
         return {
           ...circle,
           members: Array.from(circle.members).filter(
             (member) => member !== event.member.toString(),
           ),
+        };
+      });
+    }
+
+    if (event instanceof CircleChangedOwner) {
+      this.circles = this.circles.map((circle) => {
+        if (circle.id !== event.id.toString()) return circle;
+
+        return {
+          ...circle,
+          owner: event.owner.toString(),
         };
       });
     }

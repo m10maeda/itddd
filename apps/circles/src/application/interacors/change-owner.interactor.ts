@@ -1,19 +1,16 @@
-import { CircleId, ICircleRepository } from '../../domain/models/circle';
+import {
+  CircleId,
+  ICircleEventPublisher,
+  ICircleRepository,
+} from '../../domain/models/circle';
 import {
   IMemberExistenceService,
   Member,
   MemberId,
 } from '../../domain/models/member';
 import {
-  ChangeOwner,
-  IRelationEventPublisher,
-  IRelationRepository,
-  OwnerRelation,
-} from '../../domain/models/relation';
-import {
   CircleNotFoundException,
   MemberNotFoundException,
-  RelationNotFoundException,
 } from '../use-case/exceptions';
 import {
   type ChangeOwnerUseCaseInputData,
@@ -24,11 +21,9 @@ import {
 export class ChangeOwnerInteractor implements IChangeOwnerUseCaseInputPort {
   private readonly circleRepository: ICircleRepository;
 
-  private readonly eventPublisher: IRelationEventPublisher;
+  private readonly eventPublisher: ICircleEventPublisher;
 
   private readonly memberExistenceService: IMemberExistenceService;
-
-  private readonly relationRepository: IRelationRepository;
 
   public async handle(
     input: ChangeOwnerUseCaseInputData,
@@ -43,35 +38,20 @@ export class ChangeOwnerInteractor implements IChangeOwnerUseCaseInputPort {
     if (!(await this.memberExistenceService.exists(newOwner)))
       throw new MemberNotFoundException(newOwner.id.toString());
 
-    const newRelation = new OwnerRelation(circle.id, newOwner.id);
-    const lastRelation = await this.relationRepository.getOwnerRelationBy(id);
+    const event = circle.changeOwnerTo(newOwner);
 
-    if (lastRelation === undefined)
-      throw new RelationNotFoundException(
-        id.toString(),
-        newOwner.id.toString(),
-      );
-
-    const command = new ChangeOwner(
-      newRelation,
-      lastRelation,
-      this.eventPublisher,
-    );
-
-    await command.execute();
+    await this.eventPublisher.publish(event);
 
     return new ChangeOwnerUseCaseOutputData();
   }
 
   public constructor(
-    eventPublisher: IRelationEventPublisher,
+    eventPublisher: ICircleEventPublisher,
     circleRepository: ICircleRepository,
-    relationRepository: IRelationRepository,
     memberExistenceService: IMemberExistenceService,
   ) {
     this.eventPublisher = eventPublisher;
     this.circleRepository = circleRepository;
-    this.relationRepository = relationRepository;
     this.memberExistenceService = memberExistenceService;
   }
 }

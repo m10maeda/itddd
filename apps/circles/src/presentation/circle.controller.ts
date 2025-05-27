@@ -52,7 +52,7 @@ import {
   CanNotRegisterCircleException,
   CanNotRenameCircleException,
   CircleNotFoundException,
-  RelationNotFoundException,
+  MemberNotFoundException,
 } from '../application/use-case/exceptions';
 
 import type { Response } from 'express';
@@ -237,7 +237,7 @@ export class CircleController implements OnModuleDestroy, OnModuleInit {
   @EventPattern('profiles', Transport.KAFKA)
   public async handle(@Payload(ValidationPipe) message: ProfileEventDto) {
     if (message.type === EventType.deleted) {
-      await this.service.deleteRelations(message.id);
+      await this.service.onDeletedMember(message.id);
     }
   }
 
@@ -313,7 +313,7 @@ export class CircleController implements OnModuleDestroy, OnModuleInit {
     } catch (error) {
       if (error instanceof CircleNotFoundException)
         throw new NotFoundException();
-      if (error instanceof RelationNotFoundException)
+      if (error instanceof MemberNotFoundException)
         throw new NotFoundException();
 
       throw error;

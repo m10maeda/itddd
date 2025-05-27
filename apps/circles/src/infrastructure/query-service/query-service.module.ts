@@ -13,10 +13,8 @@ import {
   IGetCircleUseCaseInputPort,
 } from '../../application/use-case/input-ports';
 import { CircleEvent } from '../../domain/models/circle';
-import { RelationEvent } from '../../domain/models/relation';
 import { CircleEventBus } from '../event-bus/circle-event-bus';
 import { EventBusModule } from '../event-bus/event-bus.module';
-import { RelationEventBus } from '../event-bus/relation-event-bus';
 
 import type { paths } from '@itddd/profiles-api';
 
@@ -38,21 +36,17 @@ export const GET_CANDIDATES_USE_CASE_INPUT_PORT = Symbol(
   providers: [
     {
       provide: CIRCLE_DATA_ACCESS,
-      useFactory: (
-        circleEventBus: CircleEventBus,
-        relationEventBus: RelationEventBus,
-      ) => {
+      useFactory: (circleEventBus: CircleEventBus) => {
         const store = new InMemoryCircleDataStore([
           new CircleData('0', 'Baseball', '0', ['1', '2']),
           new CircleData('1', 'Football', '2', ['3', '4']),
         ]);
 
         circleEventBus.subscribe(CircleEvent, store);
-        relationEventBus.subscribe(RelationEvent, store);
 
         return store;
       },
-      inject: [CircleEventBus, RelationEventBus],
+      inject: [CircleEventBus],
     } satisfies Provider<ICircleDataAccess>,
 
     {

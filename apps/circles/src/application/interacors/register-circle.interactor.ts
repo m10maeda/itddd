@@ -4,7 +4,7 @@ import {
   type ICircleEventPublisher,
   type ICircleFactory,
 } from '../../domain/models/circle';
-import { MemberId } from '../../domain/models/member';
+import { Member, MemberId } from '../../domain/models/member';
 import { type CircleExistenceService } from '../../domain/services';
 import { CanNotRegisterCircleException } from '../use-case/exceptions';
 import {
@@ -25,7 +25,12 @@ export class RegisterCircleInteractor
   public async handle(
     input: RegisterCircleUseCaseInputData,
   ): Promise<RegisterCircleUseCaseOutputData> {
-    const circle = await this.factory.create(new CircleName(input.name));
+    const owner = new Member(new MemberId(input.owner));
+
+    const circle = await this.factory.create(
+      new CircleName(input.name),
+      owner.id,
+    );
 
     if (await this.service.exists(circle))
       throw new CanNotRegisterCircleException(
@@ -33,8 +38,7 @@ export class RegisterCircleInteractor
         circle.name.toString(),
       );
 
-    const ownerId = new MemberId(input.owner);
-    const event = new CircleRegistered(circle.id, circle.name, ownerId);
+    const event = new CircleRegistered(circle.id, circle.name, owner.id);
 
     await this.eventPublisher.publish(event);
 

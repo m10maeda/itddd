@@ -9,11 +9,7 @@ import {
 import { InMemoryCircleFactory } from './in-memory-circle-factory';
 import { MemberExistenceService } from './member';
 import {
-  InMemoryRelationEventStore,
-  IRelationEventLoader,
-  RelationRepository,
-} from './relation-repository';
-import {
+  CircleAddedMember,
   CircleEvent,
   CircleId,
   CircleName,
@@ -22,24 +18,14 @@ import {
   ICircleRepository,
 } from '../../domain/models/circle';
 import { IMemberExistenceService, MemberId } from '../../domain/models/member';
-import {
-  IRelationRepository,
-  RelationCreated,
-  RelationEvent,
-  RelationType,
-} from '../../domain/models/relation';
 import { CircleEventBus } from '../event-bus/circle-event-bus';
 import { EventBusModule } from '../event-bus/event-bus.module';
-import { RelationEventBus } from '../event-bus/relation-event-bus';
 
 import type { paths } from '@itddd/profiles-api';
 
 export const CIRCLE_EVENT_LOADER = Symbol('CIRCLE_EVENT_LOADER');
 export const CIRCLE_REPOSITORY = Symbol('CIRCLE_REPOSITORY');
 export const CIRCLE_FACTORY = Symbol('CIRCLE_FACTORY');
-
-export const RELATION_EVENT_LOADER = Symbol('RELATION_EVENT_LOADER');
-export const RELATION_REPOSITORY = Symbol('RELATION_REPOSITORY');
 
 export const MEMBER_EXISTENCES_SERVICE = Symbol('MEMBER_EXISTENCES_SERVICE');
 
@@ -50,17 +36,23 @@ export const MEMBER_EXISTENCES_SERVICE = Symbol('MEMBER_EXISTENCES_SERVICE');
     {
       provide: CIRCLE_EVENT_LOADER,
       useFactory: (bus: CircleEventBus) => {
+        // new CircleData('0', 'Baseball', '0', ['1', '2']),
+        // new CircleData('1', 'Football', '2', ['3', '4']),
         const store = new InMemoryCircleEventStore([
           new CircleRegistered(
             new CircleId('0'),
             new CircleName('Baseball'),
             new MemberId('0'),
           ),
+          new CircleAddedMember(new CircleId('0'), new MemberId('1')),
+          new CircleAddedMember(new CircleId('0'), new MemberId('2')),
           new CircleRegistered(
             new CircleId('1'),
             new CircleName('Football'),
             new MemberId('2'),
           ),
+          new CircleAddedMember(new CircleId('1'), new MemberId('3')),
+          new CircleAddedMember(new CircleId('1'), new MemberId('4')),
         ]);
 
         bus.subscribe(CircleEvent, store);
@@ -83,56 +75,6 @@ export const MEMBER_EXISTENCES_SERVICE = Symbol('MEMBER_EXISTENCES_SERVICE');
     } satisfies Provider<ICircleFactory>,
 
     {
-      provide: RELATION_EVENT_LOADER,
-      useFactory: (bus: RelationEventBus) => {
-        const store = new InMemoryRelationEventStore([
-          new RelationCreated(
-            new CircleId('0'),
-            new MemberId('0'),
-            RelationType.Owner,
-          ),
-          new RelationCreated(
-            new CircleId('0'),
-            new MemberId('1'),
-            RelationType.Member,
-          ),
-          new RelationCreated(
-            new CircleId('0'),
-            new MemberId('2'),
-            RelationType.Member,
-          ),
-          new RelationCreated(
-            new CircleId('1'),
-            new MemberId('2'),
-            RelationType.Owner,
-          ),
-          new RelationCreated(
-            new CircleId('1'),
-            new MemberId('3'),
-            RelationType.Member,
-          ),
-          new RelationCreated(
-            new CircleId('1'),
-            new MemberId('4'),
-            RelationType.Member,
-          ),
-        ]);
-
-        bus.subscribe(RelationEvent, store);
-
-        return store;
-      },
-      inject: [RelationEventBus],
-    } satisfies Provider<InMemoryRelationEventStore>,
-
-    {
-      provide: RELATION_REPOSITORY,
-      useFactory: (eventLoader: IRelationEventLoader) =>
-        new RelationRepository(eventLoader),
-      inject: [RELATION_EVENT_LOADER],
-    } satisfies Provider<IRelationRepository>,
-
-    {
       provide: MEMBER_EXISTENCES_SERVICE,
       useFactory: () => {
         const client = createClient<paths>({
@@ -143,11 +85,6 @@ export const MEMBER_EXISTENCES_SERVICE = Symbol('MEMBER_EXISTENCES_SERVICE');
       },
     } satisfies Provider<IMemberExistenceService>,
   ],
-  exports: [
-    CIRCLE_REPOSITORY,
-    CIRCLE_FACTORY,
-    RELATION_REPOSITORY,
-    MEMBER_EXISTENCES_SERVICE,
-  ],
+  exports: [CIRCLE_REPOSITORY, CIRCLE_FACTORY, MEMBER_EXISTENCES_SERVICE],
 })
 export class PersistenceModule {}

@@ -1,14 +1,11 @@
 import { CircleData } from '../../src/application/use-case/input-ports';
 import {
+  CircleAddedMember,
   CircleId,
   CircleName,
   CircleRegistered,
 } from '../../src/domain/models/circle';
 import { Member, MemberId } from '../../src/domain/models/member';
-import {
-  RelationCreated,
-  RelationType,
-} from '../../src/domain/models/relation';
 
 export const circleEvents = [
   new CircleRegistered(
@@ -16,31 +13,14 @@ export const circleEvents = [
     new CircleName('Baseball'),
     new MemberId('0'),
   ),
+  new CircleAddedMember(new CircleId('0'), new MemberId('1')),
+  new CircleAddedMember(new CircleId('0'), new MemberId('3')),
   new CircleRegistered(
     new CircleId('1'),
     new CircleName('Football'),
     new MemberId('2'),
   ),
-];
-
-export const relationEvents = [
-  new RelationCreated(new CircleId('0'), new MemberId('0'), RelationType.Owner),
-  new RelationCreated(
-    new CircleId('0'),
-    new MemberId('1'),
-    RelationType.Member,
-  ),
-  new RelationCreated(
-    new CircleId('0'),
-    new MemberId('3'),
-    RelationType.Member,
-  ),
-  new RelationCreated(new CircleId('1'), new MemberId('2'), RelationType.Owner),
-  new RelationCreated(
-    new CircleId('1'),
-    new MemberId('3'),
-    RelationType.Member,
-  ),
+  new CircleAddedMember(new CircleId('1'), new MemberId('3')),
 ];
 
 export const circles = [
