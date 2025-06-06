@@ -1,5 +1,3 @@
-import jest from './libs/jest.js';
-
 import base from './index.js';
 
 /**
@@ -9,7 +7,6 @@ import base from './index.js';
  */
 export default [
   ...base,
-  ...jest,
 
   {
     files: ['**/*.module.ts'],
