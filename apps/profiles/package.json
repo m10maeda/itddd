@@ -10,9 +10,7 @@
     "lint": "eslint . --max-warnings 0",
     "start": "node dist/index.js",
     "test": "jest",
-    "test:ci": "jest --ci --runInBand --coverage",
-    "test:integration": "jest --config ./test/jest.config.ts",
-    "test:integration:ci": "jest --config ./test/jest.config.ts --ci --runInBand"
+    "test:ci": "jest --ci --runInBand --coverage"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.3",
