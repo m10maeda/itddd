@@ -3,15 +3,8 @@ import {
   ICircleEventPublisher,
   type ICircleRepository,
 } from '../../domain/models/circle';
-import {
-  Member,
-  MemberId,
-  type IMemberExistenceService,
-} from '../../domain/models/member';
-import {
-  CircleNotFoundException,
-  MemberNotFoundException,
-} from '../use-case/exceptions';
+import { Member, MemberId } from '../../domain/models/member';
+import { CircleNotFoundException } from '../use-case/exceptions';
 import {
   type RemoveMemberUseCaseInputData,
   RemoveMemberUseCaseOutputData,
@@ -23,8 +16,6 @@ export class RemoveMemberInteractor implements IRemoveMemberUseCaseInputPort {
 
   private readonly eventPublisher: ICircleEventPublisher;
 
-  private readonly memberExistenceService: IMemberExistenceService;
-
   public async handle(
     input: RemoveMemberUseCaseInputData,
   ): Promise<RemoveMemberUseCaseOutputData> {
@@ -35,8 +26,7 @@ export class RemoveMemberInteractor implements IRemoveMemberUseCaseInputPort {
 
     const member = new Member(new MemberId(input.member));
 
-    if (!(await this.memberExistenceService.exists(member)))
-      throw new MemberNotFoundException(member.id.toString());
+    if (!circle.joins(member)) return new RemoveMemberUseCaseOutputData();
 
     const event = circle.remove(member);
 
@@ -48,10 +38,8 @@ export class RemoveMemberInteractor implements IRemoveMemberUseCaseInputPort {
   public constructor(
     eventPublisher: ICircleEventPublisher,
     circleRepository: ICircleRepository,
-    memberExistenceService: IMemberExistenceService,
   ) {
     this.eventPublisher = eventPublisher;
     this.circleRepository = circleRepository;
-    this.memberExistenceService = memberExistenceService;
   }
 }
