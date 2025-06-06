@@ -1,6 +1,3 @@
-import { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { ClientKafka } from '@nestjs/microservices';
-
 import {
   IProfileEventSubscriber,
   ProfileDeleted,
@@ -8,6 +5,8 @@ import {
   ProfileRegistered,
   ProfileRenamed,
 } from '../../domain/models';
+
+import type { Kafka } from 'kafkajs';
 
 interface CommonMessage {
   id: string;
@@ -30,28 +29,38 @@ type RenamedMessage = CommonMessage & {
 
 type Message = RegisteredMessage | DeletedMessage | RenamedMessage;
 
-export class Messenger
-  implements
-    IProfileEventSubscriber<ProfileEvent>,
-    OnModuleInit,
-    OnModuleDestroy
-{
-  private readonly client: ClientKafka;
+export class Messenger implements IProfileEventSubscriber<ProfileEvent> {
+  private readonly client: Kafka;
 
   public async handle(event: ProfileEvent): Promise<void> {
     const message = this.createMessageBy(event);
 
-    this.send(message);
-
-    return Promise.resolve();
+    await this.send(message);
   }
 
-  public async onModuleDestroy() {
-    await this.client.close();
-  }
+  public async onInit() {
+    console.log('Initializing Kafka Messenger...');
 
-  public async onModuleInit() {
-    await this.client.connect();
+    const admin = this.client.admin();
+
+    await admin.connect();
+    const topics = await admin.listTopics();
+
+    if (!topics.includes('profiles')) {
+      console.log('Creating "profiles" topic...');
+
+      await admin.createTopics({
+        topics: [
+          {
+            topic: 'profiles',
+            numPartitions: 1,
+            replicationFactor: 1,
+          },
+        ],
+      });
+    }
+
+    await admin.disconnect();
   }
 
   private createMessageBy(event: ProfileEvent): Message {
@@ -82,11 +91,25 @@ export class Messenger
     throw new Error();
   }
 
-  private send(message: Message) {
-    return this.client.emit('profiles', message);
+  private async send(message: Message): Promise<void> {
+    const producer = this.client.producer();
+
+    await producer.connect();
+
+    await producer.send({
+      topic: 'profiles',
+      messages: [
+        {
+          key: message.type,
+          value: JSON.stringify(message),
+        },
+      ],
+    });
+
+    await producer.disconnect();
   }
 
-  public constructor(client: ClientKafka) {
+  public constructor(client: Kafka) {
     this.client = client;
   }
 }
