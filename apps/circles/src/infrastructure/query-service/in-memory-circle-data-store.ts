@@ -88,6 +88,9 @@ export class InMemoryCircleDataStore
         return {
           ...circle,
           owner: event.owner.toString(),
+          members: Array.from(circle.members).filter(
+            (member) => member !== event.owner.toString(),
+          ),
         };
       });
     }

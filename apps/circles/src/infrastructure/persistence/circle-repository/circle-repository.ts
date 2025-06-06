@@ -33,10 +33,16 @@ export class CircleRepository implements ICircleRepository {
       )
     ).filter((circle): circle is Circle => circle !== undefined);
 
-    const chunk = circles.filter(
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      async (circle) => await criteria.isSatisfiedBy(circle),
-    );
+    const chunk = (
+      await Promise.all(
+        circles.map(async (circle) => ({
+          circle,
+          satisfied: await criteria.isSatisfiedBy(circle),
+        })),
+      )
+    )
+      .filter((result) => result.satisfied)
+      .map((result) => result.circle);
 
     return chunk;
   }

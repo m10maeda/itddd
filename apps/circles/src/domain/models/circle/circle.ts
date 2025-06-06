@@ -52,6 +52,10 @@ export class Circle {
 
     this._owner = owner.id;
 
+    if (this.joins(owner)) {
+      this._members = this._members.remove(owner.id);
+    }
+
     return new CircleChangedOwner(this.id, owner.id);
   }
 
