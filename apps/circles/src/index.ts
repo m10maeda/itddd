@@ -1,11 +1,14 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 
+import { circles } from './presentation';
+
 const app = new Hono();
 
 app.get('/health', (c) => {
   return c.json({ status: 'ok' });
 });
+app.route('/', circles);
 
 export { app };
 
