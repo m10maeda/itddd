@@ -15,12 +15,12 @@ services:
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
       KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: 'true'
     healthcheck:
       test: kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1
       interval: 60s
       timeout: 10s
       retries: 5
+      start_period: 60s
 
   kafka-ui:
     container_name: kafka-ui
@@ -42,19 +42,17 @@ services:
       dockerfile: ./apps/profiles/Dockerfile
     restart: always
     environment:
-      - PORT=3001
       - KAFKA_BROKER_URL=kafka:9092
     ports:
-      - 3001:3001
+      - 3001:3000
     depends_on:
       kafka:
         condition: service_healthy
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:3001/health || exit 1
+      test: wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
       interval: 10s
       timeout: 5s
       retries: 3
-      start_period: 60s
 
   circles:
     container_name: circles
@@ -63,20 +61,20 @@ services:
       dockerfile: ./apps/circles/Dockerfile
     restart: always
     environment:
-      - PORT=3002
       - KAFKA_BROKER_URL=kafka:9092
-      - PROFILES_SERVICE_URL=http://profiles:3001
+      - PROFILES_SERVICE_URL=http://profiles:3000
     ports:
-      - 3002:3002
+      - 3002:3000
     depends_on:
+      kafka:
+        condition: service_healthy
       profiles:
         condition: service_healthy
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://localhost:3002/health || exit 1
+      test: wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
       interval: 10s
       timeout: 5s
       retries: 3
-      start_period: 60s
 
   web:
     container_name: web
@@ -85,8 +83,8 @@ services:
       dockerfile: ./apps/web/Dockerfile
     restart: always
     environment:
-      - PROFILES_SERVICE_URL=http://profiles:3001
-      - CIRCLES_SERVICE_URL=http://circles:3002
+      - PROFILES_SERVICE_URL=http://profiles:3000
+      - CIRCLES_SERVICE_URL=http://circles:3000
     ports:
       - 3000:3000
     depends_on:

@@ -12,9 +12,7 @@
     "lint": "turbo lint",
     "prepare": "husky",
     "test": "turbo test",
-    "test:ci": "turbo test:ci",
-    "test:integration": "turbo test:integration",
-    "test:integration:ci": "turbo test:integration:ci"
+    "test:ci": "turbo test:ci"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.0",

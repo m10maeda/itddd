@@ -7,10 +7,10 @@ export class OwnerCandidateChoicer {
   private readonly circle: Circle;
 
   public choose(): Member {
-    const [candidate] = this.circle.members;
-
-    if (candidate === undefined)
+    if (this.circle.membersCount === 0)
       throw new CanNotChooseOwnerCandidateException();
+
+    const [candidate] = this.circle.members;
 
     return new Member(candidate);
   }

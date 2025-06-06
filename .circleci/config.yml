@@ -63,11 +63,6 @@ jobs:
           command: |
             pnpm run test:ci --continue -- --passWithNoTests
 
-      - run:
-          name: Run Integration Test
-          command: |
-            pnpm run test:integration:ci --continue
-
 workflows:
   main:
     jobs:

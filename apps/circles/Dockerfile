@@ -42,10 +42,10 @@ WORKDIR /app
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nestjs
-USER nestjs
+RUN adduser --system --uid 1001 honojs
+USER honojs
 
 # Automatically leverage output traces to reduce image size
-COPY --from=installer --chown=nestjs:nodejs /app .
+COPY --from=installer --chown=honojs:nodejs /app .
 
-CMD node apps/circles/dist/main.js
+CMD node apps/circles/dist/index.cjs

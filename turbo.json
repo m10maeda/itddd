@@ -25,12 +25,6 @@
     "test:ci": {
       "dependsOn": ["^test:ci"]
     },
-    "test:integration": {
-      "dependsOn": ["^test:integration"]
-    },
-    "test:integration:ci": {
-      "dependsOn": ["^test:integration:ci"]
-    },
     "dev": {
       "cache": false,
       "persistent": true

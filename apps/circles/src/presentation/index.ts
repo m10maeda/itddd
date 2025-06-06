@@ -1,1 +1,1 @@
-export * from './circle.controller';
+export { app as circles } from './circles';

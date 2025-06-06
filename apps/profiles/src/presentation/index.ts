@@ -1,1 +1,1 @@
-export * from './profile.controller';
+export { app as profiles } from './profiles';
