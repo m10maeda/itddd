@@ -147,7 +147,6 @@ const addMemberUseCase = new AddMemberInteractor(
 const removeMemberUseCase = new RemoveMemberInteractor(
   eventBus,
   circleRepository,
-  memberExistenceService,
 );
 const getCandidatesUseCase = new GetCandidatesQueryService(
   circleDataAccess,
