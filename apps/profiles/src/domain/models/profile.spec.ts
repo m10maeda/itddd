@@ -1,3 +1,5 @@
+import { describe, it, expect } from 'vitest';
+
 import { Profile } from './profile';
 import { ProfileId } from './profile-id';
 import { ProfileName } from './profile-name';
@@ -8,14 +10,14 @@ describe('Profile', () => {
       const sut = new Profile(new ProfileId('0'), new ProfileName('Alice'));
       const target = new Profile(new ProfileId('0'), new ProfileName('Bob'));
 
-      expect(sut.equals(target)).toBeTrue();
+      expect(sut.equals(target)).toBeTruthy();
     });
 
     it('should return false when specified Profile have the different id', () => {
       const sut = new Profile(new ProfileId('0'), new ProfileName('Alice'));
       const target = new Profile(new ProfileId('1'), new ProfileName('Alice'));
 
-      expect(sut.equals(target)).toBeFalse();
+      expect(sut.equals(target)).toBeFalsy();
     });
   });
 

@@ -1,4 +1,4 @@
-import { createMock } from '@golevelup/ts-jest';
+import { describe, it, expect, vi } from 'vitest';
 
 import { ProfileEventBus } from './profile-event-bus';
 import {
@@ -10,10 +10,12 @@ import {
 } from '../../domain/models';
 
 describe('ProfileEventBus', () => {
-  const mockProfileRegisteredSubscriber =
-    createMock<IProfileEventSubscriber<ProfileRegistered>>();
-  const mockProfileDeletedSubscriber =
-    createMock<IProfileEventSubscriber<ProfileDeleted>>();
+  const mockProfileRegisteredSubscriber = {
+    handle: vi.fn(),
+  } as IProfileEventSubscriber<ProfileRegistered>;
+  const mockProfileDeletedSubscriber = {
+    handle: vi.fn(),
+  } as IProfileEventSubscriber<ProfileDeleted>;
 
   it('should invoke subscriber when publish subscribed event', async () => {
     const sut = new ProfileEventBus();
