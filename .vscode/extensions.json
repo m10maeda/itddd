@@ -6,7 +6,7 @@
     "redhat.vscode-yaml",
     "vercel.turbo-vsc",
     "dbaeumer.vscode-eslint",
-    "firsttris.vscode-jest-runner",
+    "vitest.explorer",
     "mikestead.dotenv",
     "circleci.circleci",
     "codecov.codecov"
