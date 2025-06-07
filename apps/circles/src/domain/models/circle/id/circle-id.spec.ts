@@ -1,3 +1,5 @@
+import { describe, it, expect } from 'vitest';
+
 import { CircleId } from './circle-id';
 import { InvalidCircleIdException } from './invalid-circle-id.exception';
 
@@ -18,16 +20,16 @@ describe('CircleId', () => {
       const a = new CircleId('0');
       const b = new CircleId('0');
 
-      expect(a.equals(b)).toBeTrue();
-      expect(b.equals(a)).toBeTrue();
+      expect(a.equals(b)).toBeTruthy();
+      expect(b.equals(a)).toBeTruthy();
     });
 
     it('should return false when comparing objects with the different value', () => {
       const a = new CircleId('0');
       const b = new CircleId('1');
 
-      expect(a.equals(b)).toBeFalse();
-      expect(b.equals(a)).toBeFalse();
+      expect(a.equals(b)).toBeFalsy();
+      expect(b.equals(a)).toBeFalsy();
     });
   });
 });
