@@ -1,4 +1,5 @@
-import config from '@itddd/eslint-config/nest-js';
+import config from '@itddd/eslint-config';
+import vitest from '@itddd/eslint-config/+vitest';
 
 /** @type {import("eslint").Linter.Config[]} */
-export default [...config];
+export default [...config, ...vitest];

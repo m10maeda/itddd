@@ -7,9 +7,7 @@
     ".": "./index.js",
     "./node": "./node.js",
     "./next-js": "./next.js",
-    "./nest-js": "./nest.js",
-    "./+vitest": "./+vitest.js",
-    "./+jest": "./+jest.js"
+    "./+vitest": "./+vitest.js"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0"
