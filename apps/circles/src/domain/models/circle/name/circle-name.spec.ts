@@ -1,3 +1,5 @@
+import { describe, it, expect } from 'vitest';
+
 import { CircleName } from './circle-name';
 import { InvalidCircleNameException } from './invalid-circle-name.exception';
 
@@ -18,14 +20,14 @@ describe('CircleName', () => {
       const sut = new CircleName('Baseball');
       const target = new CircleName('Baseball');
 
-      expect(sut.equals(target)).toBeTrue();
+      expect(sut.equals(target)).toBeTruthy();
     });
 
     it('should return false when specified object have the different value', () => {
       const sut = new CircleName('Baseball');
       const target = new CircleName('Football');
 
-      expect(sut.equals(target)).toBeFalse();
+      expect(sut.equals(target)).toBeFalsy();
     });
   });
 });

@@ -1,3 +1,5 @@
+import { describe, it, expect } from 'vitest';
+
 import { ProfileId } from './profile-id';
 
 describe('ProfileId', () => {
@@ -17,16 +19,16 @@ describe('ProfileId', () => {
       const a = new ProfileId('0');
       const b = new ProfileId('0');
 
-      expect(a.equals(b)).toBeTrue();
-      expect(b.equals(a)).toBeTrue();
+      expect(a.equals(b)).toBeTruthy();
+      expect(b.equals(a)).toBeTruthy();
     });
 
     it('should return false when comparing objects with the different value', () => {
       const a = new ProfileId('0');
       const b = new ProfileId('1');
 
-      expect(a.equals(b)).toBeFalse();
-      expect(b.equals(a)).toBeFalse();
+      expect(a.equals(b)).toBeFalsy();
+      expect(b.equals(a)).toBeFalsy();
     });
   });
 });

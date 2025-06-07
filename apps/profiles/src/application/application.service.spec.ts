@@ -1,4 +1,12 @@
-import { createMock } from '@golevelup/ts-jest';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type MockedObject,
+} from 'vitest';
 
 import { ApplicationService } from './application.service';
 import { ProfileData } from './dto';
@@ -14,10 +22,21 @@ import {
 import { ProfileExistenceService } from '../domain/services';
 
 describe('ApplicationService', () => {
-  const mockEventPublisher = createMock<IProfileEventPublisher>();
-  const mockProfileFactory = createMock<IProfileFactory>();
-  const mockProfileRepository = createMock<IProfileRepository>();
-  const mockProfileExistenceService = createMock<ProfileExistenceService>();
+  const mockEventPublisher = {
+    publish: vi.fn(),
+  } as unknown as MockedObject<IProfileEventPublisher>;
+  const mockProfileFactory = {
+    create: vi.fn(),
+  } as unknown as MockedObject<IProfileFactory>;
+  const mockProfileRepository = {
+    getBy: vi.fn(),
+    getAll: vi.fn(),
+    delete: vi.fn(),
+    save: vi.fn(),
+  } as unknown as MockedObject<IProfileRepository>;
+  const mockProfileExistenceService = {
+    exists: vi.fn(),
+  } as unknown as MockedObject<ProfileExistenceService>;
 
   function createApplicationService() {
     return new ApplicationService(
@@ -29,7 +48,7 @@ describe('ApplicationService', () => {
   }
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('delete method', () => {
@@ -43,7 +62,7 @@ describe('ApplicationService', () => {
       it('should resolve', async () => {
         const sut = createApplicationService();
 
-        await expect(sut.delete('DUMMY_ID')).toResolve();
+        await expect(sut.delete('DUMMY_ID')).resolves.not.toThrow();
       });
 
       it('should call publish in event publisher', async () => {
@@ -64,7 +83,7 @@ describe('ApplicationService', () => {
       it('should reject', async () => {
         const sut = createApplicationService();
 
-        await expect(sut.delete('DUMMY_ID')).toReject();
+        await expect(sut.delete('DUMMY_ID')).rejects.toThrow();
       });
 
       it('should throw ProfileNotFoundException', async () => {
@@ -138,7 +157,7 @@ describe('ApplicationService', () => {
       it('should reject', async () => {
         const sut = createApplicationService();
 
-        await expect(sut.getBy('DUMMY_ID')).toReject();
+        await expect(sut.getBy('DUMMY_ID')).rejects.toThrow();
       });
 
       it('should throw ProfileNotFoundException', async () => {
@@ -155,6 +174,9 @@ describe('ApplicationService', () => {
     describe('when no specified name exist', () => {
       beforeEach(() => {
         mockProfileExistenceService.exists.mockResolvedValueOnce(false);
+        mockProfileFactory.create.mockResolvedValue(
+          new Profile(new ProfileId('NEW_ID'), new ProfileName('Alice')),
+        );
       });
 
       it('should call publish in event publisher', async () => {
@@ -187,7 +209,7 @@ describe('ApplicationService', () => {
       it('should reject', async () => {
         const sut = createApplicationService();
 
-        await expect(sut.register('Alice')).toReject();
+        await expect(sut.register('Alice')).rejects.toThrow();
       });
     });
   });
@@ -197,6 +219,9 @@ describe('ApplicationService', () => {
       describe('when no specified name exist', () => {
         beforeEach(() => {
           mockProfileExistenceService.exists.mockResolvedValueOnce(false);
+          mockProfileRepository.getBy.mockResolvedValueOnce(
+            new Profile(new ProfileId('DUMMY_ID'), new ProfileName('Alice')),
+          );
         });
 
         it('should call publish in event publisher', async () => {
@@ -217,7 +242,7 @@ describe('ApplicationService', () => {
         it('should reject', async () => {
           const sut = createApplicationService();
 
-          await expect(sut.rename('DUMMY_ID', 'Alice')).toReject();
+          await expect(sut.rename('DUMMY_ID', 'Alice')).rejects.toThrow();
         });
       });
     });
@@ -230,7 +255,7 @@ describe('ApplicationService', () => {
       it('should reject', async () => {
         const sut = createApplicationService();
 
-        await expect(sut.rename('DUMMY_ID', 'Bob')).toReject();
+        await expect(sut.rename('DUMMY_ID', 'Bob')).rejects.toThrow();
       });
 
       it('should throw ProfileNotFoundException', async () => {

@@ -1,3 +1,5 @@
+import { describe, it, expect } from 'vitest';
+
 import { ProfileName } from './profile-name';
 
 describe('ProfileName', () => {
@@ -18,14 +20,14 @@ describe('ProfileName', () => {
       const sut = new ProfileName('Alice');
       const target = new ProfileName('Alice');
 
-      expect(sut.equals(target)).toBeTrue();
+      expect(sut.equals(target)).toBeTruthy();
     });
 
     it('should return false when specified object have the different value', () => {
       const sut = new ProfileName('Alice');
       const target = new ProfileName('Bob');
 
-      expect(sut.equals(target)).toBeFalse();
+      expect(sut.equals(target)).toBeFalsy();
     });
   });
 });
