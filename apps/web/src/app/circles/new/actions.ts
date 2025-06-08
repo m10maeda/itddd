@@ -19,8 +19,30 @@ export async function registerCircle(
   prevState: State,
   formData: FormData,
 ): Promise<State> {
-  const name = formData.get('name')?.toString();
-  const owner = formData.get('owner')?.toString();
+  const nameValue = formData.get('name');
+  const ownerValue = formData.get('owner');
+
+  const nameIsNull = nameValue === null;
+  const ownerIsNull = ownerValue === null;
+
+  const nameIsNotString = !nameIsNull && typeof nameValue !== 'string';
+  const ownerIsNotString = !ownerIsNull && typeof ownerValue !== 'string';
+
+  if (nameIsNotString || ownerIsNotString) {
+    return {
+      ...prevState,
+      errors: {
+        ...prevState.errors,
+        name: nameIsNotString ? 'Name must be text.' : prevState.errors?.name,
+        owner: ownerIsNotString
+          ? 'Owner must be text.'
+          : prevState.errors?.owner,
+      },
+    };
+  }
+
+  const name = nameIsNull ? '' : nameValue;
+  const owner = ownerIsNull ? '' : ownerValue;
 
   if (!name || !owner)
     return {

@@ -19,7 +19,24 @@ export async function updateUser(
   prevState: State,
   formData: FormData,
 ): Promise<State> {
-  const name = formData.get('name')?.toString();
+  const nameValue = formData.get('name');
+
+  if (nameValue === null)
+    return {
+      ...prevState,
+      errors: { ...prevState.errors, name: 'Name is required.' },
+      values: { name: '' },
+    };
+
+  if (typeof nameValue !== 'string') {
+    return {
+      ...prevState,
+      errors: { ...prevState.errors, name: 'Name must be text.' },
+      values: { name: '' },
+    };
+  }
+
+  const name = nameValue;
 
   if (!name)
     return {
