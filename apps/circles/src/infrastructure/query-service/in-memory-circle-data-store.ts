@@ -1,5 +1,5 @@
 import { ICircleDataAccess } from './circle-data-access';
-import { type CircleData } from '../../application/use-case/input-ports';
+import { CircleData } from '../../application/use-case/input-ports';
 import {
   CircleAddedMember,
   CircleChangedOwner,
@@ -50,10 +50,12 @@ export class InMemoryCircleDataStore
       this.circles = this.circles.map((circle) => {
         if (circle.id !== event.id.toString()) return circle;
 
-        return {
-          ...circle,
-          name: event.newName.toString(),
-        };
+        return new CircleData(
+          circle.id,
+          event.newName.toString(),
+          circle.owner,
+          circle.members,
+        );
       });
     }
 
@@ -61,10 +63,12 @@ export class InMemoryCircleDataStore
       this.circles = this.circles.map((circle) => {
         if (circle.id !== event.id.toString()) return circle;
 
-        return {
-          ...circle,
-          members: [...circle.members, event.member.toString()],
-        };
+        return new CircleData(
+          circle.id,
+          circle.name,
+          circle.owner,
+          new Set([...circle.members, event.member.toString()]),
+        );
       });
     }
 
@@ -72,12 +76,16 @@ export class InMemoryCircleDataStore
       this.circles = this.circles.map((circle) => {
         if (circle.id !== event.id.toString()) return circle;
 
-        return {
-          ...circle,
-          members: Array.from(circle.members).filter(
-            (member) => member !== event.member.toString(),
+        return new CircleData(
+          circle.id,
+          circle.name,
+          circle.owner,
+          new Set(
+            Array.from(circle.members).filter(
+              (member) => member !== event.member.toString(),
+            ),
           ),
-        };
+        );
       });
     }
 
@@ -85,13 +93,16 @@ export class InMemoryCircleDataStore
       this.circles = this.circles.map((circle) => {
         if (circle.id !== event.id.toString()) return circle;
 
-        return {
-          ...circle,
-          owner: event.owner.toString(),
-          members: Array.from(circle.members).filter(
-            (member) => member !== event.owner.toString(),
+        return new CircleData(
+          circle.id,
+          circle.name,
+          event.owner.toString(),
+          new Set(
+            Array.from(circle.members).filter(
+              (member) => member !== event.owner.toString(),
+            ),
           ),
-        };
+        );
       });
     }
   }
