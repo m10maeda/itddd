@@ -41,7 +41,7 @@ export default async function Circle({ params }: Props) {
   if (circleError) return <p>Error</p>;
 
   const { data: owner } = await profileClient.GET('/{id}', {
-    params: { path: { id: circle.owner } },
+    params: { path: { id: circle.ownerId } },
   });
 
   return (
@@ -79,7 +79,7 @@ export default async function Circle({ params }: Props) {
           </p>
         </Box>
 
-        <MemberList circleId={id} memberIds={circle.members} />
+        <MemberList circleId={id} memberIds={circle.memberIds} />
       </Stack>
 
       <Box mt={4}>

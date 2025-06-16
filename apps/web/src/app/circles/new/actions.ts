@@ -73,7 +73,7 @@ export async function registerCircle(
     };
 
   const { error, response } = await client.POST('/', {
-    body: { name, owner },
+    body: { name, ownerId: owner },
   });
 
   if (error?.status === 400)

@@ -35,8 +35,8 @@ export async function CircleList() {
               circle={{
                 id: circle.id,
                 name: circle.name,
-                ownerId: circle.owner,
-                memberIds: circle.members,
+                ownerId: circle.ownerId,
+                memberIds: circle.memberIds,
               }}
             />
           ))}
