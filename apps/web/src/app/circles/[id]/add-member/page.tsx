@@ -46,9 +46,8 @@ export default async function AddMember({ params }: Props) {
 
   const { data: allProfiles } = await profileClient.GET('/');
 
-  const candidateIds = candidateMembers.map(({ id }) => id);
   const candidates = allProfiles?.filter((profile) =>
-    candidateIds.includes(profile.id),
+    candidateMembers.includes(profile.id),
   );
 
   return (
@@ -57,7 +56,7 @@ export default async function AddMember({ params }: Props) {
         Add Member Form
       </Typography>
 
-      {candidateIds.length ? (
+      {candidateMembers.length ? (
         <List>
           {candidates?.map((candidate) => (
             <ListItem

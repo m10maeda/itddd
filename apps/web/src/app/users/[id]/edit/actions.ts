@@ -63,7 +63,7 @@ export async function updateUser(
       },
     };
 
-  const { error } = await profileApiClient.PUT('/{id}', {
+  const { error } = await profileApiClient.PATCH('/{id}', {
     params: { path: { id } },
     body: { name },
   });

@@ -16,7 +16,7 @@ export async function addMember(
 ): Promise<State> {
   const { error } = await client.POST('/{id}/members', {
     params: { path: { id: circleId } },
-    body: { id: memberId },
+    body: { memberId },
   });
 
   if (error)

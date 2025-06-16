@@ -71,7 +71,7 @@ export async function editCircle(
       },
     };
 
-  const { error } = await client.PUT('/{id}', {
+  const { error } = await client.PATCH('/{id}', {
     params: { path: { id } },
     body: { name },
   });
