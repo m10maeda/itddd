@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import openapiTS, { astToString } from 'openapi-typescript';
 
 const ast = await openapiTS(
-  `${process.env.CIRCLES_SERVICE_URL ?? 'http://localhost:3000'}/api-json`,
+  `${process.env.CIRCLES_SERVICE_URL ?? 'http://localhost:3000'}/doc`,
 );
 const contents = astToString(ast);
 
