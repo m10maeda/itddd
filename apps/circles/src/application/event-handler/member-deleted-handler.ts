@@ -1,11 +1,13 @@
 import { type ICircleRepository } from '../../domain/models/circle';
-import {
-  JoinedCircleSpecification,
-  NoMembersCircleSpecification,
-  OwnedCircleSpecification,
-} from '../../domain/models/circle/specifications';
 import { IMemberDeletedHandler, Member } from '../../domain/models/member';
-import { OwnerCandidateChoicer } from '../../domain/services';
+import {
+  CircleRelationshipSpecification,
+  type IRelationshipRepository,
+  MemberRelationshipSpecification,
+  Role,
+  RoleRelationshipSpecification,
+} from '../../domain/models/relationship';
+import { OwnerCandidateRelationshipChoicer } from '../../domain/services';
 import {
   ChangeOwnerUseCaseInputData,
   DeleteCircleUseCaseInputData,
@@ -22,56 +24,79 @@ export class MemberDeletedHandler implements IMemberDeletedHandler {
 
   private readonly deleteCircleUseCase: IDeleteCircleUseCaseInputPort;
 
+  private readonly relationshipRepository: IRelationshipRepository;
+
   private readonly removeMemberUseCase: IRemoveMemberUseCaseInputPort;
 
   public async onMemberDeleted(member: Member): Promise<void> {
-    await this.changeOwnerIfNeeded(member);
-    await this.deleteCircleIfNeeded(member);
     await this.removeIfNeeded(member);
+
+    await this.changeOwnerIfNeeded(member);
+
+    await this.deleteCircleIfNeeded(member);
   }
 
   private async changeOwnerIfNeeded(member: Member): Promise<void> {
-    const spec = new OwnedCircleSpecification(member).andNot(
-      new NoMembersCircleSpecification(),
+    const spec = new MemberRelationshipSpecification(member.id).and(
+      new RoleRelationshipSpecification(Role.Owner),
     );
+    const relationships = await this.relationshipRepository.getAllBy(spec);
 
-    const circles = await this.circleRepository.findAllBy(spec);
-
-    for (const circle of circles) {
-      const candidate = new OwnerCandidateChoicer(circle).choose();
-
-      await this.changeOwnerUseCase.handle(
-        new ChangeOwnerUseCaseInputData(
-          circle.id.toString(),
-          candidate.id.toString(),
+    for (const relationship of relationships) {
+      const memberRelations = await this.relationshipRepository.getAllBy(
+        new CircleRelationshipSpecification(relationship.circleId).and(
+          new RoleRelationshipSpecification(Role.Member),
         ),
       );
+
+      if (Array.from(memberRelations).length > 0) {
+        const candidate = await new OwnerCandidateRelationshipChoicer(
+          relationship.circleId,
+          this.relationshipRepository,
+        ).choice();
+
+        await this.changeOwnerUseCase.handle(
+          new ChangeOwnerUseCaseInputData(
+            candidate.circleId.toString(),
+            candidate.memberId.toString(),
+          ),
+        );
+      }
     }
   }
 
   private async deleteCircleIfNeeded(member: Member): Promise<void> {
-    const spec = new OwnedCircleSpecification(member).and(
-      new NoMembersCircleSpecification(),
+    const spec = new MemberRelationshipSpecification(member.id).and(
+      new RoleRelationshipSpecification(Role.Owner),
     );
+    const relationships = await this.relationshipRepository.getAllBy(spec);
 
-    const circles = await this.circleRepository.findAllBy(spec);
-
-    for (const circle of circles) {
-      await this.deleteCircleUseCase.handle(
-        new DeleteCircleUseCaseInputData(circle.id.toString()),
+    for (const relationship of relationships) {
+      const memberRelations = await this.relationshipRepository.getAllBy(
+        new CircleRelationshipSpecification(relationship.circleId).and(
+          new RoleRelationshipSpecification(Role.Member),
+        ),
       );
+
+      if (Array.from(memberRelations).length === 0) {
+        await this.deleteCircleUseCase.handle(
+          new DeleteCircleUseCaseInputData(relationship.circleId.toString()),
+        );
+      }
     }
   }
 
   private async removeIfNeeded(member: Member): Promise<void> {
-    const spec = new JoinedCircleSpecification(member);
-    const circles = await this.circleRepository.findAllBy(spec);
+    const spec = new MemberRelationshipSpecification(member.id).and(
+      new RoleRelationshipSpecification(Role.Member),
+    );
+    const relationships = await this.relationshipRepository.getAllBy(spec);
 
-    for (const circle of circles) {
+    for (const relationship of relationships) {
       await this.removeMemberUseCase.handle(
         new RemoveMemberUseCaseInputData(
-          circle.id.toString(),
-          member.id.toString(),
+          relationship.circleId.toString(),
+          relationship.memberId.toString(),
         ),
       );
     }
@@ -79,11 +104,13 @@ export class MemberDeletedHandler implements IMemberDeletedHandler {
 
   public constructor(
     circleRepository: ICircleRepository,
+    relationshipRepository: IRelationshipRepository,
     removeMemberUseCase: IRemoveMemberUseCaseInputPort,
     changeOwnerUseCase: IChangeOwnerUseCaseInputPort,
     deleteCircleUseCase: IDeleteCircleUseCaseInputPort,
   ) {
     this.circleRepository = circleRepository;
+    this.relationshipRepository = relationshipRepository;
     this.removeMemberUseCase = removeMemberUseCase;
     this.changeOwnerUseCase = changeOwnerUseCase;
     this.deleteCircleUseCase = deleteCircleUseCase;

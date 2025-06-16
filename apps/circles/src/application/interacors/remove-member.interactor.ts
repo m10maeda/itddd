@@ -1,10 +1,14 @@
-import {
-  CircleId,
-  ICircleEventPublisher,
-  type ICircleRepository,
-} from '../../domain/models/circle';
+import { CircleId, type ICircleRepository } from '../../domain/models/circle';
 import { Member, MemberId } from '../../domain/models/member';
-import { CircleNotFoundException } from '../use-case/exceptions';
+import {
+  RelationshipDeleted,
+  type IRelationshipEventPublisher,
+  type IRelationshipRepository,
+} from '../../domain/models/relationship';
+import {
+  CircleNotFoundException,
+  RelationshipNotFoundException,
+} from '../use-case/exceptions';
 import {
   type RemoveMemberUseCaseInputData,
   RemoveMemberUseCaseOutputData,
@@ -14,7 +18,9 @@ import {
 export class RemoveMemberInteractor implements IRemoveMemberUseCaseInputPort {
   private readonly circleRepository: ICircleRepository;
 
-  private readonly eventPublisher: ICircleEventPublisher;
+  private readonly eventPublisher: IRelationshipEventPublisher;
+
+  private readonly relationshipRepository: IRelationshipRepository;
 
   public async handle(
     input: RemoveMemberUseCaseInputData,
@@ -26,9 +32,18 @@ export class RemoveMemberInteractor implements IRemoveMemberUseCaseInputPort {
 
     const member = new Member(new MemberId(input.member));
 
-    if (!circle.joins(member)) return new RemoveMemberUseCaseOutputData();
+    const relationship = await this.relationshipRepository.getBy(
+      circle.id,
+      member.id,
+    );
 
-    const event = circle.remove(member);
+    if (relationship === undefined)
+      throw new RelationshipNotFoundException(circle.id, member.id);
+
+    const event = new RelationshipDeleted(
+      relationship.circleId,
+      relationship.memberId,
+    );
 
     await this.eventPublisher.publish(event);
 
@@ -36,10 +51,12 @@ export class RemoveMemberInteractor implements IRemoveMemberUseCaseInputPort {
   }
 
   public constructor(
-    eventPublisher: ICircleEventPublisher,
+    eventPublisher: IRelationshipEventPublisher,
     circleRepository: ICircleRepository,
+    relationshipRepository: IRelationshipRepository,
   ) {
     this.eventPublisher = eventPublisher;
     this.circleRepository = circleRepository;
+    this.relationshipRepository = relationshipRepository;
   }
 }
