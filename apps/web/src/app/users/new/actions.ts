@@ -61,7 +61,7 @@ export async function registerUser(
       },
     };
 
-  const { error, response } = await profileApiClient.POST('/', {
+  const { error, data } = await profileApiClient.POST('/', {
     body: { name },
   });
 
@@ -82,7 +82,14 @@ export async function registerUser(
       values: { ...prevState.values, name },
     };
 
-  const id = response.headers.get('location')?.split('/')[1];
+  if (error)
+    return {
+      ...prevState,
+      errors: { ...prevState.errors, name: 'An unexpected error occurred.' },
+      values: { ...prevState.values, name },
+    };
+
+  const { id } = data;
 
   redirect(id ? `/users/${id}` : '/users');
 }

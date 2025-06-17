@@ -113,9 +113,16 @@ export interface paths {
         /** @description Profile registered successfully */
         201: {
           headers: {
+            /** @description Location of the registered circle */
+            Location?: string;
             [name: string]: unknown;
           };
-          content?: never;
+          content: {
+            'application/json': {
+              /** @example 1 */
+              id: string;
+            };
+          };
         };
         /** @description Bad request */
         400: {
