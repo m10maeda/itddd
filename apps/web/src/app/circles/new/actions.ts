@@ -72,7 +72,7 @@ export async function registerCircle(
       },
     };
 
-  const { error, response } = await client.POST('/', {
+  const { error, data } = await client.POST('/', {
     body: { name, ownerId: owner },
   });
 
@@ -93,7 +93,14 @@ export async function registerCircle(
       values: { ...prevState.values, name },
     };
 
-  const id = response.headers.get('location')?.split('/')[1];
+  if (error)
+    return {
+      ...prevState,
+      errors: { ...prevState.errors, name: 'An unexpected error occurred.' },
+      values: { ...prevState.values, name },
+    };
+
+  const { id } = data;
 
   redirect(id ? `/circles/${id}` : '/circles');
 }
