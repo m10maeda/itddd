@@ -134,7 +134,31 @@ app.openapi(
       },
     },
     responses: {
-      201: { description: 'Profile registered successfully' },
+      201: {
+        description: 'Profile registered successfully',
+        headers: {
+          Location: {
+            description: 'Location of the registered profile',
+            schema: {
+              type: 'string',
+              example: '/1',
+            },
+          },
+        },
+        content: {
+          'application/json': {
+            schema: z
+              .object({
+                id: z.string().openapi({
+                  example: '1',
+                }),
+              })
+              .openapi({
+                example: { id: '1' },
+              }),
+          },
+        },
+      },
       400: errorResponses[400],
       409: errorResponses[409],
       500: errorResponses[500],
@@ -145,7 +169,7 @@ app.openapi(
 
     const registeredId = await service.register(name);
 
-    return c.body(null, 201, { Location: `/${registeredId}` });
+    return c.json({ id: registeredId }, 201, { Location: `/${registeredId}` });
   },
 );
 
