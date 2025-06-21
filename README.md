@@ -10,7 +10,7 @@ This is a Domain-Driven Design example project.
 This repo is configured to be built with Docker, and Docker compose. To build all apps in this repo:
 
 ```shell
-docker-compose up -d
+docker compose up -d
 ```
 
 Open <http://localhost:3000>.
@@ -18,7 +18,7 @@ Open <http://localhost:3000>.
 To shutdown all running containers:
 
 ```shell
-docker kill $(docker ps -q) && docker rm $(docker ps -a -q)
+docker compose down
 ```
 
 ## Read more
