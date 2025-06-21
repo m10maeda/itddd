@@ -1,51 +1,17 @@
 import { type ICircleEventLoader } from './circle-event-loader';
 import {
   Circle,
-  CircleAddedMember,
-  CircleChangedOwner,
   CircleDeleted,
   type CircleEvent,
   CircleId,
   CircleName,
   CircleRegistered,
-  CircleRemovedMember,
   CircleRenamed,
   type ICircleRepository,
-  type ICircleSpecification,
-  Members,
 } from '../../../domain/models/circle';
-import { Member } from '../../../domain/models/member';
 
 export class CircleRepository implements ICircleRepository {
   private readonly eventLoader: ICircleEventLoader;
-
-  public async findAllBy(
-    criteria: ICircleSpecification,
-  ): Promise<Iterable<Circle>> {
-    const allRegisteredEvents =
-      await this.eventLoader.loadAllRegisteredEvents();
-
-    const circles = (
-      await Promise.all(
-        Array.from(allRegisteredEvents).map(async (event) =>
-          this.getBy(event.id),
-        ),
-      )
-    ).filter((circle): circle is Circle => circle !== undefined);
-
-    const chunk = (
-      await Promise.all(
-        circles.map(async (circle) => ({
-          circle,
-          satisfied: await criteria.isSatisfiedBy(circle),
-        })),
-      )
-    )
-      .filter((result) => result.satisfied)
-      .map((result) => result.circle);
-
-    return chunk;
-  }
 
   public async getBy(id: CircleId): Promise<Circle | undefined>;
   public async getBy(name: CircleName): Promise<Circle | undefined>;
@@ -84,28 +50,11 @@ export class CircleRepository implements ICircleRepository {
       (event) => !(event instanceof CircleRegistered),
     );
 
-    const circle = new Circle(
-      registered.id,
-      registered.name,
-      registered.owner,
-      new Members([]),
-    );
+    const circle = new Circle(registered.id, registered.name);
 
     restEvents.forEach((event) => {
       if (event instanceof CircleRenamed) {
         circle.renameTo(event.newName);
-      }
-
-      if (event instanceof CircleChangedOwner) {
-        circle.changeOwnerTo(new Member(event.owner));
-      }
-
-      if (event instanceof CircleAddedMember) {
-        circle.add(new Member(event.member));
-      }
-
-      if (event instanceof CircleRemovedMember) {
-        circle.remove(new Member(event.member));
       }
     });
 

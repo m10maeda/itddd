@@ -1,113 +1,202 @@
 import { ICircleDataAccess } from './circle-data-access';
 import { CircleData } from '../../application/use-case/input-ports';
 import {
-  CircleAddedMember,
-  CircleChangedOwner,
   CircleDeleted,
   CircleEvent,
   CircleRegistered,
-  CircleRemovedMember,
   CircleRenamed,
   ICircleEventSubscriber,
 } from '../../domain/models/circle';
+import {
+  IRelationshipEventSubscriber,
+  RelationshipChangedRole,
+  RelationshipCreated,
+  RelationshipDeleted,
+  RelationshipEvent,
+  Role,
+} from '../../domain/models/relationship';
 
 export class InMemoryCircleDataStore
-  implements ICircleDataAccess, ICircleEventSubscriber
+  implements
+    ICircleDataAccess,
+    ICircleEventSubscriber,
+    IRelationshipEventSubscriber
 {
-  private circles: CircleData[];
+  private readonly circles: Map<string, CircleData>;
+
+  private readonly pendingCircles: Map<string, Omit<CircleData, 'owner'>>;
 
   public async getAll(): Promise<Iterable<CircleData>> {
-    return Promise.resolve(this.circles);
+    return Promise.resolve(this.circles.values());
   }
 
   public async getBy(id: string): Promise<CircleData | undefined> {
-    const circle = this.circles.find((circle) => circle.id === id);
+    const circle = this.circles.get(id);
 
     return Promise.resolve(circle);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async handle(event: CircleEvent): Promise<void> {
+  public async handle(event: CircleEvent | RelationshipEvent): Promise<void> {
     if (event instanceof CircleRegistered) {
-      this.circles = [
-        ...this.circles,
-        {
-          id: event.id.toString(),
-          name: event.name.toString(),
-          owner: event.owner.toString(),
-          members: [],
-        },
-      ];
-    }
+      this.pendingCircles.set(event.id.toString(), {
+        id: event.id.toString(),
+        name: event.name.toString(),
+        members: [],
+      });
 
-    if (event instanceof CircleDeleted) {
-      this.circles = this.circles.filter(
-        (circle) => circle.id !== event.id.toString(),
-      );
+      return;
     }
 
     if (event instanceof CircleRenamed) {
-      this.circles = this.circles.map((circle) => {
-        if (circle.id !== event.id.toString()) return circle;
+      const circle = this.circles.get(event.id.toString());
 
-        return new CircleData(
+      if (circle === undefined) return;
+
+      this.circles.set(
+        event.id.toString(),
+        new CircleData(
           circle.id,
           event.newName.toString(),
           circle.owner,
           circle.members,
-        );
-      });
+        ),
+      );
     }
 
-    if (event instanceof CircleAddedMember) {
-      this.circles = this.circles.map((circle) => {
-        if (circle.id !== event.id.toString()) return circle;
+    if (event instanceof CircleDeleted) {
+      this.circles.delete(event.id.toString());
 
-        return new CircleData(
+      return;
+    }
+
+    if (event instanceof RelationshipCreated) {
+      if (event.role === Role.Owner) {
+        const pendingCircle = this.pendingCircles.get(
+          event.circleId.toString(),
+        );
+
+        if (pendingCircle !== undefined) {
+          this.circles.set(
+            event.circleId.toString(),
+            new CircleData(
+              pendingCircle.id,
+              pendingCircle.name,
+              event.memberId.toString(),
+              pendingCircle.members,
+            ),
+          );
+
+          this.pendingCircles.delete(event.circleId.toString());
+
+          return;
+        }
+
+        return;
+      }
+
+      const circle = this.circles.get(event.circleId.toString());
+
+      if (circle === undefined) return;
+
+      this.circles.set(
+        event.circleId.toString(),
+        new CircleData(circle.id, circle.name, circle.owner, [
+          ...circle.members,
+          event.memberId.toString(),
+        ]),
+      );
+
+      return;
+    }
+
+    if (event instanceof RelationshipDeleted) {
+      const circle = this.circles.get(event.circleId.toString());
+
+      if (circle === undefined) return;
+
+      if (event.memberId.toString() === circle.owner) {
+        this.pendingCircles.set(event.circleId.toString(), {
+          id: event.circleId.toString(),
+          name: circle.name,
+          members: circle.members,
+        });
+
+        return;
+      }
+
+      this.circles.set(
+        event.circleId.toString(),
+        new CircleData(
           circle.id,
           circle.name,
           circle.owner,
-          new Set([...circle.members, event.member.toString()]),
-        );
-      });
+          Array.from(circle.members).filter(
+            (member) => member !== event.memberId.toString(),
+          ),
+        ),
+      );
+
+      return;
     }
 
-    if (event instanceof CircleRemovedMember) {
-      this.circles = this.circles.map((circle) => {
-        if (circle.id !== event.id.toString()) return circle;
+    if (event instanceof RelationshipChangedRole) {
+      const circle = this.circles.get(event.circleId.toString());
 
-        return new CircleData(
-          circle.id,
-          circle.name,
-          circle.owner,
-          new Set(
+      if (circle === undefined) return;
+
+      if (event.role === Role.Owner) {
+        const pendingCircle = this.pendingCircles.get(
+          event.circleId.toString(),
+        );
+
+        if (pendingCircle !== undefined) {
+          this.circles.set(
+            event.circleId.toString(),
+            new CircleData(
+              pendingCircle.id,
+              pendingCircle.name,
+              event.memberId.toString(),
+              Array.from(pendingCircle.members).filter(
+                (member) => member !== event.memberId.toString(),
+              ),
+            ),
+          );
+
+          this.pendingCircles.delete(event.circleId.toString());
+
+          return;
+        }
+
+        this.circles.set(
+          event.circleId.toString(),
+          new CircleData(
+            circle.id,
+            circle.name,
+            event.memberId.toString(),
             Array.from(circle.members).filter(
-              (member) => member !== event.member.toString(),
+              (member) => member !== event.memberId.toString(),
             ),
           ),
         );
-      });
-    }
 
-    if (event instanceof CircleChangedOwner) {
-      this.circles = this.circles.map((circle) => {
-        if (circle.id !== event.id.toString()) return circle;
+        return;
+      }
 
-        return new CircleData(
-          circle.id,
-          circle.name,
-          event.owner.toString(),
-          new Set(
-            Array.from(circle.members).filter(
-              (member) => member !== event.owner.toString(),
-            ),
-          ),
-        );
+      this.pendingCircles.set(event.circleId.toString(), {
+        id: event.circleId.toString(),
+        name: circle.name,
+        members: [...circle.members, event.memberId.toString()],
       });
+
+      return;
     }
   }
 
   public constructor(circles: Iterable<CircleData>) {
-    this.circles = Array.from(circles);
+    this.circles = new Map<string, CircleData>(
+      Array.from(circles).map((circle) => [circle.id.toString(), circle]),
+    );
+    this.pendingCircles = new Map<string, Omit<CircleData, 'owner'>>();
   }
 }

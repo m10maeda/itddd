@@ -37,14 +37,19 @@ import {
   RenameCircleUseCaseInputData,
 } from '../application/use-case/input-ports';
 import {
-  CircleAddedMember,
   CircleEvent,
   CircleId,
   CircleName,
   CircleRegistered,
 } from '../domain/models/circle';
 import { Member, MemberId } from '../domain/models/member';
+import {
+  RelationshipCreated,
+  RelationshipEvent,
+  Role,
+} from '../domain/models/relationship';
 import { CircleExistenceService } from '../domain/services';
+import { RelationshipEventBus } from '../infrastructure/event-bus';
 import { CircleEventBus } from '../infrastructure/event-bus/circle-event-bus';
 import {
   CircleRepository,
@@ -53,11 +58,30 @@ import {
 import { InMemoryCircleFactory } from '../infrastructure/persistence/in-memory-circle-factory';
 import { MemberExistenceService } from '../infrastructure/persistence/member';
 import {
+  InMemoryRelationshipEventStore,
+  RelationshipRepository,
+} from '../infrastructure/persistence/relationship-repository';
+import {
   FindAllCirclesQueryService,
   GetCandidatesQueryService,
   GetCircleQueryService,
   InMemoryCircleDataStore,
 } from '../infrastructure/query-service';
+
+const mockCircleEvents = [
+  new CircleRegistered(new CircleId('1'), new CircleName('Baseball')),
+  new CircleRegistered(new CircleId('2'), new CircleName('Football')),
+  new CircleRegistered(new CircleId('3'), new CircleName('Tennis')),
+];
+
+const mockRelationshipEvents = [
+  new RelationshipCreated(new CircleId('1'), new MemberId('1'), Role.Owner),
+  new RelationshipCreated(new CircleId('1'), new MemberId('2'), Role.Member),
+  new RelationshipCreated(new CircleId('1'), new MemberId('4'), Role.Member),
+  new RelationshipCreated(new CircleId('2'), new MemberId('2'), Role.Owner),
+  new RelationshipCreated(new CircleId('2'), new MemberId('3'), Role.Member),
+  new RelationshipCreated(new CircleId('3'), new MemberId('2'), Role.Owner),
+];
 
 const mockCircles = [
   {
@@ -80,31 +104,17 @@ const mockCircles = [
   },
 ];
 
-const mockEvents = [
-  new CircleRegistered(
-    new CircleId('1'),
-    new CircleName('Baseball'),
-    new MemberId('1'),
-  ),
-  new CircleAddedMember(new CircleId('1'), new MemberId('2')),
-  new CircleAddedMember(new CircleId('1'), new MemberId('4')),
-  new CircleRegistered(
-    new CircleId('2'),
-    new CircleName('Football'),
-    new MemberId('2'),
-  ),
-  new CircleAddedMember(new CircleId('2'), new MemberId('3')),
-  new CircleRegistered(
-    new CircleId('3'),
-    new CircleName('Tennis'),
-    new MemberId('2'),
-  ),
-];
-
 const circleDataAccess = new InMemoryCircleDataStore(mockCircles);
-const circleEventStore = new InMemoryCircleEventStore(mockEvents);
+const circleEventStore = new InMemoryCircleEventStore(mockCircleEvents);
 const circleRepository = new CircleRepository(circleEventStore);
 const circleFactory = new InMemoryCircleFactory(mockCircles.length + 1);
+
+const relationshipEventStore = new InMemoryRelationshipEventStore(
+  mockRelationshipEvents,
+);
+const relationshipRepository = new RelationshipRepository(
+  relationshipEventStore,
+);
 
 const profilesApiClient = createClient<paths>({
   baseUrl: process.env.PROFILES_SERVICE_URL ?? 'http://localhost:3001',
@@ -113,40 +123,52 @@ const profilesApiClient = createClient<paths>({
 const circleExistenceService = new CircleExistenceService(circleRepository);
 const memberExistenceService = new MemberExistenceService(profilesApiClient);
 
-const eventBus = new CircleEventBus();
+const circleEventBus = new CircleEventBus();
 
-eventBus.subscribe(CircleEvent, circleDataAccess);
-eventBus.subscribe(CircleEvent, circleEventStore);
+circleEventBus.subscribe(CircleEvent, circleDataAccess);
+circleEventBus.subscribe(CircleEvent, circleEventStore);
+
+const relationshipEventBus = new RelationshipEventBus();
+
+relationshipEventBus.subscribe(RelationshipEvent, relationshipEventStore);
+relationshipEventBus.subscribe(RelationshipEvent, circleDataAccess);
 
 const getCircleUseCase = new GetCircleQueryService(circleDataAccess);
 const findAllCirclesUseCase = new FindAllCirclesQueryService(circleDataAccess);
 const registerCircleUseCase = new RegisterCircleInteractor(
   circleFactory,
   circleExistenceService,
-  eventBus,
+  memberExistenceService,
+  circleEventBus,
+  relationshipEventBus,
 );
 const renameCircleUseCase = new RenameCircleInteractor(
   circleRepository,
   circleExistenceService,
-  eventBus,
+  circleEventBus,
 );
 const deleteCircleUseCase = new DeleteCircleInteractor(
   circleRepository,
-  eventBus,
+  relationshipRepository,
+  circleEventBus,
+  relationshipEventBus,
 );
 const changeOwnerUseCase = new ChangeOwnerInteractor(
-  eventBus,
+  relationshipEventBus,
   circleRepository,
+  relationshipRepository,
   memberExistenceService,
 );
 const addMemberUseCase = new AddMemberInteractor(
-  eventBus,
+  relationshipEventBus,
   circleRepository,
+  relationshipRepository,
   memberExistenceService,
 );
 const removeMemberUseCase = new RemoveMemberInteractor(
-  eventBus,
+  relationshipEventBus,
   circleRepository,
+  relationshipRepository,
 );
 const getCandidatesUseCase = new GetCandidatesQueryService(
   circleDataAccess,
@@ -155,6 +177,7 @@ const getCandidatesUseCase = new GetCandidatesQueryService(
 
 const memberDeletedHandler = new MemberDeletedHandler(
   circleRepository,
+  relationshipRepository,
   removeMemberUseCase,
   changeOwnerUseCase,
   deleteCircleUseCase,
