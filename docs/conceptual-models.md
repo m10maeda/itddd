@@ -26,17 +26,14 @@ classDiagram
     }
   }
 
-   Profile -- ProfileEvent
+  Profile -- ProfileEvent
 
-   ProfileEvent <|-- ProfileRegistered
-   ProfileEvent <|-- ProfileRenamed
-   ProfileEvent <|-- ProfileDeleted
+  ProfileEvent <|-- ProfileRegistered
+  ProfileEvent <|-- ProfileRenamed
+  ProfileEvent <|-- ProfileDeleted
 
 
   namespace circles {
-    class Member
-
-
     class CircleEvent {
       <<abstract>>
     }
@@ -55,35 +52,55 @@ classDiagram
     class CircleDeleted
 
 
-    class CircleAddedMember
-
-
-    class CircleRemovedMember
-
-
-    class CircleChangedOwner
-
-
     class Circle {
       name
     }
+
+
+    class RelationshipEvent {
+      <<abstract>>
+    }
+
+
+    class RelationshipCreated
+
+
+    class RelationshipDeleted
+
+
+    class RelationshipChangedRole
+
+
+    class Role {
+      <<enum>>
+      Owner
+      Member
+    }
+
+
+    class Relationship
   }
 
-  Member "1" -- "1" Profile
-
   Circle -- CircleEvent
-  Circle "1" -- "1" Member : Owner
-  Circle "1" -- "*" Member : Member
 
   CircleEvent <|-- CircleRegistered
   CircleEvent <|-- CircleRenamed
   CircleEvent <|-- CircleDeleted
-  CircleEvent <|-- CircleAddedMember
-  CircleEvent <|-- CircleRemovedMember
-  CircleEvent <|-- CircleChangedOwner
 
-  CircleRegistered "1" -- "1" Member : Owner
-  CircleAddedMember "1" -- "1" Member
-  CircleRemovedMember "1" -- "1" Member
-  CircleChangedOwner "1" -- "1" Member : Owner
+  CircleRegistered "1" -- "1" Profile : Owner
+
+  RelationshipEvent "1" -- "1" Circle
+  RelationshipEvent "1" -- "1" Profile
+
+  RelationshipEvent <|-- RelationshipCreated
+  RelationshipEvent <|-- RelationshipDeleted
+  RelationshipEvent <|-- RelationshipChangedRole
+
+  RelationshipChangedRole "1" -- "1" Role
+
+  Relationship "1" -- "1" Role
+  Relationship -- RelationshipEvent
+  Relationship "1" -- "1" Circle
+  Relationship "1" -- "1" Profile : Owner
+  Relationship "1" -- "*" Profile : Members
 ```
