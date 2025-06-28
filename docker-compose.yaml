@@ -92,3 +92,8 @@ services:
         condition: service_healthy
       circles:
         condition: service_healthy
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://web:3000/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
