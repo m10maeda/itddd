@@ -63,7 +63,30 @@ jobs:
           command: |
             pnpm run test:ci --continue -- --passWithNoTests
 
+  e2e:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+
+    steps:
+      - checkout
+
+      - run:
+          name: Run E2E tests
+          command: |
+            docker compose --profile test up --exit-code-from e2e e2e
+            EXIT_CODE=$?
+            docker compose down
+            exit $EXIT_CODE
+
+      - store_artifacts:
+          path: e2e/playwright-report
+          destination: playwright-report
+
 workflows:
   main:
     jobs:
       - test
+      - e2e:
+          requires:
+            - test

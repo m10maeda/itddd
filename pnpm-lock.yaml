@@ -174,10 +174,10 @@ importers:
         version: 6.2.0(@emotion/react@11.14.0(@types/react@19.0.0)(react@19.0.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.0.0)(react@19.0.0))(@types/react@19.0.0)(react@19.0.0))(@types/react@19.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@mui/material-nextjs':
         specifier: ^6.2.0
-        version: 6.2.0(@emotion/cache@11.14.0)(@emotion/react@11.14.0(@types/react@19.0.0)(react@19.0.0))(@types/react@19.0.0)(next@15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
+        version: 6.2.0(@emotion/cache@11.14.0)(@emotion/react@11.14.0(@types/react@19.0.0)(react@19.0.0))(@types/react@19.0.0)(next@15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
       next:
         specifier: ^15.0.4
-        version: 15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       openapi-fetch:
         specifier: ^0.13.3
         version: 0.13.3
@@ -208,10 +208,10 @@ importers:
         version: 8.4.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.4.2))
       '@storybook/experimental-nextjs-vite':
         specifier: ^8.4.7
-        version: 8.4.7(@babel/core@7.26.0)(@storybook/test@8.4.7(storybook@8.4.7(prettier@3.4.2)))(next@15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.4.2))(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.1)(terser@5.37.0))
+        version: 8.4.7(@babel/core@7.26.0)(@storybook/test@8.4.7(storybook@8.4.7(prettier@3.4.2)))(next@15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.4.2))(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.1)(terser@5.37.0))
       '@storybook/nextjs':
         specifier: ^8.4.7
-        version: 8.4.7(esbuild@0.21.5)(next@15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.4.2))(type-fest@4.30.0)(typescript@5.7.2)(webpack-hot-middleware@2.26.1)(webpack@5.96.1(esbuild@0.21.5))
+        version: 8.4.7(esbuild@0.21.5)(next@15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.4.2))(type-fest@4.30.0)(typescript@5.7.2)(webpack-hot-middleware@2.26.1)(webpack@5.96.1(esbuild@0.21.5))
       '@storybook/react':
         specifier: ^8.4.7
         version: 8.4.7(@storybook/test@8.4.7(storybook@8.4.7(prettier@3.4.2)))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.4.2))(typescript@5.7.2)
@@ -251,6 +251,24 @@ importers:
       vitest:
         specifier: ^2.1.8
         version: 2.1.8(@types/node@22.10.1)(jsdom@25.0.1)(terser@5.37.0)
+
+  e2e:
+    devDependencies:
+      '@itddd/eslint-config':
+        specifier: workspace:*
+        version: link:../packages/eslint-config
+      '@itddd/typescript-config':
+        specifier: workspace:*
+        version: link:../packages/typescript-config
+      '@playwright/test':
+        specifier: ^1.53.1
+        version: 1.53.1
+      '@types/node':
+        specifier: ^22.10.1
+        version: 22.10.1
+      eslint-plugin-playwright:
+        specifier: ^2.2.0
+        version: 2.2.0(eslint@9.16.0(jiti@1.21.6))
 
   packages/circles-api:
     devDependencies:
@@ -1760,6 +1778,11 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@playwright/test@1.53.1':
+    resolution: {integrity: sha512-Z4c23LHV0muZ8hfv4jw6HngPJkbbtZxTkxPNIg7cJcTc9C28N/p2q7g3JZS2SiKBBHJ3uM1dgDye66bB7LEk5w==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   '@pmmmwh/react-refresh-webpack-plugin@0.5.15':
     resolution: {integrity: sha512-LFWllMA55pzB9D34w/wXUCf8+c+IYKuJDgxiZ3qMhl64KRMBHYM1I3VdGaD2BV5FNPV2/S2596bppxHbv2ZydQ==}
@@ -3292,6 +3315,12 @@ packages:
     resolution: {integrity: sha512-2tktqUAT+Q3hCAU0iSf4xAN1k9zOpjK5WO8104mB0rT/dGhOa09582HN5HlbxNbPRZ0THV7nLGvzugcNOSjzfA==}
     engines: {node: '>=6'}
 
+  eslint-plugin-playwright@2.2.0:
+    resolution: {integrity: sha512-qSQpAw7RcSzE3zPp8FMGkthaCWovHZ/BsXtpmnGax9vQLIovlh1bsZHEa2+j2lv9DWhnyeLM/qZmp7ffQZfQvg==}
+    engines: {node: '>=16.6.0'}
+    peerDependencies:
+      eslint: '>=8.40.0'
+
   eslint-plugin-promise@7.2.1:
     resolution: {integrity: sha512-SWKjd+EuvWkYaS+uN2csvj0KoP43YTu7+phKQ5v+xw6+A0gutVX2yqCeCkC3uLCJFiPfR2dD8Es5L7yUsmvEaA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -3525,6 +3554,11 @@ packages:
   fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
+  fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -3605,6 +3639,10 @@ packages:
   globals@11.12.0:
     resolution: {integrity: sha512-WOBp/EEGUiIsJSp7wcv/y6MO+lV9UoncWqxuFfm8eBwzWNgyfBd6Gz+IeKQ9jCmyhoH99g15M3T+QaVHFjizVA==}
     engines: {node: '>=4'}
+
+  globals@13.24.0:
+    resolution: {integrity: sha512-AhO5QUcj8llrbG09iWhPU2B204J1xnPeL8kQmVorSsy+Sjj1sk8gIyh6cUocGmH4L0UuhAJy+hJMRA4mgA4mFQ==}
+    engines: {node: '>=8'}
 
   globals@14.0.0:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
@@ -4548,6 +4586,16 @@ packages:
     resolution: {integrity: sha512-Ie9z/WINcxxLp27BKOCHGde4ITq9UklYKDzVo1nhk5sqGEXU3FpkwP5GM2voTGJkGd9B3Otl+Q4uwSOeSUtOBA==}
     engines: {node: '>=14.16'}
 
+  playwright-core@1.53.1:
+    resolution: {integrity: sha512-Z46Oq7tLAyT0lGoFx4DOuB1IA9D1TPj0QkYxpPVUnGDqHHvDpCftu1J2hM2PiWsNMoZh8+LQaarAWcDfPBc6zg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.53.1:
+    resolution: {integrity: sha512-LJ13YLr/ocweuwxyGf1XNFWIU4M2zUSo149Qbp+A4cpwDjsxRPj7k6H25LBrEHiEwxvRbD8HdwvQmRMSvquhYw==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
     engines: {node: '>=4'}
@@ -5345,6 +5393,10 @@ packages:
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
+
+  type-fest@0.20.2:
+    resolution: {integrity: sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==}
+    engines: {node: '>=10'}
 
   type-fest@2.19.0:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
@@ -7019,11 +7071,11 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.0
 
-  '@mui/material-nextjs@6.2.0(@emotion/cache@11.14.0)(@emotion/react@11.14.0(@types/react@19.0.0)(react@19.0.0))(@types/react@19.0.0)(next@15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)':
+  '@mui/material-nextjs@6.2.0(@emotion/cache@11.14.0)(@emotion/react@11.14.0(@types/react@19.0.0)(react@19.0.0))(@types/react@19.0.0)(next@15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@babel/runtime': 7.26.0
       '@emotion/react': 11.14.0(@types/react@19.0.0)(react@19.0.0)
-      next: 15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      next: 15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react: 19.0.0
     optionalDependencies:
       '@emotion/cache': 11.14.0
@@ -7150,6 +7202,10 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@playwright/test@1.53.1':
+    dependencies:
+      playwright: 1.53.1
 
   '@pmmmwh/react-refresh-webpack-plugin@0.5.15(react-refresh@0.14.2)(type-fest@4.30.0)(webpack-hot-middleware@2.26.1)(webpack@5.96.1(esbuild@0.21.5))':
     dependencies:
@@ -7491,18 +7547,18 @@ snapshots:
     dependencies:
       type-fest: 2.19.0
 
-  '@storybook/experimental-nextjs-vite@8.4.7(@babel/core@7.26.0)(@storybook/test@8.4.7(storybook@8.4.7(prettier@3.4.2)))(next@15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.4.2))(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.1)(terser@5.37.0))':
+  '@storybook/experimental-nextjs-vite@8.4.7(@babel/core@7.26.0)(@storybook/test@8.4.7(storybook@8.4.7(prettier@3.4.2)))(next@15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.4.2))(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.1)(terser@5.37.0))':
     dependencies:
       '@storybook/builder-vite': 8.4.7(storybook@8.4.7(prettier@3.4.2))(vite@5.4.11(@types/node@22.10.1)(terser@5.37.0))
       '@storybook/react': 8.4.7(@storybook/test@8.4.7(storybook@8.4.7(prettier@3.4.2)))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.4.2))(typescript@5.7.2)
       '@storybook/test': 8.4.7(storybook@8.4.7(prettier@3.4.2))
-      next: 15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      next: 15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       storybook: 8.4.7(prettier@3.4.2)
       styled-jsx: 5.1.6(@babel/core@7.26.0)(react@19.0.0)
       vite: 5.4.11(@types/node@22.10.1)(terser@5.37.0)
-      vite-plugin-storybook-nextjs: 1.1.0(@storybook/test@8.4.7(storybook@8.4.7(prettier@3.4.2)))(next@15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(storybook@8.4.7(prettier@3.4.2))(vite@5.4.11(@types/node@22.10.1)(terser@5.37.0))
+      vite-plugin-storybook-nextjs: 1.1.0(@storybook/test@8.4.7(storybook@8.4.7(prettier@3.4.2)))(next@15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(storybook@8.4.7(prettier@3.4.2))(vite@5.4.11(@types/node@22.10.1)(terser@5.37.0))
     optionalDependencies:
       sharp: 0.33.5
       typescript: 5.7.2
@@ -7532,7 +7588,7 @@ snapshots:
     dependencies:
       storybook: 8.4.7(prettier@3.4.2)
 
-  '@storybook/nextjs@8.4.7(esbuild@0.21.5)(next@15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.4.2))(type-fest@4.30.0)(typescript@5.7.2)(webpack-hot-middleware@2.26.1)(webpack@5.96.1(esbuild@0.21.5))':
+  '@storybook/nextjs@8.4.7(esbuild@0.21.5)(next@15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(storybook@8.4.7(prettier@3.4.2))(type-fest@4.30.0)(typescript@5.7.2)(webpack-hot-middleware@2.26.1)(webpack@5.96.1(esbuild@0.21.5))':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/plugin-syntax-bigint': 7.8.3(@babel/core@7.26.0)
@@ -7559,7 +7615,7 @@ snapshots:
       find-up: 5.0.0
       image-size: 1.1.1
       loader-utils: 3.3.1
-      next: 15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      next: 15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       node-polyfill-webpack-plugin: 2.0.1(webpack@5.96.1(esbuild@0.21.5))
       pnp-webpack-plugin: 1.7.0(typescript@5.7.2)
       postcss: 8.4.49
@@ -9137,6 +9193,11 @@ snapshots:
 
   eslint-plugin-only-warn@1.1.0: {}
 
+  eslint-plugin-playwright@2.2.0(eslint@9.16.0(jiti@1.21.6)):
+    dependencies:
+      eslint: 9.16.0(jiti@1.21.6)
+      globals: 13.24.0
+
   eslint-plugin-promise@7.2.1(eslint@9.16.0(jiti@1.21.6)):
     dependencies:
       '@eslint-community/eslint-utils': 4.4.1(eslint@9.16.0(jiti@1.21.6))
@@ -9442,6 +9503,9 @@ snapshots:
 
   fs.realpath@1.0.0: {}
 
+  fsevents@2.3.2:
+    optional: true
+
   fsevents@2.3.3:
     optional: true
 
@@ -9525,6 +9589,10 @@ snapshots:
       ini: 4.1.1
 
   globals@11.12.0: {}
+
+  globals@13.24.0:
+    dependencies:
+      type-fest: 0.20.2
 
   globals@14.0.0: {}
 
@@ -10164,7 +10232,7 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  next@15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  next@15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@next/env': 15.0.4
       '@swc/counter': 0.1.3
@@ -10184,6 +10252,7 @@ snapshots:
       '@next/swc-linux-x64-musl': 15.0.4
       '@next/swc-win32-arm64-msvc': 15.0.4
       '@next/swc-win32-x64-msvc': 15.0.4
+      '@playwright/test': 1.53.1
       sharp: 0.33.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -10457,6 +10526,14 @@ snapshots:
   pkg-dir@7.0.0:
     dependencies:
       find-up: 6.3.0
+
+  playwright-core@1.53.1: {}
+
+  playwright@1.53.1:
+    dependencies:
+      playwright-core: 1.53.1
+    optionalDependencies:
+      fsevents: 2.3.2
 
   pluralize@8.0.0: {}
 
@@ -11311,6 +11388,8 @@ snapshots:
     dependencies:
       prelude-ls: 1.2.1
 
+  type-fest@0.20.2: {}
+
   type-fest@2.19.0: {}
 
   type-fest@4.30.0: {}
@@ -11440,14 +11519,14 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-storybook-nextjs@1.1.0(@storybook/test@8.4.7(storybook@8.4.7(prettier@3.4.2)))(next@15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(storybook@8.4.7(prettier@3.4.2))(vite@5.4.11(@types/node@22.10.1)(terser@5.37.0)):
+  vite-plugin-storybook-nextjs@1.1.0(@storybook/test@8.4.7(storybook@8.4.7(prettier@3.4.2)))(next@15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(storybook@8.4.7(prettier@3.4.2))(vite@5.4.11(@types/node@22.10.1)(terser@5.37.0)):
     dependencies:
       '@next/env': 15.0.4
       '@storybook/test': 8.4.7(storybook@8.4.7(prettier@3.4.2))
       image-size: 1.1.1
       magic-string: 0.30.14
       module-alias: 2.2.3
-      next: 15.0.4(@babel/core@7.26.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      next: 15.0.4(@babel/core@7.26.0)(@playwright/test@1.53.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       storybook: 8.4.7(prettier@3.4.2)
       ts-dedent: 2.2.0
       vite: 5.4.11(@types/node@22.10.1)(terser@5.37.0)
