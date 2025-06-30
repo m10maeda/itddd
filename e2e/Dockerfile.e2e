@@ -22,5 +22,5 @@ CMD echo "=== Debug: Checking test files ===" && \
     echo "=== Test file names ===" && \
     find /app/e2e/tests -name "*.spec.ts" && \
     echo "=== Starting Playwright ===" && \
-    pnpm run e2e -- --reporter=list
+    pnpm run e2e --reporter=list
 
