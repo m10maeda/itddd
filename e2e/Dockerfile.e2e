@@ -14,4 +14,3 @@ WORKDIR /app/e2e
 
 ENV PLAYWRIGHT_HEADLESS=true
 CMD pnpm run e2e
-
