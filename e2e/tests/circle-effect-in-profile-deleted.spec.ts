@@ -44,10 +44,10 @@ test.describe('Circle Effect in Profile Deleted Tests', () => {
       const table = page.getByRole('table');
 
       await expect(
-        table.locator('tbody tr:nth-child(2) > td:nth-child(2)'),
+        table.locator('tbody tr:nth-of-type(2) > td:nth-of-type(2)'),
       ).toContainText('Carol');
       await expect(
-        table.locator('tbody tr:nth-child(2) > td:nth-child(3)'),
+        table.locator('tbody tr:nth-of-type(2) > td:nth-of-type(3)'),
       ).toContainText('0');
     });
 
