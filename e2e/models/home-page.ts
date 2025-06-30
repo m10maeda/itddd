@@ -1,13 +1,10 @@
 import { Page, expect } from '@playwright/test';
 
 export class HomePage {
-  private static readonly URL =
-    process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000';
-
   private page: Page;
 
   public async go(): Promise<void> {
-    await this.page.goto(HomePage.URL);
+    await this.page.goto('/');
 
     await expect(this.page).toHaveTitle(/Introduction to Domain-Driven Design/);
   }
