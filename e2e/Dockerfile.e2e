@@ -10,13 +10,17 @@ RUN corepack enable && \
     pnpm install --filter=e2e && \
     cd e2e && pnpm exec playwright install --with-deps chromium
 
-RUN echo "=== Copied files in e2e/tests ===" && \
-    ls -la /app/e2e/tests/ && \
-    echo "=== File counts ===" && \
-    find /app/e2e/tests -name "*.spec.ts" | wc -l
 
 WORKDIR /app/e2e
 
 ENV PLAYWRIGHT_HEADLESS=true
-CMD pnpm run e2e
+
+CMD echo "=== Debug: Checking test files ===" && \
+    ls -la /app/e2e/tests/ && \
+    echo "=== Test file count ===" && \
+    find /app/e2e/tests -name "*.spec.ts" | wc -l && \
+    echo "=== Test file names ===" && \
+    find /app/e2e/tests -name "*.spec.ts" && \
+    echo "=== Starting Playwright ===" && \
+    pnpm run e2e -- --reporter=list
 

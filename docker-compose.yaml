@@ -17,10 +17,10 @@ services:
       KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
     healthcheck:
       test: kafka-topics.sh --list --bootstrap-server localhost:9092 || exit 1
-      interval: 60s
+      interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 60s
+      start_period: 30s
 
   kafka-ui:
     container_name: kafka-ui
