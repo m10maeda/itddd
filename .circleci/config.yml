@@ -74,6 +74,7 @@ jobs:
       - run:
           name: Run E2E tests
           command: |
+            docker compose --profile test build --no-cache
             docker compose --profile test up --exit-code-from e2e e2e
             EXIT_CODE=$?
             docker compose down
