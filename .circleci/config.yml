@@ -76,6 +76,8 @@ jobs:
           command: |
             docker compose --profile test up --exit-code-from e2e e2e
             EXIT_CODE=$?
+            echo "=== After docker compose execution ==="
+            docker compose logs e2e
             docker compose down
             exit $EXIT_CODE
 
@@ -87,6 +89,4 @@ workflows:
   main:
     jobs:
       - test
-      - e2e:
-          requires:
-            - test
+      - e2e
