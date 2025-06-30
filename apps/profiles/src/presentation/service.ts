@@ -23,6 +23,7 @@ const mockProfiles = [
   new Profile(new ProfileId('3'), new ProfileName('Carol')),
   new Profile(new ProfileId('4'), new ProfileName('Dave')),
   new Profile(new ProfileId('5'), new ProfileName('Ellen')),
+  new Profile(new ProfileId('6'), new ProfileName('Frank')),
 ];
 
 const repository = new InMemoryProfileRepository(mockProfiles);

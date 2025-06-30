@@ -1,22 +1,6 @@
-import test, { APIRequestContext, expect } from '@playwright/test';
+import test, { expect } from '@playwright/test';
 
 import { HomePage } from '../models/home-page';
-
-let apiContext: APIRequestContext;
-
-const PROFILES_SERVICE_URL =
-  process.env.PROFILES_SERVICE_URL ?? 'http://localhost:3001';
-
-test.beforeAll(async ({ playwright }) => {
-  apiContext = await playwright.request.newContext({
-    baseURL: PROFILES_SERVICE_URL,
-    extraHTTPHeaders: { 'Content-Type': 'application/json' },
-  });
-});
-
-test.afterAll(async ({}) => {
-  await apiContext.dispose();
-});
 
 test.describe('Circle Management Tests', () => {
   let homePage: HomePage;
@@ -30,8 +14,6 @@ test.describe('Circle Management Tests', () => {
   });
 
   test('should create a new circle', async ({ page }) => {
-    await apiContext.post('/', { data: { name: ownerName } });
-
     await homePage.go();
     await homePage.navigateToCircleListPage();
 
