@@ -27,7 +27,7 @@ test.describe('Circle Effect in Profile Deleted Tests', () => {
       await page.waitForLoadState();
 
       await expect(page).toHaveTitle('User List');
-      await expect(page.getByRole('link', { name: 'Ellen' })).toBeHidden();
+      await expect(page.getByRole('link', { name: 'Bob' })).toBeHidden();
     });
 
     await test.step('Check that Bob is removed from circle', async () => {
