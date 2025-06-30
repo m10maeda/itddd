@@ -18,11 +18,11 @@ import {
 const eventBus = new ProfileEventBus();
 
 const mockProfiles = [
-  new Profile(new ProfileId('0'), new ProfileName('Alice')),
-  new Profile(new ProfileId('1'), new ProfileName('Bob')),
-  new Profile(new ProfileId('2'), new ProfileName('Carol')),
-  new Profile(new ProfileId('3'), new ProfileName('Dave')),
-  new Profile(new ProfileId('4'), new ProfileName('Ellen')),
+  new Profile(new ProfileId('1'), new ProfileName('Alice')),
+  new Profile(new ProfileId('2'), new ProfileName('Bob')),
+  new Profile(new ProfileId('3'), new ProfileName('Carol')),
+  new Profile(new ProfileId('4'), new ProfileName('Dave')),
+  new Profile(new ProfileId('5'), new ProfileName('Ellen')),
 ];
 
 const repository = new InMemoryProfileRepository(mockProfiles);
