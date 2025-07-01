@@ -18,7 +18,7 @@ export async function CircleList() {
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="list of users">
+      <Table sx={{ minWidth: 650 }} aria-label="list of circles">
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>

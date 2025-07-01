@@ -1,0 +1,16 @@
+FROM mcr.microsoft.com/playwright:v1.53.1-jammy
+
+WORKDIR /app
+
+COPY e2e ./e2e
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+RUN corepack enable && \
+    corepack prepare pnpm@latest-10 --activate && \
+    pnpm install --filter=e2e && \
+    cd e2e && pnpm exec playwright install --with-deps chromium
+
+WORKDIR /app/e2e
+
+ENV PLAYWRIGHT_HEADLESS=true
+CMD pnpm run e2e

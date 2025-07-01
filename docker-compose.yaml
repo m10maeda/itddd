@@ -92,3 +92,24 @@ services:
         condition: service_healthy
       circles:
         condition: service_healthy
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://web:3000/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  e2e:
+    container_name: e2e
+    profiles: ['test']
+    build:
+      context: .
+      dockerfile: ./e2e/Dockerfile.e2e
+    depends_on:
+      web:
+        condition: service_healthy
+    environment:
+      - CI=true
+      - PLAYWRIGHT_BASE_URL=http://web:3000
+    volumes:
+      - ./e2e/playwright-report:/app/e2e/playwright-report
+      - ./e2e/test-results:/app/e2e/test-results

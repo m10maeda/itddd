@@ -37,7 +37,7 @@ export async function MemberList({ circleId, memberIds: memberIds }: Props) {
         </Button>
       </Stack>
 
-      {members !== undefined ? (
+      {members?.length ? (
         <List>
           {members.map((member) => (
             <ListItem

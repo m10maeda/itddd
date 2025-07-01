@@ -13,6 +13,7 @@ import {
 
 export class RelationshipRepository implements IRelationshipRepository {
   private readonly eventLoader: IRelationshipEventLoader;
+
   public async getAllBy(
     criteria: IRelationSpecification,
   ): Promise<Iterable<Relationship>> {

@@ -2,7 +2,9 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
   "globalEnv": [
+    "CI",
     "PORT",
+    "PLAYWRIGHT_BASE_URL",
     "PROFILES_SERVICE_URL",
     "CIRCLES_SERVICE_URL",
     "KAFKA_BROKER_URL"
