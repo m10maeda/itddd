@@ -80,7 +80,7 @@ const mockRelationshipEvents = [
   new RelationshipCreated(new CircleId('1'), new MemberId('4'), Role.Member),
   new RelationshipCreated(new CircleId('2'), new MemberId('2'), Role.Owner),
   new RelationshipCreated(new CircleId('2'), new MemberId('3'), Role.Member),
-  new RelationshipCreated(new CircleId('3'), new MemberId('5'), Role.Owner),
+  new RelationshipCreated(new CircleId('3'), new MemberId('2'), Role.Owner),
 ];
 
 const mockCircles = [
