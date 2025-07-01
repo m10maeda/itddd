@@ -176,7 +176,6 @@ const getCandidatesUseCase = new GetCandidatesQueryService(
 );
 
 const memberDeletedHandler = new MemberDeletedHandler(
-  circleRepository,
   relationshipRepository,
   removeMemberUseCase,
   changeOwnerUseCase,

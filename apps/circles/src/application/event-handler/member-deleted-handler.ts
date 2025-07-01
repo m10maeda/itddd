@@ -1,4 +1,3 @@
-import { type ICircleRepository } from '../../domain/models/circle';
 import { IMemberDeletedHandler, Member } from '../../domain/models/member';
 import {
   CircleRelationshipSpecification,
@@ -19,8 +18,6 @@ import {
 
 export class MemberDeletedHandler implements IMemberDeletedHandler {
   private readonly changeOwnerUseCase: IChangeOwnerUseCaseInputPort;
-
-  private readonly circleRepository: ICircleRepository;
 
   private readonly deleteCircleUseCase: IDeleteCircleUseCaseInputPort;
 
@@ -86,13 +83,11 @@ export class MemberDeletedHandler implements IMemberDeletedHandler {
   }
 
   public constructor(
-    circleRepository: ICircleRepository,
     relationshipRepository: IRelationshipRepository,
     removeMemberUseCase: IRemoveMemberUseCaseInputPort,
     changeOwnerUseCase: IChangeOwnerUseCaseInputPort,
     deleteCircleUseCase: IDeleteCircleUseCaseInputPort,
   ) {
-    this.circleRepository = circleRepository;
     this.relationshipRepository = relationshipRepository;
     this.removeMemberUseCase = removeMemberUseCase;
     this.changeOwnerUseCase = changeOwnerUseCase;
