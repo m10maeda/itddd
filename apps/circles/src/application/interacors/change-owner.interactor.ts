@@ -47,7 +47,11 @@ export class ChangeOwnerInteractor implements IChangeOwnerUseCaseInputPort {
       await this.relationshipRepository.getOwnerBy(circle.id);
 
     if (currentOwnerRelationship !== undefined) {
-      if (!(await this.memberExistenceService.exists(newOwner))) {
+      if (
+        !(await this.memberExistenceService.exists(
+          new Member(currentOwnerRelationship.memberId),
+        ))
+      ) {
         const currentOwnerDeletedEvent = new RelationshipDeleted(
           currentOwnerRelationship.circleId,
           currentOwnerRelationship.memberId,

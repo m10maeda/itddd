@@ -31,41 +31,12 @@ export class MemberDeletedHandler implements IMemberDeletedHandler {
   public async onMemberDeleted(member: Member): Promise<void> {
     await this.removeIfNeeded(member);
 
-    await this.changeOwnerIfNeeded(member);
-
-    await this.deleteCircleIfNeeded(member);
+    await this.changeOwnerOrDeleteCircleIfNeeded(member);
   }
 
-  private async changeOwnerIfNeeded(member: Member): Promise<void> {
-    const spec = new MemberRelationshipSpecification(member.id).and(
-      new RoleRelationshipSpecification(Role.Owner),
-    );
-    const relationships = await this.relationshipRepository.getAllBy(spec);
-
-    for (const relationship of relationships) {
-      const memberRelations = await this.relationshipRepository.getAllBy(
-        new CircleRelationshipSpecification(relationship.circleId).and(
-          new RoleRelationshipSpecification(Role.Member),
-        ),
-      );
-
-      if (Array.from(memberRelations).length > 0) {
-        const candidate = await new OwnerCandidateRelationshipChoicer(
-          relationship.circleId,
-          this.relationshipRepository,
-        ).choice();
-
-        await this.changeOwnerUseCase.handle(
-          new ChangeOwnerUseCaseInputData(
-            candidate.circleId.toString(),
-            candidate.memberId.toString(),
-          ),
-        );
-      }
-    }
-  }
-
-  private async deleteCircleIfNeeded(member: Member): Promise<void> {
+  private async changeOwnerOrDeleteCircleIfNeeded(
+    member: Member,
+  ): Promise<void> {
     const spec = new MemberRelationshipSpecification(member.id).and(
       new RoleRelationshipSpecification(Role.Owner),
     );
@@ -81,6 +52,18 @@ export class MemberDeletedHandler implements IMemberDeletedHandler {
       if (Array.from(memberRelations).length === 0) {
         await this.deleteCircleUseCase.handle(
           new DeleteCircleUseCaseInputData(relationship.circleId.toString()),
+        );
+      } else {
+        const candidate = await new OwnerCandidateRelationshipChoicer(
+          relationship.circleId,
+          this.relationshipRepository,
+        ).choice();
+
+        await this.changeOwnerUseCase.handle(
+          new ChangeOwnerUseCaseInputData(
+            candidate.circleId.toString(),
+            candidate.memberId.toString(),
+          ),
         );
       }
     }
