@@ -1,5 +1,10 @@
 import { EventBus } from './event-bus';
 
-import type { RelationshipEvent } from '../../domain/models/relationship';
+import type {
+  IRelationshipEventPublisher,
+  RelationshipEvent,
+} from '../../domain/models/relationship';
 
-export class RelationshipEventBus extends EventBus<RelationshipEvent> {}
+export class RelationshipEventBus
+  extends EventBus<RelationshipEvent>
+  implements IRelationshipEventPublisher {}
