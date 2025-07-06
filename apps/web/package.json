@@ -39,6 +39,7 @@
     "@storybook/nextjs": "^8.4.7",
     "@storybook/react": "^8.4.7",
     "@storybook/test": "^8.4.7",
+    "@tailwindcss/postcss": "^4",
     "@testing-library/react": "^16.1.0",
     "@types/node": "^22.10.1",
     "@types/react": "19.0.0",
@@ -47,6 +48,7 @@
     "@vitest/coverage-v8": "^2.1.8",
     "jsdom": "^25.0.1",
     "storybook": "^8.4.7",
+    "tailwindcss": "^4",
     "typescript": "^5.7.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^2.1.8"
